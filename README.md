@@ -6,16 +6,38 @@ Sistema interactivo de evaluación técnica para entrevistas, con preguntas sobr
 
 Evaluar conocimientos prácticos de candidatos mediante un sistema de preguntas técnicas tipo quiz con explicaciones detalladas y retroalimentación inmediata.
 
+## ⚠️ IMPORTANTE: Node.js 14.17.6 detectado
+
+Tu versión de Node es demasiado antigua. **Lee `IMPORTANTE.md` para soluciones**.
+
 ## 🚀 Cómo ejecutar
 
-### ⚡ Opción 1: StackBlitz (Recomendado)
+### ⚡ Opción 1: StackBlitz (Recomendado - SIN INSTALACIÓN)
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/TU_USUARIO/fullstack-interview)
 
-Simplemente haz clic en el botón y el proyecto se abrirá en StackBlitz listo para ejecutarse. No necesitas instalar nada localmente.
+**La forma más fácil de usar este proyecto:**
+1. Sube tu código a GitHub
+2. Abre: `https://stackblitz.com/github/TU_USUARIO/fullstack-interview`
+3. ¡Listo! Funciona al instante sin instalar nada
 
-### 💻 Opción 2: Desarrollo local
+**Ver guía completa en `STACKBLITZ.md`**
 
+### 💻 Opción 2: Desarrollo local (Requiere Node 18+)
+
+⚠️ **Tu Node actual (14.17.6) es muy antiguo**. Opciones:
+
+#### A. Actualizar Node (Recomendado para desarrollo local):
+```bash
+# Con nvm
+nvm install 18
+nvm use 18
+
+# Verificar
+node -v  # Debe mostrar v18.x.x
+```
+
+#### B. Luego instalar y ejecutar:
 ```bash
 # Instalar dependencias
 npm install
@@ -25,14 +47,11 @@ npm run dev
 
 # Build para producción
 npm run build
-
-# Vista previa del build
-npm run preview
 ```
 
 La aplicación estará disponible en `http://localhost:5173`
 
-**Nota**: Requiere Node.js 18+ para desarrollo local. Para versiones anteriores, usa StackBlitz.
+**Nota**: Si no puedes actualizar Node, **usa StackBlitz** (Opción 1).
 
 ## 📁 Estructura del proyecto
 
