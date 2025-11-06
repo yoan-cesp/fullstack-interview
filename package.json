@@ -1,0 +1,21 @@
+{
+  "name": "fullstack-interview",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistema de evaluación técnica interactivo - React, Node.js, Git, CSS y AWS",
+  "scripts": {
+    "install": "npm -C client install",
+    "dev": "npm --prefix client run dev",
+    "build": "npm --prefix client run build",
+    "preview": "npm --prefix client run preview"
+  },
+  "keywords": [
+    "react",
+    "interview",
+    "technical-test",
+    "quiz",
+    "evaluation"
+  ],
+  "author": "",
+  "license": "MIT"
+}
