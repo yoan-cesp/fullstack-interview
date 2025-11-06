@@ -49,29 +49,33 @@ Sistema de evaluación técnica interactivo diseñado para evaluar conocimientos
 fullstack-interview/
 ├── README.md                 # Documentación principal
 ├── DOCUMENTACION.md          # Este archivo - documentación detallada
-├── package.json              # Scripts para ejecutar el proyecto
-├── .gitignore               # Archivos ignorados por git
+├── package.json              # Dependencias y scripts
+├── index.html                # HTML principal
+├── vite.config.js            # Configuración de Vite
+├── .stackblitzrc             # Configuración para StackBlitz
+├── .gitignore                # Archivos ignorados por git
 ├── .github/
 │   └── workflows/
-│       └── ci.yml           # GitHub Actions CI
-└── client/                   # Aplicación React (Frontend)
-    ├── package.json
-    ├── index.html
-    ├── vite.config.js
-    └── src/
-        ├── App.jsx           # Configuración de rutas React Router
-        ├── main.jsx          # Entry point de la aplicación
-        ├── data/
-        │   └── exercises.js  # Base de datos con 21 preguntas técnicas
-        ├── pages/
-        │   ├── Home.jsx                # Página principal con accesos
-        │   ├── NuevosEjercicios.jsx   # Sistema de preguntas step-by-step
-        │   └── NuevosResultados.jsx   # Visualización de resultados
-        └── styles/
-            └── global.css    # Estilos completos del sistema
+│       └── ci.yml            # GitHub Actions CI
+└── src/                      # Código fuente de la aplicación
+    ├── App.jsx               # Configuración de rutas React Router
+    ├── main.jsx              # Entry point de la aplicación
+    ├── data/
+    │   └── exercises.js      # Base de datos con 21 preguntas técnicas
+    ├── pages/
+    │   ├── Home.jsx                # Página principal con accesos
+    │   ├── NuevosEjercicios.jsx   # Sistema de preguntas step-by-step
+    │   └── NuevosResultados.jsx   # Visualización de resultados
+    └── styles/
+        └── global.css        # Estilos completos del sistema
 ```
 
-**Nota**: Este proyecto es **solo frontend** (no requiere backend). Toda la lógica se ejecuta en el navegador y los datos se almacenan en localStorage.
+**Notas importantes**:
+- ✅ Este proyecto es **solo frontend** (no requiere backend)
+- ✅ Toda la lógica se ejecuta en el navegador
+- ✅ Los datos se almacenan en localStorage
+- ✅ **Optimizado para StackBlitz**: Estructura plana para máxima compatibilidad
+- ✅ Compatible con Vite y React 18
 
 ## Preguntas Incluidas
 

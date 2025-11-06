@@ -8,7 +8,13 @@ Evaluar conocimientos prácticos de candidatos mediante un sistema de preguntas 
 
 ## 🚀 Cómo ejecutar
 
-### Opción 1: Desde la raíz del proyecto
+### ⚡ Opción 1: StackBlitz (Recomendado)
+
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/TU_USUARIO/fullstack-interview)
+
+Simplemente haz clic en el botón y el proyecto se abrirá en StackBlitz listo para ejecutarse. No necesitas instalar nada localmente.
+
+### 💻 Opción 2: Desarrollo local
 
 ```bash
 # Instalar dependencias
@@ -19,20 +25,14 @@ npm run dev
 
 # Build para producción
 npm run build
-```
 
-### Opción 2: Directamente en el cliente
-
-```bash
-# Instalar dependencias del cliente
-cd client
-npm install
-
-# Ejecutar el servidor de desarrollo
-npm run dev
+# Vista previa del build
+npm run preview
 ```
 
 La aplicación estará disponible en `http://localhost:5173`
+
+**Nota**: Requiere Node.js 18+ para desarrollo local. Para versiones anteriores, usa StackBlitz.
 
 ## 📁 Estructura del proyecto
 
@@ -40,26 +40,28 @@ La aplicación estará disponible en `http://localhost:5173`
 fullstack-interview/
 ├── README.md                 # Este archivo
 ├── DOCUMENTACION.md          # Documentación completa del sistema
-├── package.json              # Scripts para ejecutar el proyecto
+├── package.json              # Dependencias y scripts
+├── index.html                # HTML principal
+├── vite.config.js            # Configuración de Vite
+├── .stackblitzrc             # Configuración para StackBlitz
+├── .gitignore                # Archivos ignorados por git
 ├── .github/
 │   └── workflows/
-│       └── ci.yml           # GitHub Actions CI
-└── client/                   # Aplicación React
-    ├── package.json
-    ├── index.html
-    ├── vite.config.js
-    └── src/
-        ├── App.jsx           # Configuración de rutas
-        ├── main.jsx          # Entry point
-        ├── data/
-        │   └── exercises.js  # 21 preguntas técnicas
-        ├── pages/
-        │   ├── Home.jsx                # Página principal
-        │   ├── NuevosEjercicios.jsx   # Sistema de preguntas step-by-step
-        │   └── NuevosResultados.jsx   # Visualización de resultados
-        └── styles/
-            └── global.css    # Estilos completos del sistema
+│       └── ci.yml            # GitHub Actions CI
+└── src/                      # Código fuente
+    ├── App.jsx               # Configuración de rutas
+    ├── main.jsx              # Entry point
+    ├── data/
+    │   └── exercises.js      # 21 preguntas técnicas
+    ├── pages/
+    │   ├── Home.jsx                # Página principal
+    │   ├── NuevosEjercicios.jsx   # Sistema de preguntas step-by-step
+    │   └── NuevosResultados.jsx   # Visualización de resultados
+    └── styles/
+        └── global.css        # Estilos completos del sistema
 ```
+
+**Estructura optimizada para StackBlitz**: Todos los archivos del frontend están en la raíz para máxima compatibilidad.
 
 ## ✨ Características
 
