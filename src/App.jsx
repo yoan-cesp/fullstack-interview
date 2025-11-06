@@ -4,9 +4,11 @@ import NuevosEjercicios from "./pages/NuevosEjercicios.jsx";
 import NuevosResultados from "./pages/NuevosResultados.jsx";
 
 function App() {
+  // Para GitHub Pages, usa el basename del repo
+  const basename = import.meta.env.PROD ? '/fullstack-interview' : '';
+  
   return (
-    <BrowserRouter>
-      <link rel="stylesheet" href="/src/styles/global.css" />
+    <BrowserRouter basename={basename}>
       <header className="toolbar">
         <nav className="container">
           <h1>🎯 Evaluación Técnica</h1>
