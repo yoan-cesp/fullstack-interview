@@ -6,22 +6,31 @@ Sistema interactivo de evaluación técnica para entrevistas, con preguntas sobr
 
 Evaluar conocimientos prácticos de candidatos mediante un sistema de preguntas técnicas tipo quiz con explicaciones detalladas y retroalimentación inmediata.
 
-## ⚠️ IMPORTANTE: Node.js 14.17.6 detectado
+## 🚀 Usar directamente desde GitHub (SIN instalación local)
 
-Tu versión de Node es demasiado antigua. **Lee `IMPORTANTE.md` para soluciones**.
+### ⚡ Opción 1: GitHub Codespaces (RECOMENDADO) ⭐
 
-## 🚀 Cómo ejecutar
+**Entorno de desarrollo completo en la nube con Node 20:**
 
-### ⚡ Opción 1: StackBlitz (Recomendado - SIN INSTALACIÓN)
+1. Ve a tu repositorio en GitHub
+2. Click en el botón verde **"Code"**
+3. Selecciona **"Codespaces"** → **"Create codespace on master"**
+4. ¡Listo! Se abrirá VS Code en tu navegador y ejecutará automáticamente
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/TU_USUARIO/fullstack-interview)
+**✅ GRATIS**: 60 horas/mes para cuentas personales
 
-**La forma más fácil de usar este proyecto:**
+### 🌐 Opción 2: GitHub Pages (Deploy público)
+
+**URL pública permanente para compartir con candidatos:**
+
 1. Sube tu código a GitHub
-2. Abre: `https://stackblitz.com/github/TU_USUARIO/fullstack-interview`
-3. ¡Listo! Funciona al instante sin instalar nada
+2. Ve a **Settings** → **Pages** 
+3. En **Source**, selecciona **"GitHub Actions"**
+4. Tu sitio estará en: `https://TU_USUARIO.github.io/fullstack-interview/`
 
-**Ver guía completa en `STACKBLITZ.md`**
+**✅ GRATIS**: Ilimitado
+
+**📚 Ver guía completa en `GITHUB_SETUP.md`**
 
 ### 💻 Opción 2: Desarrollo local (Requiere Node 18+)
 
