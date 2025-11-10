@@ -214,6 +214,206 @@ select:focus {
   color: #52606d;
 }
 
+.home-config-card {
+  border: 2px solid #e5e7eb;
+}
+
+.home-config-card__head h3 {
+  margin-bottom: 0.25rem;
+}
+
+.home-config-card__head p {
+  color: #52606d;
+  margin-top: 0.25rem;
+}
+
+.home-config-section + .home-config-section {
+  margin-top: 1.5rem;
+}
+
+.stack-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem;
+}
+
+.stack-chip {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.85rem;
+  padding: 0.85rem;
+  display: flex;
+  gap: 0.75rem;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.stack-chip--selected {
+  border-color: #1f7a8c;
+  background: #ebf7fa;
+  box-shadow: 0 8px 20px rgba(31, 122, 140, 0.15);
+}
+
+.stack-chip__icon {
+  font-size: 1.8rem;
+}
+
+.stack-chip__title {
+  font-weight: 600;
+  display: block;
+  color: #111827;
+}
+
+.stack-chip__desc {
+  font-size: 0.85rem;
+  color: #52606d;
+  display: block;
+}
+
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.level-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.85rem;
+  padding: 0.85rem;
+  display: flex;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.level-card input {
+  width: auto;
+  margin-top: 0.25rem;
+}
+
+.level-card--active {
+  border-color: #8b5cf6;
+  background: #f5f3ff;
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.15);
+}
+
+.level-card p {
+  margin: 0.25rem 0 0 0;
+  color: #52606d;
+  font-size: 0.9rem;
+}
+
+.home-config-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  border: 1px dashed #d1d5db;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin: 1.5rem 0;
+  background: #f9fafb;
+}
+
+.home-config-summary strong {
+  display: block;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  margin-bottom: 0.35rem;
+}
+
+.home-config-summary p {
+  margin: 0;
+  color: #111827;
+  font-weight: 600;
+}
+
+.form-error {
+  color: #dc2626;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+}
+
+.home-card__button--cta {
+  width: 100%;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+}
+
+.summary-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  text-align: left;
+  color: #374151;
+}
+
+.summary-list li + li {
+  margin-top: 0.35rem;
+}
+
+.exam-config-card {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.exam-config-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.exam-config-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+}
+
+.exam-config-value {
+  font-weight: 700;
+  color: #111827;
+}
+
+.exam-config-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.config-warning {
+  color: #b45309;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.score-config {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #f5f5f7;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.score-config__label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #6b7280;
+  letter-spacing: 0.05em;
+  display: block;
+}
+
+.score-config__value {
+  font-weight: 600;
+  color: #111827;
+}
+
 /* Exercise Page Styles */
 .exercises-container {
   max-width: 1400px;
@@ -1055,4 +1255,3 @@ select:focus {
     max-height: 400px;
   }
 }
-

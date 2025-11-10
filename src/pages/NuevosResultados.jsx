@@ -1,6 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { exercises, calculateScore, getDetailedResults } from "../data/exercises";
+import { TECH_STACKS, STACK_DICTIONARY, LEVEL_DICTIONARY, LEVELS, getQuestionTargetByStacks } from "../data/stackConfig.js";
+
+const FALLBACK_STACKS = [TECH_STACKS[0].id];
+
+const FALLBACK_CONFIG = {
+  stacks: FALLBACK_STACKS,
+  level: LEVELS[0].id,
+  questionCount: getQuestionTargetByStacks(FALLBACK_STACKS),
+};
 
 function NuevosResultados() {
   const [answers, setAnswers] = useState({});
@@ -8,20 +17,44 @@ function NuevosResultados() {
   const [results, setResults] = useState([]);
   const [filter, setFilter] = useState('all'); // all, correct, incorrect, timeout
   const [expandedId, setExpandedId] = useState(null);
+  const [evaluationConfig, setEvaluationConfig] = useState(FALLBACK_CONFIG);
 
   useEffect(() => {
     const saved = localStorage.getItem('interview-answers');
+    const savedConfig = localStorage.getItem('interview-config');
+    const savedQuestionSet = localStorage.getItem('interview-question-set');
+
+    if (savedConfig) {
+      try {
+        const parsed = JSON.parse(savedConfig);
+        const stacks = Array.isArray(parsed.stacks) && parsed.stacks.length ? parsed.stacks : FALLBACK_CONFIG.stacks;
+        const level = parsed.level && LEVEL_DICTIONARY[parsed.level] ? parsed.level : FALLBACK_CONFIG.level;
+        const questionCount = getQuestionTargetByStacks(stacks);
+        setEvaluationConfig({ stacks, level, questionCount });
+      } catch {
+        setEvaluationConfig(FALLBACK_CONFIG);
+      }
+    }
+
     if (saved) {
       const userAnswers = JSON.parse(saved);
       setAnswers(userAnswers);
-      setScore(calculateScore(userAnswers));
-      setResults(getDetailedResults(userAnswers));
+      let questionIds;
+      try {
+        questionIds = savedQuestionSet ? JSON.parse(savedQuestionSet) : null;
+      } catch {
+        questionIds = null;
+      }
+      const normalizedIds = questionIds && questionIds.length ? questionIds : exercises.map((exercise) => exercise.id);
+      setScore(calculateScore(userAnswers, { questionIds: normalizedIds }));
+      setResults(getDetailedResults(userAnswers, { questionIds: normalizedIds }));
     }
   }, []);
 
   const handleReset = () => {
     if (window.confirm('¿Estás seguro de que quieres reiniciar el examen? Se perderán todas tus respuestas.')) {
       localStorage.removeItem('interview-answers');
+      localStorage.removeItem('interview-question-set');
       setAnswers({});
       setScore(null);
       setResults([]);
@@ -40,6 +73,18 @@ function NuevosResultados() {
   });
 
   const timeoutCount = results.filter(r => r.userAnswer === 'timeout').length;
+  const stackNames = evaluationConfig.stacks
+    .map((id) => STACK_DICTIONARY[id]?.label || id)
+    .join(", ");
+  const levelDefinition =
+    LEVEL_DICTIONARY[evaluationConfig.level] || LEVEL_DICTIONARY[FALLBACK_CONFIG.level];
+  const targetQuestionCount =
+    evaluationConfig.questionCount ||
+    getQuestionTargetByStacks(evaluationConfig.stacks);
+  const shortage =
+    score &&
+    targetQuestionCount &&
+    score.total < targetQuestionCount;
 
   const getScoreColor = (percentage) => {
     if (percentage >= 80) return 'score-excellent';
@@ -125,6 +170,31 @@ function NuevosResultados() {
             <span className="stat-icon">📝</span>
             <span className="stat-label">Total</span>
             <span className="stat-value">{score.total}</span>
+          </div>
+        </div>
+        <div className="score-config">
+          <div>
+            <span className="score-config__label">Stack(s)</span>
+            <span className="score-config__value">{stackNames || 'General'}</span>
+          </div>
+          <div>
+            <span className="score-config__label">Nivel</span>
+            <span className="score-config__value">{levelDefinition.label}</span>
+            <small className="exam-config-note">
+              Dificultades: {levelDefinition.difficulties.join(' · ')}
+            </small>
+          </div>
+          <div>
+            <span className="score-config__label">Preguntas evaluadas</span>
+            <span className="score-config__value">
+              {score.total}
+              {targetQuestionCount ? ` / ${targetQuestionCount}` : ''}
+            </span>
+            {shortage && (
+              <small className="config-warning">
+                El banco del stack seleccionado aún no alcanza el objetivo.
+              </small>
+            )}
           </div>
         </div>
         <div className="score-actions">

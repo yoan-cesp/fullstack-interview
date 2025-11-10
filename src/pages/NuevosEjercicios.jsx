@@ -1,9 +1,34 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { exercises } from "../data/exercises";
+import { buildQuestionSet } from "../data/exercises";
+import { TECH_STACKS, STACK_DICTIONARY, LEVEL_DICTIONARY, LEVELS, getQuestionTargetByStacks } from "../data/stackConfig.js";
+
+const DEFAULT_STACKS = [TECH_STACKS[0].id];
+
+const DEFAULT_CONFIG = {
+  stacks: DEFAULT_STACKS,
+  level: LEVELS[0].id,
+  questionCount: getQuestionTargetByStacks(DEFAULT_STACKS),
+};
+
+const hydrateConfig = () => {
+  try {
+    const raw = localStorage.getItem("interview-config");
+    if (!raw) return DEFAULT_CONFIG;
+    const parsed = JSON.parse(raw);
+    const stacks = Array.isArray(parsed.stacks) && parsed.stacks.length ? parsed.stacks : DEFAULT_CONFIG.stacks;
+    const level = parsed.level && LEVEL_DICTIONARY[parsed.level] ? parsed.level : DEFAULT_CONFIG.level;
+    const questionCount = getQuestionTargetByStacks(stacks);
+    return { stacks, level, questionCount };
+  } catch {
+    return DEFAULT_CONFIG;
+  }
+};
 
 function NuevosEjercicios() {
   const navigate = useNavigate();
+  const [evaluationConfig, setEvaluationConfig] = useState(DEFAULT_CONFIG);
+  const [questionSet, setQuestionSet] = useState(() => buildQuestionSet(DEFAULT_CONFIG));
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState(() => {
     const saved = localStorage.getItem('interview-answers');
@@ -13,11 +38,39 @@ function NuevosEjercicios() {
   const [timeLeft, setTimeLeft] = useState(0);
   const [timerActive, setTimerActive] = useState(true);
 
-  const currentExercise = exercises[currentStep];
-  const progress = ((currentStep + 1) / exercises.length) * 100;
-  const isLastStep = currentStep === exercises.length - 1;
+  const currentExercise =
+    questionSet[currentStep] || questionSet[questionSet.length - 1];
+  const totalQuestions = questionSet.length || 1;
+  const progress = ((currentStep + 1) / totalQuestions) * 100;
+  const isLastStep = currentStep === questionSet.length - 1;
+  const stackNames = evaluationConfig.stacks
+    .map((id) => STACK_DICTIONARY[id]?.label || id)
+    .join(", ");
+  const levelDefinition =
+    LEVEL_DICTIONARY[evaluationConfig.level] || LEVEL_DICTIONARY[LEVELS[0].id];
+  const targetQuestionCount =
+    evaluationConfig.questionCount ||
+    getQuestionTargetByStacks(evaluationConfig.stacks);
+  const shortage =
+    targetQuestionCount && questionSet.length < targetQuestionCount;
 
   useEffect(() => {
+    const config = hydrateConfig();
+    setEvaluationConfig(config);
+    setQuestionSet(buildQuestionSet(config));
+  }, []);
+
+  useEffect(() => {
+    if (!questionSet.length) return;
+    localStorage.setItem(
+      'interview-question-set',
+      JSON.stringify(questionSet.map((exercise) => exercise.id))
+    );
+    setCurrentStep(0);
+  }, [questionSet]);
+
+  useEffect(() => {
+    if (!currentExercise) return;
     // Cargar la respuesta previamente seleccionada si existe
     if (answers[currentExercise.id]) {
       setSelectedOption(answers[currentExercise.id]);
@@ -28,11 +81,11 @@ function NuevosEjercicios() {
     // Reiniciar el timer
     setTimeLeft(currentExercise.timeLimit);
     setTimerActive(true);
-  }, [currentStep, currentExercise.id, currentExercise.timeLimit, answers]);
+  }, [currentStep, currentExercise, answers]);
 
   // Timer countdown
   useEffect(() => {
-    if (!timerActive || timeLeft <= 0) return;
+    if (!currentExercise || !timerActive || timeLeft <= 0) return;
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -47,9 +100,10 @@ function NuevosEjercicios() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timerActive, timeLeft]);
+  }, [timerActive, timeLeft, currentExercise]);
 
   const handleTimeOut = () => {
+    if (!currentExercise) return;
     // Guardar como "timeout" si no hay respuesta seleccionada
     const newAnswers = {
       ...answers,
@@ -71,19 +125,20 @@ function NuevosEjercicios() {
   };
 
   const handleNext = () => {
-    if (selectedOption) {
-      const newAnswers = {
-        ...answers,
-        [currentExercise.id]: selectedOption
-      };
-      setAnswers(newAnswers);
-      localStorage.setItem('interview-answers', JSON.stringify(newAnswers));
+    if (!currentExercise || !selectedOption) {
+      return;
+    }
+    const newAnswers = {
+      ...answers,
+      [currentExercise.id]: selectedOption
+    };
+    setAnswers(newAnswers);
+    localStorage.setItem('interview-answers', JSON.stringify(newAnswers));
 
-      if (isLastStep) {
-        navigate('/respuestas');
-      } else {
-        setCurrentStep(currentStep + 1);
-      }
+    if (isLastStep) {
+      navigate('/respuestas');
+    } else {
+      setCurrentStep(currentStep + 1);
     }
   };
 
@@ -94,6 +149,7 @@ function NuevosEjercicios() {
   };
 
   const handleSkip = () => {
+    if (!currentExercise) return;
     if (isLastStep) {
       navigate('/respuestas');
     } else {
@@ -117,11 +173,51 @@ function NuevosEjercicios() {
   };
 
   const getTimerClass = () => {
+    if (!currentExercise) return 'timer--normal';
     const percentage = (timeLeft / currentExercise.timeLimit) * 100;
     if (percentage <= 25) return 'timer--critical';
     if (percentage <= 50) return 'timer--warning';
     return 'timer--normal';
   };
+
+  const getCodeLanguage = (category) => {
+    switch (category) {
+      case 'Backend':
+        return 'JavaScript (Node.js)';
+      case 'NestJS':
+        return 'TypeScript (NestJS)';
+      case 'Next.js':
+        return 'TypeScript (Next.js)';
+      case 'Relacional':
+        return 'SQL';
+      case 'NoSQL':
+        return 'Mongo/Cassandra';
+      case 'Arquitectura':
+        return 'System Design';
+      case 'Git':
+        return 'Bash';
+      case 'CSS':
+        return 'CSS';
+      case 'AWS':
+        return 'JavaScript (AWS)';
+      case 'QA Automation':
+        return 'Testing / QA';
+      default:
+        return 'JavaScript (React)';
+    }
+  };
+
+  if (!questionSet.length) {
+    return (
+      <section className="card">
+        <h2>⚠️ Sin preguntas disponibles</h2>
+        <p>No encontramos preguntas para la configuración seleccionada.</p>
+        <button className="button" onClick={() => navigate('/')}>
+          Configurar nuevamente
+        </button>
+      </section>
+    );
+  }
 
   return (
     <section className="exercises-container">
@@ -145,6 +241,32 @@ function NuevosEjercicios() {
         </div>
       </div>
 
+      <div className="card exam-config-card">
+        <div className="exam-config-item">
+          <span className="exam-config-label">Stacks</span>
+          <span className="exam-config-value">{stackNames || 'General'}</span>
+        </div>
+        <div className="exam-config-item">
+          <span className="exam-config-label">Nivel</span>
+          <span className="exam-config-value">{levelDefinition.label}</span>
+          <small className="exam-config-note">
+            Dificultades: {levelDefinition.difficulties.join(' · ')}
+          </small>
+        </div>
+        <div className="exam-config-item">
+          <span className="exam-config-label">Preguntas activas</span>
+          <span className="exam-config-value">
+            {questionSet.length}
+            {targetQuestionCount ? ` / ${targetQuestionCount}` : ''}
+          </span>
+          {shortage && (
+            <small className="config-warning">
+              No hay suficientes preguntas para alcanzar el objetivo del stack seleccionado.
+            </small>
+          )}
+        </div>
+      </div>
+
       {/* Main Content - Two Column Layout */}
       <div className="exercise-main">
         {/* Left Column - Question and Options */}
@@ -152,7 +274,7 @@ function NuevosEjercicios() {
           <div className="card exercise-header">
             <div className="exercise-header__top">
               <span className="exercise-number">
-                Pregunta {currentStep + 1} de {exercises.length}
+                Pregunta {currentStep + 1} de {questionSet.length}
               </span>
               <div className="exercise-badges">
                 <span className={`badge ${getDifficultyClass(currentExercise.difficulty)}`}>
@@ -194,7 +316,7 @@ function NuevosEjercicios() {
           <div className="card code-card">
             <div className="code-header">
               <span className="code-language">
-                {currentExercise.category === 'Backend' ? 'JavaScript (Node.js)' : currentExercise.category === 'Git' ? 'Bash' : currentExercise.category === 'CSS' ? 'CSS' : currentExercise.category === 'AWS' ? 'JavaScript (AWS)' : 'JavaScript (React)'}
+                {getCodeLanguage(currentExercise.category)}
               </span>
               <button
                 className="btn-copy"
@@ -240,10 +362,10 @@ function NuevosEjercicios() {
 
       {/* Progress Indicator */}
       <div className="step-indicators">
-        {exercises.map((_, index) => (
+        {questionSet.map((exercise, index) => (
           <div
-            key={index}
-            className={`step-indicator ${index === currentStep ? 'step-indicator--active' : ''} ${answers[exercises[index].id] ? 'step-indicator--completed' : ''}`}
+            key={exercise.id}
+            className={`step-indicator ${index === currentStep ? 'step-indicator--active' : ''} ${answers[exercise.id] ? 'step-indicator--completed' : ''}`}
             onClick={() => setCurrentStep(index)}
           />
         ))}
@@ -253,4 +375,3 @@ function NuevosEjercicios() {
 }
 
 export default NuevosEjercicios;
-
