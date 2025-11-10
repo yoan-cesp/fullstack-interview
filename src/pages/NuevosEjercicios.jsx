@@ -37,6 +37,7 @@ function NuevosEjercicios() {
   const [selectedOption, setSelectedOption] = useState(null);
   const [timeLeft, setTimeLeft] = useState(0);
   const [timerActive, setTimerActive] = useState(true);
+  const [optionOrder, setOptionOrder] = useState({});
 
   const currentExercise =
     questionSet[currentStep] || questionSet[questionSet.length - 1];
@@ -67,6 +68,16 @@ function NuevosEjercicios() {
       JSON.stringify(questionSet.map((exercise) => exercise.id))
     );
     setCurrentStep(0);
+    const orderMap = {};
+    questionSet.forEach((exercise) => {
+      const shuffled = [...exercise.options];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      orderMap[exercise.id] = shuffled;
+    });
+    setOptionOrder(orderMap);
   }, [questionSet]);
 
   useEffect(() => {
@@ -291,7 +302,7 @@ function NuevosEjercicios() {
           <div className="card options-card">
             <h3>Selecciona la respuesta correcta:</h3>
             <div className="options-list">
-              {currentExercise.options.map((option) => (
+              {(optionOrder[currentExercise.id] || currentExercise.options).map((option) => (
                 <label
                   key={option.id}
                   className={`option-item ${selectedOption === option.id ? 'option-item--selected' : ''}`}
