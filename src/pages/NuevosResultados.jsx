@@ -47,7 +47,20 @@ function NuevosResultados() {
       }
       const normalizedIds = questionIds && questionIds.length ? questionIds : exercises.map((exercise) => exercise.id);
       setScore(calculateScore(userAnswers, { questionIds: normalizedIds }));
-      setResults(getDetailedResults(userAnswers, { questionIds: normalizedIds }));
+      const detailedResults = getDetailedResults(userAnswers, { questionIds: normalizedIds });
+      // Asegurar que todas las explicaciones estén presentes
+      const resultsWithExplanations = detailedResults.map(result => {
+        if (!result.explanation) {
+          // Buscar la explicación en el ejercicio original si no está presente
+          const originalExercise = exercises.find(ex => ex.id === result.id);
+          return {
+            ...result,
+            explanation: originalExercise?.explanation || ''
+          };
+        }
+        return result;
+      });
+      setResults(resultsWithExplanations);
     }
   }, []);
 
@@ -295,13 +308,18 @@ function NuevosResultados() {
                       </div>
                     )}
                   </div>
-
-                  <div className="result-explanation">
-                    <h4>💡 Explicación:</h4>
-                    <p>{result.explanation}</p>
-                  </div>
                 </div>
               )}
+
+              {/* Explicación siempre visible */}
+              <div className="result-explanation">
+                <h4>💡 Explicación:</h4>
+                {result.explanation ? (
+                  <p>{result.explanation}</p>
+                ) : (
+                  <p className="explanation-placeholder">No hay explicación disponible para esta pregunta.</p>
+                )}
+              </div>
             </div>
           );
         })}

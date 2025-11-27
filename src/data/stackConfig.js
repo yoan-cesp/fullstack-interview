@@ -1,5 +1,5 @@
 export const DEFAULT_QUESTION_COUNT = 20;
-export const MULTI_STACK_QUESTION_COUNT = 30;
+export const MULTI_STACK_QUESTION_COUNT = 15;
 
 export const LEVELS = [
   {
@@ -85,6 +85,20 @@ export const TECH_STACKS = [
     icon: "🧠",
     description: "Diseño de servicios, patrones de escalabilidad y trade-offs cloud.",
     focus: "Decisiones de alto nivel para equipos senior.",
+  },
+  {
+    id: "vue",
+    label: "Vue.js",
+    icon: "🟢",
+    description: "Composition API, Reactivity, Directivas, Componentes y estado global.",
+    focus: "Framework progresivo para interfaces de usuario.",
+  },
+  {
+    id: "java",
+    label: "Java",
+    icon: "☕",
+    description: "Hibernate ORM, Spring Framework, Beans, JPA, Annotations y patrones enterprise.",
+    focus: "Backend enterprise con Spring y persistencia ORM.",
   },
 ];
 

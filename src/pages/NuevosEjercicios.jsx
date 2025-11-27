@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { buildQuestionSet } from "../data/exercises";
 import { TECH_STACKS, STACK_DICTIONARY, LEVEL_DICTIONARY, LEVELS, getQuestionTargetByStacks } from "../data/stackConfig.js";
+import { useSessionBroadcast } from "../hooks/useSessionBroadcast.js";
 
 const DEFAULT_STACKS = [TECH_STACKS[0].id];
 
@@ -27,6 +28,7 @@ const hydrateConfig = () => {
 
 function NuevosEjercicios() {
   const navigate = useNavigate();
+  const { sessionId } = useParams(); // Obtener sessionId de la URL si existe
   const [evaluationConfig, setEvaluationConfig] = useState(DEFAULT_CONFIG);
   const [questionSet, setQuestionSet] = useState(() => buildQuestionSet(DEFAULT_CONFIG));
   const [currentStep, setCurrentStep] = useState(0);
@@ -38,6 +40,9 @@ function NuevosEjercicios() {
   const [timeLeft, setTimeLeft] = useState(0);
   const [timerActive, setTimerActive] = useState(true);
   const [optionOrder, setOptionOrder] = useState({});
+  
+  // Hook para emitir eventos de sesión
+  const { emit } = useSessionBroadcast(sessionId || null);
 
   const currentExercise =
     questionSet[currentStep] || questionSet[questionSet.length - 1];
@@ -57,28 +62,111 @@ function NuevosEjercicios() {
 
   useEffect(() => {
     const config = hydrateConfig();
+    // Si hay sessionId en la URL, agregarlo al config
+    if (sessionId) {
+      config.sessionId = sessionId;
+    }
+    const questions = buildQuestionSet(config);
     setEvaluationConfig(config);
-    setQuestionSet(buildQuestionSet(config));
-  }, []);
+    setQuestionSet(questions);
+    
+    // Emitir evento de inicio de test si hay sesión (solo una vez)
+    if (sessionId && emit) {
+      console.log('📤 Emitiendo inicio de test, sessionId:', sessionId);
+      // Múltiples intentos para asegurar que el monitor reciba el mensaje
+      const emitStart = () => {
+        emit({
+          status: 'in_progress',
+          currentQuestion: 1,
+          currentQuestionId: questions[0]?.id || null,
+          totalQuestions: questions.length,
+          config: config,
+          answers: {},
+          timeLeft: questions[0]?.timeLimit || 0,
+          progress: 0,
+          timestamp: Date.now()
+        });
+      };
+      
+      // Emitir inmediatamente
+      emitStart();
+      
+      // Y también después de un delay por si el monitor aún no está listo
+      setTimeout(emitStart, 500);
+      setTimeout(emitStart, 1000);
+    }
+  }, [sessionId]); // Removido 'emit' de dependencias
 
   useEffect(() => {
     if (!questionSet.length) return;
-    localStorage.setItem(
-      'interview-question-set',
-      JSON.stringify(questionSet.map((exercise) => exercise.id))
-    );
-    setCurrentStep(0);
-    const orderMap = {};
-    questionSet.forEach((exercise) => {
-      const shuffled = [...exercise.options];
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-      orderMap[exercise.id] = shuffled;
-    });
-    setOptionOrder(orderMap);
-  }, [questionSet]);
+    const questionIds = questionSet.map((exercise) => exercise.id).join(',');
+    const savedIds = localStorage.getItem('interview-question-set');
+    
+    // Solo actualizar si los IDs cambiaron
+    if (savedIds !== questionIds) {
+      localStorage.setItem('interview-question-set', questionIds);
+      setCurrentStep(0);
+      const orderMap = {};
+      const correctAnswerMap = {}; // Mapeo: exerciseId -> ID de la opción correcta (A, B, C, D)
+      
+      questionSet.forEach((exercise) => {
+        // Crear un array con las opciones originales
+        const originalOptions = [...exercise.options];
+        const correctAnswerId = exercise.correctAnswer;
+        
+        // Encontrar la opción correcta
+        const correctOption = originalOptions.find(opt => opt.id === correctAnswerId);
+        const otherOptions = originalOptions.filter(opt => opt.id !== correctAnswerId);
+        
+        // Mezclar las opciones incorrectas
+        for (let i = otherOptions.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [otherOptions[i], otherOptions[j]] = [otherOptions[j], otherOptions[i]];
+        }
+        
+        // Elegir una posición aleatoria para la respuesta correcta (0-3)
+        const correctPosition = Math.floor(Math.random() * 4);
+        const correctDisplayId = String.fromCharCode(65 + correctPosition); // A, B, C, D
+        
+        // Guardar el mapeo de la respuesta correcta
+        correctAnswerMap[exercise.id] = correctDisplayId;
+        
+        // Crear el array final con A, B, C, D en orden secuencial
+        // pero con la respuesta correcta en posición aleatoria
+        const finalOptions = [];
+        let otherIndex = 0;
+        
+        for (let i = 0; i < 4; i++) {
+          const displayId = String.fromCharCode(65 + i); // A, B, C, D
+          
+          if (i === correctPosition) {
+            // En esta posición va la respuesta correcta
+            finalOptions.push({
+              ...correctOption,
+              id: displayId,
+              originalId: correctOption.id // Guardar el ID original para referencia
+            });
+          } else {
+            // En las demás posiciones van las opciones incorrectas
+            finalOptions.push({
+              ...otherOptions[otherIndex],
+              id: displayId,
+              originalId: otherOptions[otherIndex].id // Guardar el ID original
+            });
+            otherIndex++;
+          }
+        }
+        
+        orderMap[exercise.id] = finalOptions;
+      });
+      
+      setOptionOrder(orderMap);
+      // Guardar el mapeo de respuestas correctas en localStorage
+      localStorage.setItem('correct-answer-map', JSON.stringify(correctAnswerMap));
+      // También guardar el orden de opciones para los resultados
+      localStorage.setItem('option-order', JSON.stringify(orderMap));
+    }
+  }, [questionSet.length]); // Solo cuando cambia la longitud
 
   useEffect(() => {
     if (!currentExercise) return;
@@ -92,7 +180,25 @@ function NuevosEjercicios() {
     // Reiniciar el timer
     setTimeLeft(currentExercise.timeLimit);
     setTimerActive(true);
-  }, [currentStep, currentExercise, answers]);
+    
+    // Emitir evento de cambio de pregunta si hay sesión (solo cuando cambia currentStep o currentExercise)
+    if (sessionId && emit && currentExercise) {
+      console.log('📤 Emitiendo cambio de pregunta:', currentStep + 1);
+      emit({
+        status: 'in_progress',
+        currentQuestion: currentStep + 1,
+        currentQuestionId: currentExercise.id,
+        totalQuestions: questionSet.length,
+        selectedAnswer: answers[currentExercise.id] || null,
+        timeLeft: currentExercise.timeLimit,
+        progress: Math.round(((currentStep + 1) / questionSet.length) * 100),
+        answers: answers,
+        config: evaluationConfig,
+        timestamp: Date.now()
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep, currentExercise?.id]); // Solo cuando cambia el paso o el ejercicio
 
   // Timer countdown
   useEffect(() => {
@@ -100,18 +206,39 @@ function NuevosEjercicios() {
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
+        const newTime = prev <= 1 ? 0 : prev - 1;
+        
+        // Emitir actualización de timer cada 2 segundos si hay sesión (para no saturar)
+        if (sessionId && prev > 0 && prev % 2 === 0 && emit && currentExercise) {
+          // Usar valores actuales sin depender de ellos
+          const currentAnswers = JSON.parse(localStorage.getItem('interview-answers') || '{}');
+          emit({
+            status: 'in_progress',
+            currentQuestion: currentStep + 1,
+            currentQuestionId: currentExercise.id,
+            totalQuestions: questionSet.length,
+            selectedAnswer: selectedOption || currentAnswers[currentExercise.id] || null,
+            timeLeft: newTime,
+            progress: Math.round(((currentStep + 1) / questionSet.length) * 100),
+            answers: currentAnswers,
+            config: evaluationConfig,
+            timestamp: Date.now()
+          });
+        }
+        
         if (prev <= 1) {
           setTimerActive(false);
           // Auto-avanzar cuando se acaba el tiempo
           handleTimeOut();
           return 0;
         }
-        return prev - 1;
+        return newTime;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timerActive, timeLeft, currentExercise]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timerActive, currentExercise?.id, sessionId]); // Dependencias mínimas, timeLeft se maneja internamente
 
   const handleTimeOut = () => {
     if (!currentExercise) return;
@@ -123,6 +250,22 @@ function NuevosEjercicios() {
     setAnswers(newAnswers);
     localStorage.setItem('interview-answers', JSON.stringify(newAnswers));
 
+    // Emitir evento de timeout
+    if (sessionId) {
+      emit({
+        status: isLastStep ? 'completed' : 'in_progress',
+        currentQuestion: isLastStep ? currentStep + 1 : currentStep + 2,
+        currentQuestionId: isLastStep ? null : questionSet[currentStep + 1]?.id,
+        totalQuestions: questionSet.length,
+        selectedAnswer: 'timeout',
+        timeLeft: 0,
+        progress: isLastStep ? 100 : Math.round(((currentStep + 2) / questionSet.length) * 100),
+        answers: newAnswers,
+        config: evaluationConfig,
+        timestamp: Date.now()
+      });
+    }
+
     // Avanzar a la siguiente pregunta
     if (isLastStep) {
       navigate('/respuestas');
@@ -133,18 +276,67 @@ function NuevosEjercicios() {
 
   const handleOptionSelect = (optionId) => {
     setSelectedOption(optionId);
+    
+    // Emitir evento de selección de respuesta si hay sesión
+    if (sessionId && currentExercise && emit) {
+      console.log('📤 Emitiendo selección de respuesta:', optionId);
+      emit({
+        status: 'in_progress',
+        currentQuestion: currentStep + 1,
+        currentQuestionId: currentExercise.id,
+        totalQuestions: questionSet.length,
+        selectedAnswer: optionId,
+        timeLeft: timeLeft,
+        progress: Math.round(((currentStep + 1) / questionSet.length) * 100),
+        answers: answers,
+        config: evaluationConfig,
+        timestamp: Date.now()
+      });
+    }
   };
 
   const handleNext = () => {
     if (!currentExercise || !selectedOption) {
       return;
     }
+    
+    // Obtener el mapeo de respuestas correctas
+    const correctAnswerMap = JSON.parse(localStorage.getItem('correct-answer-map') || '{}');
+    const correctDisplayId = correctAnswerMap[currentExercise.id];
+    
+    // Guardar la respuesta del usuario (A, B, C, D) y también el mapeo para verificación
     const newAnswers = {
       ...answers,
-      [currentExercise.id]: selectedOption
+      [currentExercise.id]: selectedOption // Guardamos A, B, C, D
     };
+    
+    // También guardar el mapeo para verificación posterior
+    const answerMapping = JSON.parse(localStorage.getItem('answer-mapping') || '{}');
+    answerMapping[currentExercise.id] = {
+      userAnswer: selectedOption,
+      correctAnswer: correctDisplayId,
+      originalCorrectAnswer: currentExercise.correctAnswer
+    };
+    localStorage.setItem('answer-mapping', JSON.stringify(answerMapping));
+    
     setAnswers(newAnswers);
     localStorage.setItem('interview-answers', JSON.stringify(newAnswers));
+
+    // Emitir evento de respuesta guardada
+    if (sessionId) {
+      emit({
+        status: isLastStep ? 'completed' : 'in_progress',
+        currentQuestion: isLastStep ? currentStep + 1 : currentStep + 2,
+        currentQuestionId: isLastStep ? null : questionSet[currentStep + 1]?.id,
+        totalQuestions: questionSet.length,
+        selectedAnswer: null,
+        timeLeft: 0,
+        progress: isLastStep ? 100 : Math.round(((currentStep + 2) / questionSet.length) * 100),
+        answers: newAnswers,
+        config: evaluationConfig,
+        timestamp: Date.now()
+      });
+    }
 
     if (isLastStep) {
       navigate('/respuestas');

@@ -5045,6 +5045,940 @@ loginPage.login('user@test.com', 'pass');`,
     ],
     correctAnswer: "a",
     explanation: "Scrum Master: servant-leader, facilita Scrum, remueve impedimentos, coaching, protege al equipo de distracciones. NO es: project manager, technical lead, ni decide el QUÉ (eso es Product Owner). Product Owner: maximiza valor del producto, gestiona Product Backlog, prioriza. Development Team: auto-organizado, entrega Increment. Roles claros evitan confusión."
+  },
+  // ============= VUE.JS - Preguntas (210-229) =============
+  {
+    id: 210,
+    title: "Vue - Reactivity System",
+    category: "Vue.js",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Cómo funciona el sistema de reactividad de Vue?",
+    code: `import { ref, reactive } from 'vue';
+
+const count = ref(0);
+const state = reactive({ name: 'Vue' });
+
+count.value++;
+state.name = 'Vue 3';`,
+    options: [
+      { id: "a", text: "Usa Proxy para interceptar cambios y actualizar automáticamente el DOM" },
+      { id: "b", text: "Requiere llamar manualmente update() después de cada cambio" },
+      { id: "c", text: "Solo funciona con objetos, no con primitivos" },
+      { id: "d", text: "No tiene sistema de reactividad" }
+    ],
+    correctAnswer: "a",
+    explanation: "Vue 3 usa Proxy API para crear objetos reactivos. ref() envuelve primitivos en un objeto con .value. reactive() hace objetos profundamente reactivos. Vue rastrea dependencias automáticamente y actualiza el DOM cuando cambian. Vue 2 usaba Object.defineProperty (limitaciones). Proxy permite detectar agregar/eliminar propiedades y arrays."
+  },
+  {
+    id: 211,
+    title: "Vue - Composition API vs Options API",
+    category: "Vue.js",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Cuál es la ventaja principal de Composition API sobre Options API?",
+    code: `// Options API
+export default {
+  data() { return { count: 0 }; },
+  methods: { increment() { this.count++; } }
+}
+
+// Composition API
+import { ref } from 'vue';
+export default {
+  setup() {
+    const count = ref(0);
+    const increment = () => count.value++;
+    return { count, increment };
+  }
+}`,
+    options: [
+      { id: "a", text: "Mejor organización de lógica relacionada, reutilización con composables, mejor TypeScript support" },
+      { id: "b", text: "Es más rápido siempre" },
+      { id: "c", text: "Options API está deprecado" },
+      { id: "d", text: "No hay diferencias reales" }
+    ],
+    correctAnswer: "a",
+    explanation: "Composition API agrupa lógica relacionada (data + methods) en lugar de separarla por tipo (data, methods, computed). Permite composables reutilizables (useCounter, useAuth). Mejor inferencia de tipos en TypeScript. Options API sigue soportado y es válido para componentes simples. Puedes usar ambos en el mismo proyecto."
+  },
+  {
+    id: 212,
+    title: "Vue - Computed Properties",
+    category: "Vue.js",
+    difficulty: "Básico",
+    timeLimit: TIME_LIMITS["Básico"],
+    question: "¿Cuándo usar computed vs methods en Vue?",
+    code: `// Computed
+const fullName = computed(() => firstName.value + ' ' + lastName.value);
+
+// Method
+const getFullName = () => firstName.value + ' ' + lastName.value;`,
+    options: [
+      { id: "a", text: "Computed: cachea resultado, solo recalcula si dependencias cambian; Methods: ejecuta cada vez" },
+      { id: "b", text: "Son idénticos" },
+      { id: "c", text: "Computed es más lento" },
+      { id: "d", text: "Methods siempre es mejor" }
+    ],
+    correctAnswer: "a",
+    explanation: "Computed properties son cached y reactivos. Solo se recalculan cuando sus dependencias reactivas cambian. Útiles para valores derivados. Methods se ejecutan cada vez que se llaman. Usa computed para: valores derivados, filtrado/transformación de datos. Usa methods para: eventos, acciones que necesitan ejecutarse cada vez."
+  },
+  {
+    id: 213,
+    title: "Vue - Directivas v-if vs v-show",
+    category: "Vue.js",
+    difficulty: "Básico",
+    timeLimit: TIME_LIMITS["Básico"],
+    question: "¿Cuál es la diferencia entre v-if y v-show?",
+    code: `<!-- v-if -->
+<div v-if="isVisible">Contenido</div>
+
+<!-- v-show -->
+<div v-show="isVisible">Contenido</div>`,
+    options: [
+      { id: "a", text: "v-if: condicionalmente renderiza (agrega/quita del DOM); v-show: siempre renderiza, solo cambia CSS display" },
+      { id: "b", text: "Son idénticos" },
+      { id: "c", text: "v-show es más rápido siempre" },
+      { id: "d", text: "v-if solo funciona con strings" }
+    ],
+    correctAnswer: "a",
+    explanation: "v-if: renderizado condicional. Si false, el elemento no existe en el DOM. Costoso si cambia frecuentemente (crear/destruir). v-show: siempre renderiza, usa display: none. Mejor para toggles frecuentes. v-if tiene menor costo inicial si raramente visible. v-show tiene menor costo de toggle. v-if soporta v-else, v-else-if."
+  },
+  {
+    id: 214,
+    title: "Vue - Watchers",
+    category: "Vue.js",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Cuándo usar watch vs watchEffect?",
+    code: `// watch
+watch(count, (newVal, oldVal) => {
+  console.log('Count changed:', newVal);
+});
+
+// watchEffect
+watchEffect(() => {
+  console.log('Count:', count.value);
+});`,
+    options: [
+      { id: "a", text: "watch: observa fuente específica, lazy (solo cuando cambia); watchEffect: observa todas las dependencias usadas, eager (inmediato)" },
+      { id: "b", text: "Son idénticos" },
+      { id: "c", text: "watchEffect es deprecated" },
+      { id: "d", text: "watch solo funciona con refs" }
+    ],
+    correctAnswer: "a",
+    explanation: "watch: observa una o más fuentes específicas, lazy (no ejecuta hasta que cambia), acceso a oldValue. watchEffect: automáticamente rastrea dependencias reactivas usadas dentro, eager (ejecuta inmediatamente), no tiene oldValue. Usa watch para: reacciones que necesitan oldValue, observación específica. Usa watchEffect para: efectos que necesitan ejecutarse inmediatamente."
+  },
+  {
+    id: 215,
+    title: "Vue - Props y Emits",
+    category: "Vue.js",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Cómo comunicas datos del hijo al padre en Vue?",
+    code: `// Child Component
+const emit = defineEmits(['update']);
+emit('update', newValue);
+
+// Parent Component
+<ChildComponent @update="handleUpdate" />`,
+    options: [
+      { id: "a", text: "Usando $emit o defineEmits para emitir eventos que el padre escucha con @event" },
+      { id: "b", text: "Modificando props directamente" },
+      { id: "c", text: "Usando v-model en el hijo" },
+      { id: "d", text: "No es posible comunicar hijo -> padre" }
+    ],
+    correctAnswer: "a",
+    explanation: "Vue usa one-way data flow: props down, events up. Hijo emite eventos con emit('eventName', payload). Padre escucha con @eventName=\"handler\". v-model es sugar syntax para :value + @input. defineEmits (Composition API) o emits option (Options API) declara eventos. Nunca mutes props directamente, siempre emite eventos."
+  },
+  {
+    id: 216,
+    title: "Vue - Lifecycle Hooks",
+    category: "Vue.js",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿En qué orden se ejecutan los lifecycle hooks?",
+    code: `// Composition API
+import { onMounted, onUpdated, onUnmounted } from 'vue';
+
+onMounted(() => { /* ... */ });
+onUpdated(() => { /* ... */ });
+onUnmounted(() => { /* ... */ });`,
+    options: [
+      { id: "a", text: "setup -> onMounted -> onUpdated (cuando cambia) -> onUnmounted" },
+      { id: "b", text: "onMounted -> setup -> onUpdated" },
+      { id: "c", text: "Todos se ejecutan al mismo tiempo" },
+      { id: "d", text: "Solo existe onMounted" }
+    ],
+    correctAnswer: "a",
+    explanation: "Lifecycle: setup (Composition API) / created (Options API) -> onMounted / mounted (DOM montado) -> onUpdated / updated (cuando data cambia) -> onUnmounted / unmounted (componente destruido). También: onBeforeMount, onBeforeUpdate, onBeforeUnmount. setup() corre antes de created. Útil para: API calls (mounted), cleanup (unmounted), side effects."
+  },
+  {
+    id: 217,
+    title: "Vue - v-model y Custom Components",
+    category: "Vue.js",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "¿Cómo implementas v-model en un componente personalizado?",
+    code: `// CustomInput.vue
+const props = defineProps(['modelValue']);
+const emit = defineEmits(['update:modelValue']);
+
+const updateValue = (e) => {
+  emit('update:modelValue', e.target.value);
+};`,
+    options: [
+      { id: "a", text: "Define prop 'modelValue' y emite 'update:modelValue' con el nuevo valor" },
+      { id: "b", text: "Solo necesitas el prop, no emit" },
+      { id: "c", text: "v-model no funciona en componentes custom" },
+      { id: "d", text: "Usa v-bind directamente" }
+    ],
+    correctAnswer: "a",
+    explanation: "v-model en componentes custom: prop 'modelValue' (o nombre custom con v-model:customName), emit 'update:modelValue' (o 'update:customName'). Vue 3 permite múltiples v-models: v-model:title, v-model:content. Internamente v-model es sugar para :modelValue=\"value\" @update:modelValue=\"value = $event\"."
+  },
+  {
+    id: 218,
+    title: "Vue - Slots",
+    category: "Vue.js",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Qué son los slots en Vue?",
+    code: `// Parent
+<Card>
+  <template #header>Title</template>
+  <p>Content</p>
+  <template #footer>Footer</template>
+</Card>
+
+// Card.vue
+<slot name="header" />
+<slot />
+<slot name="footer" />`,
+    options: [
+      { id: "a", text: "Permiten pasar contenido/componentes al hijo, con named slots para múltiples áreas" },
+      { id: "b", text: "Son solo para estilos CSS" },
+      { id: "c", text: "Solo funcionan con strings" },
+      { id: "d", text: "No existen en Vue 3" }
+    ],
+    correctAnswer: "a",
+    explanation: "Slots: contenido proyectado del padre al hijo. Default slot: contenido sin nombre. Named slots: #header, #footer (sintaxis v-slot:header o #header). Scoped slots: pasan datos del hijo al padre (v-slot=\"{ data }\"). Útiles para: layouts reutilizables, composición de componentes, contenido dinámico."
+  },
+  {
+    id: 219,
+    title: "Vue - Provide/Inject",
+    category: "Vue.js",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "¿Para qué sirve provide/inject?",
+    code: `// Ancestor Component
+provide('theme', 'dark');
+
+// Deep Child Component
+const theme = inject('theme');`,
+    options: [
+      { id: "a", text: "Pasa datos de ancestro a descendientes sin prop drilling (evita pasar props por cada nivel)" },
+      { id: "b", text: "Reemplaza props completamente" },
+      { id: "c", text: "Solo funciona con un nivel de profundidad" },
+      { id: "d", text: "Es lo mismo que v-model" }
+    ],
+    correctAnswer: "a",
+    explanation: "provide/inject: dependency injection pattern. Ancestor provide() datos, cualquier descendiente puede inject(). Útil para: themes, configuración global, plugins. Evita prop drilling (pasar props por componentes intermedios que no las usan). provide puede ser reactive con ref/reactive. Similar a React Context. Úsalo cuando props drilling es problemático."
+  },
+  {
+    id: 220,
+    title: "Vue - Teleport",
+    category: "Vue.js",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Qué hace <Teleport>?",
+    code: `<Teleport to="body">
+  <Modal v-if="showModal" />
+</Teleport>`,
+    options: [
+      { id: "a", text: "Renderiza el contenido en otro lugar del DOM (útil para modales, tooltips fuera del flujo)" },
+      { id: "b", text: "Teletransporta el componente a otro servidor" },
+      { id: "c", text: "Solo funciona con modales" },
+      { id: "d", text: "No existe en Vue 3" }
+    ],
+    correctAnswer: "a",
+    explanation: "Teleport: renderiza contenido en diferente ubicación del DOM. Útil para: modales (fuera de z-index issues), tooltips, notifications. El componente mantiene su contexto Vue (props, events) pero el DOM está en otro lugar. Similar a React Portals. to puede ser selector CSS o 'body'."
+  },
+  {
+    id: 221,
+    title: "Vue - Pinia State Management",
+    category: "Vue.js",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Cuál es la diferencia entre Pinia y Vuex?",
+    code: `// Pinia
+import { defineStore } from 'pinia';
+export const useCounterStore = defineStore('counter', {
+  state: () => ({ count: 0 }),
+  actions: { increment() { this.count++; } }
+});`,
+    options: [
+      { id: "a", text: "Pinia: más simple, mejor TypeScript, sin mutations, composables; Vuex: más verboso, mutations separadas" },
+      { id: "b", text: "Son idénticos" },
+      { id: "c", text: "Vuex es siempre mejor" },
+      { id: "d", text: "Pinia está deprecado" }
+    ],
+    correctAnswer: "a",
+    explanation: "Pinia: store oficial de Vue 3, reemplaza Vuex. Ventajas: sin mutations (actions pueden mutar state), mejor TypeScript inference, múltiples stores, DevTools support. Vuex: mutations obligatorias, más boilerplate. Pinia es más simple y moderno. Ambos soportan modules/namespaces. Migración de Vuex a Pinia es relativamente fácil."
+  },
+  {
+    id: 222,
+    title: "Vue - KeepAlive",
+    category: "Vue.js",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Para qué sirve <KeepAlive>?",
+    code: `<KeepAlive :include="['ComponentA']">
+  <component :is="currentComponent" />
+</KeepAlive>`,
+    options: [
+      { id: "a", text: "Cachea componentes desmontados, preservando estado y evitando re-render (útil para tabs, routing)" },
+      { id: "b", text: "Solo mantiene componentes vivos" },
+      { id: "c", text: "No tiene efecto real" },
+      { id: "d", text: "Solo funciona con un componente" }
+    ],
+    correctAnswer: "a",
+    explanation: "KeepAlive: componente wrapper que cachea instancias de componentes. Cuando se desmonta, se guarda en memoria. Al remontar, reusa la instancia (no recrea). Props: include (componentes a cachear), exclude, max (límite de instancias). Útil para: tabs, routing (preservar scroll position), formularios complejos. Lifecycle: activated/deactivated hooks."
+  },
+  {
+    id: 223,
+    title: "Vue - Custom Directives",
+    category: "Vue.js",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "¿Cómo creas una directiva personalizada?",
+    code: `// Global
+app.directive('focus', {
+  mounted(el) {
+    el.focus();
+  }
+});
+
+// Usage
+<input v-focus />`,
+    options: [
+      { id: "a", text: "Define objeto con lifecycle hooks (mounted, updated, unmounted) que reciben el elemento DOM" },
+      { id: "b", text: "Solo funciona con funciones" },
+      { id: "c", text: "No se pueden crear directivas custom" },
+      { id: "d", text: "Solo en Options API" }
+    ],
+    correctAnswer: "a",
+    explanation: "Custom directives: extienden comportamiento del DOM. Hooks: mounted (elemento insertado), updated (VNode actualizado), unmounted (elemento removido). Reciben: el (elemento DOM), binding (value, oldValue, arg, modifiers). Útiles para: integración con librerías DOM, comportamiento reutilizable (v-focus, v-tooltip). Built-in: v-if, v-show, v-model, v-for."
+  },
+  {
+    id: 224,
+    title: "Vue - Router Navigation Guards",
+    category: "Vue.js",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "¿Qué son los navigation guards en Vue Router?",
+    code: `router.beforeEach((to, from, next) => {
+  if (requiresAuth(to)) {
+    next('/login');
+  } else {
+    next();
+  }
+});`,
+    options: [
+      { id: "a", text: "Funciones que interceptan navegación para autenticación, permisos, o lógica antes/después de rutas" },
+      { id: "b", text: "Solo para logging" },
+      { id: "c", text: "No existen en Vue Router" },
+      { id: "d", text: "Solo funcionan en componentes" }
+    ],
+    correctAnswer: "a",
+    explanation: "Navigation guards: beforeEach (global, antes de navegación), beforeResolve (después de guards de componentes), afterEach (después de navegación, sin next). Component guards: beforeRouteEnter, beforeRouteUpdate, beforeRouteLeave. Útiles para: auth checks, permisos, loading states, confirmación antes de salir. next() continúa, next(false) cancela, next('/path') redirige."
+  },
+  {
+    id: 225,
+    title: "Vue - Suspense",
+    category: "Vue.js",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "¿Para qué sirve <Suspense> en Vue 3?",
+    code: `<Suspense>
+  <template #default>
+    <AsyncComponent />
+  </template>
+  <template #fallback>
+    <Loading />
+  </template>
+</Suspense>`,
+    options: [
+      { id: "a", text: "Maneja componentes asíncronos, mostrando fallback mientras cargan (async setup, async components)" },
+      { id: "b", text: "Solo para errores" },
+      { id: "c", text: "No existe en Vue 3" },
+      { id: "d", text: "Solo funciona con fetch" }
+    ],
+    correctAnswer: "a",
+    explanation: "Suspense: wrapper para componentes asíncronos. Muestra fallback mientras el componente carga (async setup() o async component). Similar a React Suspense. Útil para: code splitting, data fetching, lazy loading. Puede anidarse. onErrorCaptured maneja errores. Experimental en Vue 3, pero estable para casos de uso comunes."
+  },
+  {
+    id: 226,
+    title: "Vue - Ref vs Reactive",
+    category: "Vue.js",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Cuándo usar ref() vs reactive()?",
+    code: `const count = ref(0);
+const state = reactive({ name: 'Vue', age: 3 });`,
+    options: [
+      { id: "a", text: "ref: primitivos o cuando necesitas reemplazar objeto completo; reactive: objetos/arrays que no reemplazarás" },
+      { id: "b", text: "Son intercambiables siempre" },
+      { id: "c", text: "reactive es siempre mejor" },
+      { id: "d", text: "ref solo funciona con números" }
+    ],
+    correctAnswer: "a",
+    explanation: "ref: envuelve cualquier valor en objeto { value }, útil para primitivos (string, number, boolean). Acceso con .value. reactive: solo objetos/arrays, no primitivos. No puedes reemplazar objeto completo (pierde reactividad). ref puede reemplazar valor completo. Regla: usa ref por defecto, reactive solo si necesitas objeto sin .value. Ambos son profundamente reactivos."
+  },
+  {
+    id: 227,
+    title: "Vue - Template Refs",
+    category: "Vue.js",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Cómo accedes a elementos DOM en Vue?",
+    code: `// Template
+<input ref="inputRef" />
+
+// Composition API
+const inputRef = ref(null);
+onMounted(() => {
+  inputRef.value.focus();
+});`,
+    options: [
+      { id: "a", text: "Usa ref attribute en template y ref() en script, accede después de mounted" },
+      { id: "b", text: "Usa document.querySelector directamente" },
+      { id: "c", text: "No es posible acceder al DOM" },
+      { id: "d", text: "Solo funciona en Options API" }
+    ],
+    correctAnswer: "a",
+    explanation: "Template refs: ref=\"name\" en template, const name = ref(null) en script. El ref se asigna después de que el componente se monta. Accede en onMounted() o después. Útil para: focus, scroll, integrar librerías DOM (charts, maps). En Options API: this.$refs.name. Puedes usar refs en componentes también (acceso a instancia del componente hijo)."
+  },
+  {
+    id: 228,
+    title: "Vue - Mixins vs Composables",
+    category: "Vue.js",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "¿Por qué Composables son mejores que Mixins?",
+    code: `// Mixin (Vue 2)
+const myMixin = { methods: { ... } };
+
+// Composable (Vue 3)
+function useCounter() {
+  const count = ref(0);
+  return { count };
+}`,
+    options: [
+      { id: "a", text: "Composables: explícitos (import), no conflictos de nombres, mejor TypeScript; Mixins: implícitos, conflictos, difícil debug" },
+      { id: "b", text: "Son idénticos" },
+      { id: "c", text: "Mixins son siempre mejores" },
+      { id: "d", text: "Mixins no existen en Vue" }
+    ],
+    correctAnswer: "a",
+    explanation: "Mixins: mezclan opciones (data, methods) en componente. Problemas: conflictos de nombres, origen de propiedades no claro, difícil composar múltiples mixins. Composables: funciones que retornan estado/lógica, explícitos (import), composables, mejor TypeScript. Patrón recomendado en Vue 3. Naming: useXxx (useCounter, useAuth). Reemplazan mixins completamente."
+  },
+  {
+    id: 229,
+    title: "Vue - Performance Optimization",
+    category: "Vue.js",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "¿Qué técnicas optimizan performance en Vue?",
+    code: `// v-memo
+<div v-for="item in list" v-memo="[item.id]">
+  {{ expensive(item) }}
+</div>
+
+// v-once
+<div v-once>{{ staticContent }}</div>`,
+    options: [
+      { id: "a", text: "v-memo (cachea subárbol), v-once (renderiza una vez), lazy components, computed caching, virtual scrolling" },
+      { id: "b", text: "Solo v-if optimiza" },
+      { id: "c", text: "Vue no necesita optimización" },
+      { id: "d", text: "Solo funciona con v-for" }
+    ],
+    correctAnswer: "a",
+    explanation: "Optimizaciones: v-memo (Vue 3.2+): cachea subárbol si dependencias no cambian, útil en v-for. v-once: renderiza una vez, ignora cambios. Lazy components: code splitting. Computed: cache automático. Virtual scrolling: renderizar solo items visibles. También: key estable en v-for, evitar inline functions en templates, usar Object.freeze para listas grandes."
+  },
+  // ============= JAVA - Preguntas (230-249) =============
+  {
+    id: 230,
+    title: "Java - Hibernate ORM Basics",
+    category: "Java",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Qué es Hibernate ORM?",
+    code: `@Entity
+@Table(name = "users")
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(name = "user_name")
+    private String name;
+}`,
+    options: [
+      { id: "a", text: "Framework ORM que mapea objetos Java a tablas SQL, maneja persistencia y queries" },
+      { id: "b", text: "Solo un generador de SQL" },
+      { id: "c", text: "Reemplaza completamente SQL" },
+      { id: "d", text: "Solo funciona con MySQL" }
+    ],
+    correctAnswer: "a",
+    explanation: "Hibernate: ORM (Object-Relational Mapping) framework. Mapea clases Java (@Entity) a tablas SQL. Maneja: persistencia (save, update, delete), queries (HQL, Criteria API), relaciones (OneToMany, ManyToOne), transacciones, lazy loading. Implementa JPA specification. Ventajas: menos SQL boilerplate, portabilidad entre DBs. Desventajas: puede generar queries ineficientes si no se entiende bien."
+  },
+  {
+    id: 231,
+    title: "Java - Hibernate Session y EntityManager",
+    category: "Java",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Cuál es la diferencia entre Session (Hibernate) y EntityManager (JPA)?",
+    code: `// Hibernate Session
+Session session = sessionFactory.openSession();
+User user = session.get(User.class, 1L);
+
+// JPA EntityManager
+EntityManager em = entityManagerFactory.createEntityManager();
+User user = em.find(User.class, 1L);`,
+    options: [
+      { id: "a", text: "EntityManager es estándar JPA (portable), Session es específico de Hibernate (más features)" },
+      { id: "b", text: "Son idénticos" },
+      { id: "c", text: "Session está deprecado" },
+      { id: "d", text: "No se pueden usar juntos" }
+    ],
+    correctAnswer: "a",
+    explanation: "EntityManager: estándar JPA, portable entre implementaciones (Hibernate, EclipseLink). Session: API nativa de Hibernate, más features (filters, interceptors). Hibernate implementa JPA, así que EntityManager internamente usa Session. Prefiere EntityManager para portabilidad. Session para features avanzadas específicas de Hibernate. Ambos manejan: persist, merge, remove, find, flush."
+  },
+  {
+    id: 232,
+    title: "Java - Hibernate Lazy vs Eager Loading",
+    category: "Java",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Qué significa FetchType.LAZY?",
+    code: `@OneToMany(fetch = FetchType.LAZY)
+private List<Order> orders;
+
+@ManyToOne(fetch = FetchType.EAGER)
+private User user;`,
+    options: [
+      { id: "a", text: "LAZY: carga relación solo cuando se accede; EAGER: carga inmediatamente (puede causar N+1 queries)" },
+      { id: "b", text: "Son idénticos" },
+      { id: "c", text: "LAZY es siempre más lento" },
+      { id: "d", text: "EAGER es siempre mejor" }
+    ],
+    correctAnswer: "a",
+    explanation: "LAZY: carga relación bajo demanda (proxy). Eficiente si no siempre necesitas la relación. EAGER: carga inmediatamente (join o query separada). Puede causar N+1 problem si cargas múltiples entidades. Regla: usa LAZY por defecto, EAGER solo si siempre necesitas la relación. Puedes forzar carga con JOIN FETCH en query. LazyInitializationException si accedes fuera de transacción."
+  },
+  {
+    id: 233,
+    title: "Java - Hibernate N+1 Problem",
+    category: "Java",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "¿Qué es el problema N+1 en Hibernate?",
+    code: `// Query 1: SELECT * FROM users
+List<User> users = session.createQuery("FROM User").list();
+
+// Queries N: SELECT * FROM orders WHERE user_id = ?
+for (User user : users) {
+    user.getOrders().size(); // Lazy load trigger
+}`,
+    options: [
+      { id: "a", text: "1 query para lista + N queries para cada relación lazy (ineficiente); solución: JOIN FETCH o batch fetching" },
+      { id: "b", text: "Es un feature, no un problema" },
+      { id: "c", text: "Solo ocurre con EAGER" },
+      { id: "d", text: "No existe en Hibernate" }
+    ],
+    correctAnswer: "a",
+    explanation: "N+1 problem: 1 query para obtener lista, N queries adicionales para cargar relaciones lazy. Ejemplo: 100 users, cada uno con orders lazy = 1 + 100 queries. Soluciones: JOIN FETCH (\"FROM User u JOIN FETCH u.orders\"), @BatchSize, Hibernate.initialize(). Usa EXPLAIN o logging para detectar. Crítico para performance en producción."
+  },
+  {
+    id: 234,
+    title: "Java - Spring Beans",
+    category: "Java",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Qué es un Spring Bean?",
+    code: `@Component
+public class UserService {
+    @Autowired
+    private UserRepository repository;
+}
+
+@Configuration
+public class AppConfig {
+    @Bean
+    public DataSource dataSource() {
+        return new HikariDataSource();
+    }
+}`,
+    options: [
+      { id: "a", text: "Objeto gestionado por Spring IoC container, creado, configurado y gestionado por el framework" },
+      { id: "b", text: "Solo clases anotadas con @Bean" },
+      { id: "c", text: "Es lo mismo que una clase normal" },
+      { id: "d", text: "Solo existe en Spring Boot" }
+    ],
+    correctAnswer: "a",
+    explanation: "Spring Bean: objeto gestionado por Spring IoC (Inversion of Control) container. Spring crea, configura, y gestiona el ciclo de vida. Anotaciones: @Component, @Service, @Repository, @Controller (stereotypes), o @Bean en @Configuration. Ventajas: dependency injection, singleton por defecto, lifecycle management. Container resuelve dependencias automáticamente (@Autowired, constructor injection)."
+  },
+  {
+    id: 235,
+    title: "Java - Spring Bean Scopes",
+    category: "Java",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Cuáles son los scopes de Spring Beans?",
+    code: `@Component
+@Scope("prototype")
+public class PrototypeBean { }
+
+@Component
+@Scope("singleton") // default
+public class SingletonBean { }`,
+    options: [
+      { id: "a", text: "singleton (1 instancia), prototype (nueva cada vez), request/session (web), application (ServletContext)" },
+      { id: "b", text: "Solo singleton existe" },
+      { id: "c", text: "Todos son iguales" },
+      { id: "d", text: "No hay scopes en Spring" }
+    ],
+    correctAnswer: "a",
+    explanation: "Bean scopes: singleton (default, 1 instancia compartida), prototype (nueva instancia cada vez que se solicita), request (1 por HTTP request, web), session (1 por HTTP session, web), application (1 por ServletContext, web), websocket (1 por WebSocket session). Singleton: eficiente, stateless. Prototype: cuando necesitas estado independiente. Request/Session: para web apps con estado."
+  },
+  {
+    id: 236,
+    title: "Java - Spring Dependency Injection",
+    category: "Java",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Cuál es la mejor forma de inyectar dependencias en Spring?",
+    code: `// Constructor Injection (recomendado)
+public class UserService {
+    private final UserRepository repository;
+    public UserService(UserRepository repository) {
+        this.repository = repository;
+    }
+}
+
+// Field Injection
+@Autowired
+private UserRepository repository;`,
+    options: [
+      { id: "a", text: "Constructor injection: inmutable, requerido, fácil testing; Field injection: menos verboso pero menos recomendado" },
+      { id: "b", text: "Solo field injection funciona" },
+      { id: "c", text: "Son idénticos" },
+      { id: "d", text: "No hay inyección de dependencias" }
+    ],
+    correctAnswer: "a",
+    explanation: "Constructor injection: dependencias como parámetros del constructor. Ventajas: inmutable (final), requerido (fail-fast si falta), fácil testing (new Service(repo)), no necesita @Autowired (Spring 4.3+). Field injection: @Autowired en campo. Desventajas: mutable, difícil testing (reflection), oculta dependencias. Spring recomienda constructor injection. Setter injection: para opcionales."
+  },
+  {
+    id: 237,
+    title: "Java - Spring @Transactional",
+    category: "Java",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "¿Qué hace @Transactional?",
+    code: `@Service
+@Transactional
+public class UserService {
+    public void transferMoney(Long fromId, Long toId, BigDecimal amount) {
+        // Multiple DB operations
+    }
+}`,
+    options: [
+      { id: "a", text: "Marca método/clase para ejecutarse en transacción: commit si éxito, rollback si excepción" },
+      { id: "b", text: "Solo para logging" },
+      { id: "c", text: "No tiene efecto real" },
+      { id: "d", text: "Solo funciona con Hibernate" }
+    ],
+    correctAnswer: "a",
+    explanation: "@Transactional: Spring maneja transacciones declarativamente. Crea transacción antes del método, commit si éxito, rollback si RuntimeException/Error. Props: propagation (REQUIRED default, NESTED, REQUIRES_NEW), isolation, readOnly, timeout, rollbackFor. AOP proxy intercepta llamadas. Self-invocation no funciona (llamar método @Transactional desde mismo objeto). Usa TransactionTemplate para programático."
+  },
+  {
+    id: 238,
+    title: "Java - Spring AOP",
+    category: "Java",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "¿Qué es AOP en Spring?",
+    code: `@Aspect
+@Component
+public class LoggingAspect {
+    @Around("@annotation(Loggable)")
+    public Object log(ProceedingJoinPoint pjp) throws Throwable {
+        // Before
+        Object result = pjp.proceed();
+        // After
+        return result;
+    }
+}`,
+    options: [
+      { id: "a", text: "Aspect-Oriented Programming: separa cross-cutting concerns (logging, security, transactions) del código business" },
+      { id: "b", text: "Solo para logging" },
+      { id: "c", text: "No existe en Spring" },
+      { id: "d", text: "Es lo mismo que inheritance" }
+    ],
+    correctAnswer: "a",
+    explanation: "AOP: separa concerns transversales (cross-cutting). Aspectos: @Aspect con @Before, @After, @Around, @AfterReturning, @AfterThrowing. Pointcuts: @annotation, execution(), within(). Spring usa proxies (JDK dynamic o CGLIB). Ejemplos: @Transactional, @Cacheable, security, logging, performance monitoring. Mantiene código business limpio, reutiliza lógica transversal."
+  },
+  {
+    id: 239,
+    title: "Java - JPA Entity Relationships",
+    category: "Java",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Cómo defines relación OneToMany bidireccional?",
+    code: `// Parent
+@Entity
+public class User {
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Order> orders;
+}
+
+// Child
+@Entity
+public class Order {
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+}`,
+    options: [
+      { id: "a", text: "Parent: @OneToMany(mappedBy=\"fieldName\"), Child: @ManyToOne con @JoinColumn; mappedBy indica que el otro lado es owner" },
+      { id: "b", text: "Solo necesitas @OneToMany" },
+      { id: "c", text: "No se pueden hacer relaciones bidireccionales" },
+      { id: "d", text: "Solo funciona con @ManyToMany" }
+    ],
+    correctAnswer: "a",
+    explanation: "Bidirectional: un lado es owner (tiene @JoinColumn), otro es inverse (mappedBy). Owner: @ManyToOne o @OneToMany sin mappedBy. Inverse: @OneToMany(mappedBy=\"fieldName\") o @ManyToOne(mappedBy). mappedBy referencia el campo en la otra entidad. Cascade: ALL, PERSIST, MERGE, REMOVE, REFRESH, DETACH. Bidirectional útil para navegación desde ambos lados."
+  },
+  {
+    id: 240,
+    title: "Java - Hibernate Second Level Cache",
+    category: "Java",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "¿Qué es el Second Level Cache en Hibernate?",
+    code: `@Entity
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+public class User { }`,
+    options: [
+      { id: "a", text: "Cache compartido entre todas las sesiones, reduce queries a DB para entidades frecuentemente accedidas" },
+      { id: "b", text: "Solo cachea en memoria local" },
+      { id: "c", text: "No existe en Hibernate" },
+      { id: "d", text: "Solo funciona con Redis" }
+    ],
+    correctAnswer: "a",
+    explanation: "Second Level Cache: cache compartido a nivel de SessionFactory (todas las sesiones). First Level Cache: por sesión (implícito). Providers: EhCache, Infinispan, Hazelcast. Estrategias: READ_ONLY (inmutable), READ_WRITE (read-write), NONSTRICT_READ_WRITE, TRANSACTIONAL. Útil para: entidades de referencia (países, categorías), datos raramente modificados. Configurar en hibernate.cfg.xml o application.properties."
+  },
+  {
+    id: 241,
+    title: "Java - Spring Profiles",
+    category: "Java",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Para qué sirven los Spring Profiles?",
+    code: `@Profile("dev")
+@Configuration
+public class DevConfig { }
+
+@Profile("prod")
+@Configuration
+public class ProdConfig { }`,
+    options: [
+      { id: "a", text: "Activan configuraciones específicas por ambiente (dev, test, prod) - beans condicionales" },
+      { id: "b", text: "Solo para logging" },
+      { id: "c", text: "No tienen efecto" },
+      { id: "d", text: "Solo funcionan en Spring Boot" }
+    ],
+    correctAnswer: "a",
+    explanation: "Profiles: activan beans/configuraciones por ambiente. Activar: -Dspring.profiles.active=dev, application.properties (spring.profiles.active=dev), @ActiveProfiles en tests. Útil para: diferentes DBs (dev: H2, prod: PostgreSQL), configuraciones (dev: debug, prod: optimizado), features (dev: mock services, prod: real). @Profile en @Configuration, @Component, @Bean. Múltiples profiles: @Profile({\"dev\", \"test\"})."
+  },
+  {
+    id: 242,
+    title: "Java - Spring Boot Auto Configuration",
+    category: "Java",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Cómo funciona Spring Boot Auto Configuration?",
+    code: `// Spring Boot detecta classpath y configura automáticamente
+// Si encuentra H2 en classpath -> DataSource automático
+// Si encuentra Jackson -> ObjectMapper automático`,
+    options: [
+      { id: "a", text: "Detecta librerías en classpath y configura beans automáticamente basado en condiciones (@ConditionalOnClass)" },
+      { id: "b", text: "Solo configura lo que le dices explícitamente" },
+      { id: "c", text: "No existe auto-configuration" },
+      { id: "d", text: "Solo funciona con Spring Boot Starter" }
+    ],
+    correctAnswer: "a",
+    explanation: "Auto Configuration: Spring Boot configura beans automáticamente basado en classpath. @ConditionalOnClass, @ConditionalOnMissingBean, @ConditionalOnProperty. Ejemplos: H2 en classpath -> H2 DataSource, Jackson -> ObjectMapper, Spring Data JPA -> EntityManagerFactory. Puedes deshabilitar: @SpringBootApplication(exclude = DataSourceAutoConfiguration.class). Custom auto-config: crear @Configuration en META-INF/spring.factories."
+  },
+  {
+    id: 243,
+    title: "Java - Hibernate Criteria API",
+    category: "Java",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "¿Cuándo usar Criteria API vs HQL?",
+    code: `// Criteria API (type-safe, programático)
+CriteriaBuilder cb = em.getCriteriaBuilder();
+CriteriaQuery<User> query = cb.createQuery(User.class);
+Root<User> root = query.from(User.class);
+query.where(cb.equal(root.get("name"), "John"));
+
+// HQL (string-based)
+String hql = "FROM User WHERE name = :name";`,
+    options: [
+      { id: "a", text: "Criteria: queries dinámicas type-safe; HQL: queries estáticas más legibles, similar a SQL" },
+      { id: "b", text: "Son idénticos" },
+      { id: "c", text: "Criteria está deprecado" },
+      { id: "d", text: "HQL no existe" }
+    ],
+    correctAnswer: "a",
+    explanation: "Criteria API: programático, type-safe (compile-time checks), útil para queries dinámicas (filtros opcionales). HQL: string-based, más legible, similar a SQL. JPA Criteria (estándar) vs Hibernate Criteria (deprecated en favor de JPA). Para queries simples: HQL. Para queries dinámicas complejas: Criteria. Spring Data JPA: métodos derivados o @Query (HQL/JPQL)."
+  },
+  {
+    id: 244,
+    title: "Java - Spring Data JPA",
+    category: "Java",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Qué es Spring Data JPA?",
+    code: `public interface UserRepository extends JpaRepository<User, Long> {
+    List<User> findByName(String name);
+    @Query("SELECT u FROM User u WHERE u.email = :email")
+    User findByEmail(@Param("email") String email);
+}`,
+    options: [
+      { id: "a", text: "Abstracción sobre JPA que genera implementaciones de repositorios automáticamente basado en métodos" },
+      { id: "b", text: "Reemplaza Hibernate completamente" },
+      { id: "c", text: "Solo para testing" },
+      { id: "d", text: "No existe" }
+    ],
+    correctAnswer: "a",
+    explanation: "Spring Data JPA: reduce boilerplate de DAOs. Extiende JpaRepository (CRUD methods), PagingAndSortingRepository. Métodos derivados: findByName, findByEmailAndActive, etc. Genera queries automáticamente. @Query para queries custom (JPQL o SQL nativo). @Modifying para UPDATE/DELETE. Paginación: Pageable, Page. Ventajas: menos código, consistencia, fácil testing. Implementación generada en runtime."
+  },
+  {
+    id: 245,
+    title: "Java - Hibernate Detached Entities",
+    category: "Java",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "¿Qué es una entidad detached en Hibernate?",
+    code: `// Entity está en estado detached
+User user = session.get(User.class, 1L);
+session.close(); // user ahora está detached
+
+// Reattach
+Session newSession = sessionFactory.openSession();
+newSession.update(user); // o merge()`,
+    options: [
+      { id: "a", text: "Entidad fuera de sesión Hibernate (session cerrada); necesita merge() o update() para reattach" },
+      { id: "b", text: "Entidad eliminada de la DB" },
+      { id: "c", text: "No existe este concepto" },
+      { id: "d", text: "Solo ocurre con @Transactional" }
+    ],
+    correctAnswer: "a",
+    explanation: "Estados de entidad: transient (nueva, no en DB), persistent (en sesión, sincronizada con DB), detached (fuera de sesión, existe en DB), removed (marcada para delete). Detached: session cerrada pero objeto existe. Reattach: merge() (copia estado, retorna managed), update() (reattach si no existe en sesión). Útil en: web apps (entidad serializada, luego merge en nueva request)."
+  },
+  {
+    id: 246,
+    title: "Java - Spring @Component vs @Service vs @Repository",
+    category: "Java",
+    difficulty: "Básico",
+    timeLimit: TIME_LIMITS["Básico"],
+    question: "¿Cuál es la diferencia entre @Component, @Service y @Repository?",
+    code: `@Component // Generic
+public class Util { }
+
+@Service // Business logic
+public class UserService { }
+
+@Repository // Data access
+public class UserRepository { }`,
+    options: [
+      { id: "a", text: "Todas son @Component, pero @Service/@Repository indican propósito semántico y habilitan features específicos (@Repository: exception translation)" },
+      { id: "b", text: "Son completamente diferentes" },
+      { id: "c", text: "Solo @Component funciona" },
+      { id: "d", text: "No hay diferencias" }
+    ],
+    correctAnswer: "a",
+    explanation: "Todas son estereotipos de @Component (mismo comportamiento base). @Service: lógica de negocio, semántica. @Repository: acceso a datos, traduce excepciones de persistencia a DataAccessException. @Controller: web layer, maneja requests. @Component: genérico. Diferencia práctica: @Repository habilita exception translation (SQLException -> DataAccessException). Usa por semántica y claridad, no por funcionalidad."
+  },
+  {
+    id: 247,
+    title: "Java - Hibernate HQL vs Native SQL",
+    category: "Java",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Cuándo usar HQL vs Native SQL?",
+    code: `// HQL (portable)
+String hql = "FROM User u WHERE u.name = :name";
+
+// Native SQL (DB-specific)
+String sql = "SELECT * FROM users WHERE user_name = ?";`,
+    options: [
+      { id: "a", text: "HQL: portable entre DBs, usa nombres de entidades; Native SQL: DB-specific, más control, queries complejas" },
+      { id: "b", text: "Son idénticos" },
+      { id: "c", text: "HQL está deprecado" },
+      { id: "d", text: "Solo Native SQL funciona" }
+    ],
+    correctAnswer: "a",
+    explanation: "HQL: Hibernate Query Language, portable, usa nombres de entidades/propiedades, Hibernate maneja SQL. Native SQL: SQL directo, DB-specific, más control, útil para queries complejas, stored procedures, funciones DB específicas. @Query(nativeQuery = true) en Spring Data. HQL para: portabilidad, queries estándar. Native SQL para: performance crítica, features DB específicas, migración de queries existentes."
+  },
+  {
+    id: 248,
+    title: "Java - Spring Bean Lifecycle",
+    category: "Java",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Qué métodos del ciclo de vida de Spring Beans conoces?",
+    code: `@Component
+public class MyBean implements InitializingBean, DisposableBean {
+    @PostConstruct
+    public void init() { }
+    
+    @PreDestroy
+    public void cleanup() { }
+}`,
+    options: [
+      { id: "a", text: "@PostConstruct (después de inyección), @PreDestroy (antes de destrucción), InitializingBean, DisposableBean" },
+      { id: "b", text: "Solo constructor" },
+      { id: "c", text: "No hay lifecycle" },
+      { id: "d", text: "Solo @Autowired" }
+    ],
+    correctAnswer: "a",
+    explanation: "Bean lifecycle: 1) Constructor, 2) Dependency injection (@Autowired), 3) @PostConstruct (inicialización), 4) Bean ready, 5) @PreDestroy (cleanup antes de destrucción). Interfaces: InitializingBean.afterPropertiesSet(), DisposableBean.destroy(). @PostConstruct/@PreDestroy: JSR-250, recomendado. Útil para: inicializar recursos, conexiones DB, cleanup. Orden: @PostConstruct después de todas las inyecciones."
+  },
+  {
+    id: 249,
+    title: "Java - Hibernate Inheritance Strategies",
+    category: "Java",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "¿Qué estrategias de herencia soporta JPA/Hibernate?",
+    code: `// Single Table
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type")
+public class Animal { }
+
+// Joined Table
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Animal { }`,
+    options: [
+      { id: "a", text: "SINGLE_TABLE (1 tabla con discriminator), JOINED (tabla por clase), TABLE_PER_CLASS (tabla por clase conpleta)" },
+      { id: "b", text: "Solo herencia simple" },
+      { id: "c", text: "No soporta herencia" },
+      { id: "d", text: "Solo SINGLE_TABLE" }
+    ],
+    correctAnswer: "a",
+    explanation: "Estrategias: SINGLE_TABLE: todas las clases en 1 tabla, @DiscriminatorColumn diferencia tipos, eficiente queries, columnas null. JOINED: tabla por clase, JOINs para queries, normalizado. TABLE_PER_CLASS: tabla por clase con todas las columnas, UNION para polimorfismo, no recomendado. Elegir según: queries frecuentes (SINGLE_TABLE), normalización (JOINED), performance vs estructura."
   }
 ];
 
@@ -5258,6 +6192,48 @@ const STACK_ASSIGNMENTS = {
   204: ["qa-automation"],
   205: ["qa-automation"],
   206: ["qa-automation"],
+  // ===== Vue.js (210-229) = 20 preguntas =====
+  210: ["vue"],
+  211: ["vue"],
+  212: ["vue"],
+  213: ["vue"],
+  214: ["vue"],
+  215: ["vue"],
+  216: ["vue"],
+  217: ["vue"],
+  218: ["vue"],
+  219: ["vue"],
+  220: ["vue"],
+  221: ["vue"],
+  222: ["vue"],
+  223: ["vue"],
+  224: ["vue"],
+  225: ["vue"],
+  226: ["vue"],
+  227: ["vue"],
+  228: ["vue"],
+  229: ["vue"],
+  // ===== Java (230-249) = 20 preguntas =====
+  230: ["java"],
+  231: ["java"],
+  232: ["java"],
+  233: ["java"],
+  234: ["java"],
+  235: ["java"],
+  236: ["java"],
+  237: ["java"],
+  238: ["java"],
+  239: ["java"],
+  240: ["java"],
+  241: ["java"],
+  242: ["java"],
+  243: ["java"],
+  244: ["java"],
+  245: ["java"],
+  246: ["java"],
+  247: ["java"],
+  248: ["java"],
+  249: ["java"],
 };
 
 const DEFAULT_STACK = ["react"];
@@ -5383,9 +6359,31 @@ export function calculateScore(userAnswers, options = {}) {
   let correct = 0;
   let total = targetExercises.length;
   
+  // Obtener el mapeo de respuestas correctas si existe
+  let correctAnswerMap = {};
+  try {
+    const stored = localStorage.getItem('correct-answer-map');
+    if (stored) {
+      correctAnswerMap = JSON.parse(stored);
+    }
+  } catch (e) {
+    // Si no hay mapeo, usar comparación original
+  }
+  
   targetExercises.forEach(exercise => {
-    if (userAnswers[exercise.id] === exercise.correctAnswer) {
-      correct++;
+    const userAnswer = userAnswers[exercise.id];
+    const correctDisplayId = correctAnswerMap[exercise.id];
+    
+    if (correctDisplayId) {
+      // Usar el mapeo: la respuesta correcta está en la posición A, B, C, o D
+      if (userAnswer === correctDisplayId) {
+        correct++;
+      }
+    } else {
+      // Fallback: comparación original
+      if (userAnswer === exercise.correctAnswer) {
+        correct++;
+      }
     }
   });
   
@@ -5399,9 +6397,47 @@ export function calculateScore(userAnswers, options = {}) {
 // Función para obtener el resultado detallado
 export function getDetailedResults(userAnswers, options = {}) {
   const targetExercises = getExercisesByIds(options.questionIds);
-  return targetExercises.map(exercise => ({
-    ...exercise,
-    userAnswer: userAnswers[exercise.id] || null,
-    isCorrect: userAnswers[exercise.id] === exercise.correctAnswer
-  }));
+  
+  // Obtener el mapeo de respuestas correctas y el orden de opciones
+  let correctAnswerMap = {};
+  let optionOrder = {};
+  try {
+    const storedMap = localStorage.getItem('correct-answer-map');
+    if (storedMap) {
+      correctAnswerMap = JSON.parse(storedMap);
+    }
+    const storedOrder = localStorage.getItem('option-order');
+    if (storedOrder) {
+      optionOrder = JSON.parse(storedOrder);
+    }
+  } catch (e) {
+    // Si no hay mapeo, usar comparación original
+  }
+  
+  return targetExercises.map(exercise => {
+    const userAnswer = userAnswers[exercise.id] || null;
+    const correctDisplayId = correctAnswerMap[exercise.id];
+    
+    // Determinar si es correcta
+    let isCorrect = false;
+    if (correctDisplayId) {
+      // Usar el mapeo: comparar A, B, C, D
+      isCorrect = userAnswer === correctDisplayId;
+    } else {
+      // Fallback: comparación original
+      isCorrect = userAnswer === exercise.correctAnswer;
+    }
+    
+    // Obtener las opciones ordenadas si existen
+    const orderedOptions = optionOrder[exercise.id] || exercise.options;
+    
+    return {
+      ...exercise,
+      userAnswer: userAnswer,
+      isCorrect: isCorrect,
+      correctAnswer: correctDisplayId || exercise.correctAnswer, // Usar el ID mapeado para mostrar
+      options: orderedOptions, // Usar las opciones ordenadas
+      explanation: exercise.explanation || '' // Asegurar que la explicación esté incluida
+    };
+  });
 }
