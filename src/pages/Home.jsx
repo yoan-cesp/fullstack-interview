@@ -89,7 +89,11 @@ function Home() {
   };
 
   const getFullUrl = (path) => {
-    return `${window.location.origin}${path}`;
+    // Obtener el path base (en producción es /fullstack-interview/, en desarrollo es /)
+    const base = import.meta.env.PROD ? '/fullstack-interview' : '';
+    // Asegurar que path empiece con /
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    return `${window.location.origin}${base}${normalizedPath}`;
   };
 
   const levelInfo = LEVELS.find((level) => level.id === selectedLevel);
