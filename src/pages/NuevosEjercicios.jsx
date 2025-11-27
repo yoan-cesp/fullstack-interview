@@ -99,12 +99,13 @@ function NuevosEjercicios() {
 
   useEffect(() => {
     if (!questionSet.length) return;
-    const questionIds = questionSet.map((exercise) => exercise.id).join(',');
+    const questionIds = questionSet.map((exercise) => exercise.id);
+    const questionIdsString = JSON.stringify(questionIds);
     const savedIds = localStorage.getItem('interview-question-set');
     
     // Solo actualizar si los IDs cambiaron
-    if (savedIds !== questionIds) {
-      localStorage.setItem('interview-question-set', questionIds);
+    if (savedIds !== questionIdsString) {
+      localStorage.setItem('interview-question-set', questionIdsString);
       setCurrentStep(0);
       const orderMap = {};
       const correctAnswerMap = {}; // Mapeo: exerciseId -> ID de la opción correcta (A, B, C, D)

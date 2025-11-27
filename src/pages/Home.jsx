@@ -331,6 +331,13 @@ function Home() {
           <p>Revisa tus respuestas y aprende de las explicaciones</p>
           <span className="home-card__button">Ver resultados →</span>
         </Link>
+
+        <Link to="/editor" className="home-card home-card--secondary">
+          <div className="home-card__icon">💻</div>
+          <h3>Editor de Código</h3>
+          <p>Resuelve ejercicios de programación escribiendo código JavaScript</p>
+          <span className="home-card__button">Abrir Editor →</span>
+        </Link>
       </div>
 
       <div className="card home-info">

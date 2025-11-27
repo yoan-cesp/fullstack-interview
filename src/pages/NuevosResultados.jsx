@@ -39,13 +39,29 @@ function NuevosResultados() {
     if (saved) {
       const userAnswers = JSON.parse(saved);
       setAnswers(userAnswers);
-      let questionIds;
+      let questionIds = null;
       try {
-        questionIds = savedQuestionSet ? JSON.parse(savedQuestionSet) : null;
-      } catch {
+        if (savedQuestionSet) {
+          // Intentar parsear como JSON primero
+          try {
+            questionIds = JSON.parse(savedQuestionSet);
+          } catch {
+            // Si falla, intentar como string separado por comas (compatibilidad con versiones antiguas)
+            const idsAsString = savedQuestionSet.trim();
+            if (idsAsString) {
+              questionIds = idsAsString.split(',').map(id => parseInt(id.trim(), 10)).filter(id => !isNaN(id));
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Error parsing question set:', e);
         questionIds = null;
       }
-      const normalizedIds = questionIds && questionIds.length ? questionIds : exercises.map((exercise) => exercise.id);
+      
+      // Si no hay questionIds válidos, NO usar todos los ejercicios, usar solo los que tienen respuestas
+      const normalizedIds = questionIds && questionIds.length > 0 
+        ? questionIds 
+        : Object.keys(userAnswers).map(id => parseInt(id, 10)).filter(id => !isNaN(id));
       setScore(calculateScore(userAnswers, { questionIds: normalizedIds }));
       const detailedResults = getDetailedResults(userAnswers, { questionIds: normalizedIds });
       // Asegurar que todas las explicaciones estén presentes
