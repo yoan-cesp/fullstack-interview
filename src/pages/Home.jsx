@@ -90,10 +90,15 @@ function Home() {
 
   const getFullUrl = (path) => {
     // Obtener el path base (en producción es /fullstack-interview/, en desarrollo es /)
-    const base = import.meta.env.PROD ? '/fullstack-interview' : '';
-    // Asegurar que path empiece con /
+    // Usar window.location.pathname para detectar si estamos en GitHub Pages
+    const isGitHubPages = window.location.pathname.startsWith('/fullstack-interview');
+    const base = isGitHubPages ? '/fullstack-interview' : '';
+    
+    // Asegurar que path empiece con / y no tenga doble slash
     const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-    return `${window.location.origin}${base}${normalizedPath}`;
+    const fullPath = `${base}${normalizedPath}`.replace(/\/+/g, '/'); // Eliminar dobles slashes
+    
+    return `${window.location.origin}${fullPath}`;
   };
 
   const levelInfo = LEVELS.find((level) => level.id === selectedLevel);
