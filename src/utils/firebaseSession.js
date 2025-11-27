@@ -43,12 +43,49 @@ async function initFirebase() {
 
 /**
  * Genera un ID de sesión único (2 dígitos: 00-99)
+ * Verifica en Firebase que no exista antes de retornarlo
  * Si hay más de 100 sesiones activas, usa alfanumérico
  */
-export function generateSessionId() {
-  // Genera un ID de 2 dígitos (00-99)
-  const randomNum = Math.floor(Math.random() * 100);
-  return randomNum.toString().padStart(2, '0');
+export async function generateSessionId() {
+  await initFirebase();
+  
+  // Función auxiliar para generar un ID aleatorio
+  const generateRandomId = () => {
+    const randomNum = Math.floor(Math.random() * 100);
+    return randomNum.toString().padStart(2, '0');
+  };
+  
+  // Si Firebase no está disponible, generar ID simple (modo local)
+  if (!firebaseDatabase) {
+    return generateRandomId();
+  }
+  
+  // Intentar generar un ID único (máximo 10 intentos)
+  const maxAttempts = 10;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const candidateId = generateRandomId();
+    
+    try {
+      // Verificar si el ID ya existe en Firebase
+      const exists = await checkSessionExists(candidateId);
+      
+      if (!exists) {
+        console.log(`✅ ID de sesión único generado: ${candidateId} (intento ${attempt + 1})`);
+        return candidateId;
+      } else {
+        console.log(`⚠️ ID ${candidateId} ya existe, intentando otro...`);
+      }
+    } catch (error) {
+      // Si hay error verificando, usar el ID generado (mejor que fallar)
+      console.warn('⚠️ Error verificando unicidad del ID, usando ID generado:', error);
+      return candidateId;
+    }
+  }
+  
+  // Si después de 10 intentos no encontramos uno único, usar timestamp
+  console.warn('⚠️ No se pudo generar ID único después de 10 intentos, usando timestamp');
+  const timestampId = Date.now().toString().slice(-4); // Últimos 4 dígitos del timestamp
+  return timestampId.padStart(2, '0').slice(-2); // Asegurar 2 dígitos
 }
 
 /**
@@ -261,15 +298,12 @@ export async function checkSessionExists(sessionId) {
   }
 
   try {
-    const { ref, onValue, off } = await import('firebase/database');
-    return new Promise((resolve) => {
-      const sessionRef = ref(firebaseDatabase, `sessions/${sessionId}/candidate`);
-      onValue(sessionRef, (snapshot) => {
-        resolve(snapshot.exists());
-        off(sessionRef);
-      }, { onlyOnce: true });
-    });
+    const { ref, get } = await import('firebase/database');
+    const sessionRef = ref(firebaseDatabase, `sessions/${sessionId}`);
+    const snapshot = await get(sessionRef);
+    return snapshot.exists();
   } catch (error) {
+    console.warn('Error verificando existencia de sesión:', error);
     return Promise.resolve(false);
   }
 }

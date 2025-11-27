@@ -1805,6 +1805,7 @@ select:focus {
 }
 
 .monitor-history {
+  grid-column: 1 / -1; /* Ocupa todo el ancho */
   max-height: 600px;
   overflow-y: auto;
 }

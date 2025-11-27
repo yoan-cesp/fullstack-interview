@@ -61,13 +61,17 @@ function Home() {
     localStorage.removeItem("interview-answers");
     
     if (withSession) {
-      // Crear sesión con ID para monitoreo
-      const sessionId = generateSessionId();
-      config.sessionId = sessionId;
-      localStorage.setItem("interview-config", JSON.stringify(config));
-      setCreatedSessionId(sessionId);
-      setFormError(""); // Limpiar errores
-      // No navegar inmediatamente, mostrar URL para compartir
+      // Crear sesión con ID único para monitoreo
+      generateSessionId().then((sessionId) => {
+        config.sessionId = sessionId;
+        localStorage.setItem("interview-config", JSON.stringify(config));
+        setCreatedSessionId(sessionId);
+        setFormError(""); // Limpiar errores
+        // No navegar inmediatamente, mostrar URL para compartir
+      }).catch((error) => {
+        console.error('Error generando ID de sesión:', error);
+        setFormError("Error al crear sesión. Por favor, intenta de nuevo.");
+      });
     } else {
       navigate("/ejercicios");
     }
