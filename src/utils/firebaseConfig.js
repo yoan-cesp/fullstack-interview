@@ -22,9 +22,22 @@ export const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID || ""
 };
 
+// Log de diagnóstico (solo en desarrollo o si hay problemas)
+if (import.meta.env.DEV || !firebaseConfig.apiKey) {
+  console.log('🔍 Firebase Config Debug:', {
+    hasApiKey: !!firebaseConfig.apiKey,
+    hasProjectId: !!firebaseConfig.projectId,
+    hasDatabaseURL: !!firebaseConfig.databaseURL,
+    apiKeyLength: firebaseConfig.apiKey?.length || 0,
+    projectId: firebaseConfig.projectId || 'NO CONFIGURADO',
+    envMode: import.meta.env.MODE,
+    isProd: import.meta.env.PROD
+  });
+}
+
 // Verifica si Firebase está configurado correctamente
 export const isFirebaseConfigured = () => {
-  return !!(
+  const configured = !!(
     firebaseConfig.apiKey && 
     firebaseConfig.apiKey.trim() !== "" &&
     firebaseConfig.projectId && 
@@ -32,5 +45,15 @@ export const isFirebaseConfigured = () => {
     firebaseConfig.databaseURL && 
     firebaseConfig.databaseURL.trim() !== ""
   );
+  
+  if (!configured) {
+    console.warn('⚠️ Firebase no está configurado correctamente. Variables faltantes:', {
+      apiKey: !firebaseConfig.apiKey || firebaseConfig.apiKey.trim() === "",
+      projectId: !firebaseConfig.projectId || firebaseConfig.projectId.trim() === "",
+      databaseURL: !firebaseConfig.databaseURL || firebaseConfig.databaseURL.trim() === ""
+    });
+  }
+  
+  return configured;
 };
 

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Node Tech Test</title>
+    <script>
+      // GitHub Pages redirige todas las rutas 404 a este archivo
+      // Necesitamos redirigir a index.html y luego React Router manejará la ruta
+      // Preservar la ruta original usando sessionStorage
+      const originalPath = window.location.pathname;
+      const search = window.location.search;
+      const hash = window.location.hash;
+      
+      // Guardar la ruta original para que React Router la use
+      sessionStorage.setItem('redirectPath', originalPath + search + hash);
+      
+      // Redirigir a index.html
+      const base = '/fullstack-interview';
+      window.location.replace(base + '/index.html');
+    </script>
+  </head>
+  <body>
+    <div id="root">
+      <p>Redirigiendo...</p>
+    </div>
+  </body>
+</html>
+
