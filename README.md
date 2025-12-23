@@ -6,7 +6,8 @@ Sistema interactivo de evaluación técnica para entrevistas de desarrollo, dise
 
 Este laboratorio práctico permite a los entrevistadores evaluar las competencias técnicas de candidatos en diferentes tecnologías y niveles de experiencia. El sistema incluye:
 
-- **246+ preguntas técnicas** distribuidas en 11 stacks tecnológicos
+- **266+ preguntas técnicas** distribuidas en 12 stacks tecnológicos
+- **Editor de código interactivo** con evaluación automática de ejercicios de programación
 - **Sistema de monitoreo en tiempo real** para que el entrevistador observe el progreso del candidato
 - **Temporizador por pregunta** basado en la complejidad
 - **Generación aleatoria de preguntas** para evitar repetición
@@ -63,8 +64,9 @@ El sistema incluye preguntas sobre:
 9. **🧠 Arquitectura / System Design** - Escalabilidad, Microservicios (20 preguntas)
 10. **💚 Vue.js** - Composition API, Reactivity, Directivas (20 preguntas)
 11. **☕ Java** - Spring, Hibernate ORM, Beans, JPA (20 preguntas)
+12. **📊 Business Analyst** - Requisitos, stakeholders, KPIs, priorización, procesos (20 preguntas)
 
-**Total: 246+ preguntas técnicas**
+**Total: 266+ preguntas técnicas**
 
 ## 📊 Sistema de Evaluación
 
@@ -87,6 +89,83 @@ El sistema incluye preguntas sobre:
 
 Si el tiempo se agota, la pregunta se marca como "Tiempo agotado" y se avanza automáticamente a la siguiente.
 
+## 💻 Editor de Código Interactivo
+
+### Características
+
+El sistema incluye un editor de código completo donde los candidatos pueden resolver **ejercicios prácticos del día a día** de un desarrollador JavaScript:
+
+- ✅ **Editor profesional** con Monaco Editor (mismo editor de VS Code)
+- ✅ **25 ejercicios prácticos** (10 básicos, 8 intermedios, 7 avanzados)
+- ✅ **Ejercicios del mundo real**: formateo, validación, APIs, optimización
+- ✅ **Evaluación automática** con sistema de tests
+- ✅ **Feedback inmediato** con resultados detallados de cada test
+- ✅ **Syntax highlighting** y auto-completado
+- ✅ **Tema claro/oscuro** configurable
+- ✅ **Sistema de hints** progresivos para ayudar al candidato
+- ✅ **Ver solución** después de intentar
+- ✅ **Persistencia automática** del código escrito
+- ✅ **Indicador de ejercicios completados**
+- ✅ **Filtros por dificultad** (Básico, Intermedio, Avanzado)
+
+### Cómo Usar el Editor
+
+1. Navega a **"Editor de Código"** desde el menú o la página principal
+2. Selecciona un ejercicio de la lista lateral
+3. Lee la descripción y los requisitos del ejercicio
+4. Escribe tu solución en el editor
+5. Haz click en **"▶️ Ejecutar Tests"** para evaluar tu código
+6. Revisa los resultados: verás qué tests pasaron y cuáles fallaron
+7. Si todos los tests pasan, el ejercicio se marca como completado ✅
+
+### Ejercicios Disponibles
+
+Todos los ejercicios son **tareas prácticas del día a día** de un desarrollador JavaScript:
+
+**Básicos (10 ejercicios):**
+- Formatear precio con moneda (`$1,234.50`)
+- Extraer iniciales de nombre (`Juan Carlos → JC`)
+- Validar email simple
+- Truncar texto con ellipsis
+- Convertir objeto a query string
+- Generar slug desde título (`hola-mundo`)
+- Verificar palíndromo
+- Contar palabras en texto
+- Encontrar máximo en array
+- Eliminar duplicados
+
+**Intermedios (8 ejercicios):**
+- Agrupar array por propiedad
+- Parsear query string a objeto
+- Ordenar por múltiples campos
+- Obtener valor nested (`user.address.city`)
+- Deep merge de objetos
+- Validar formulario con reglas
+- Flatten array anidado
+- Invertir palabras de frase
+
+**Avanzados (7 ejercicios):**
+- Flatten object con dot notation
+- Diferencia entre arrays
+- Chunk array en grupos
+- Encontrar duplicados
+- Intersección de arrays
+- Zip de dos arrays
+- Componer funciones (pipe)
+
+### Seguridad
+
+El editor incluye validación de seguridad que bloquea:
+- Uso de `eval()`, `setTimeout()`, `setInterval()`
+- Acceso a `window`, `document`, `process`, `global`
+- Importaciones dinámicas y `require()`
+- Bucles infinitos (con timeout de 5 segundos)
+
+### Tecnología
+
+- **Monaco Editor** (`@monaco-editor/react`) - Editor de código
+- **Evaluación en cliente** - No requiere backend
+- **Sistema de tests** - Ejecuta múltiples casos de prueba automáticamente
 
 ## 🔍 Sistema de Monitoreo en Tiempo Real
 
@@ -154,7 +233,7 @@ El entrevistador copia la URL del candidato y la comparte.
 
 ## 🎨 Características Principales
 
-### Sistema de Ejercicios
+### Sistema de Ejercicios (Quiz)
 
 - ✅ **Navegación step-by-step** con indicadores visuales
 - ✅ **Barra de progreso** que muestra el avance
@@ -163,6 +242,19 @@ El entrevistador copia la URL del candidato y la comparte.
 - ✅ **Bloques de código** con syntax highlighting
 - ✅ **Botón de copiar código** para facilitar pruebas
 - ✅ **Layout optimizado** (pregunta y código lado a lado)
+
+### Editor de Código
+
+- ✅ **Editor profesional** con Monaco Editor (VS Code)
+- ✅ **25 ejercicios prácticos** de JavaScript del día a día
+- ✅ **Evaluación automática** con tests unitarios
+- ✅ **Feedback inmediato** con resultados detallados
+- ✅ **Sistema de hints** progresivos
+- ✅ **Ver solución** opcional
+- ✅ **Persistencia del código** escrito
+- ✅ **Tema claro/oscuro** configurable
+- ✅ **Filtros por dificultad**
+- ✅ **Categorías**: Formateo, Validación, URLs, Fechas, Async, Optimización
 
 ### Sistema de Resultados
 
@@ -232,19 +324,25 @@ fullstack-interview/
     ├── main.jsx                 # Entry point
     ├── data/
     │   ├── exercises.js         # 246+ preguntas técnicas
-    │   └── stackConfig.js        # Configuración de stacks y niveles
+    │   ├── stackConfig.js        # Configuración de stacks y niveles
+    │   └── codingExercises.js    # 15 ejercicios de programación
     ├── pages/
     │   ├── Home.jsx             # Página principal (crear sesión)
     │   ├── NuevosEjercicios.jsx # Sistema de preguntas step-by-step
     │   ├── NuevosResultados.jsx # Visualización de resultados
-    │   └── Monitor.jsx          # Dashboard de monitoreo
+    │   ├── Monitor.jsx          # Dashboard de monitoreo
+    │   └── CodeEditor.jsx       # Editor de código interactivo
+    ├── components/
+    │   └── TestResults.jsx      # Componente de resultados de tests
     ├── hooks/
     │   └── useSessionBroadcast.js # Hook para comunicación en tiempo real
     ├── utils/
     │   ├── firebaseConfig.js     # Configuración de Firebase
-    │   └── firebaseSession.js   # Utilidades de sesión y Firebase
+    │   ├── firebaseSession.js   # Utilidades de sesión y Firebase
+    │   └── codeEvaluator.js      # Sistema de evaluación de código
     └── styles/
-        └── global.css           # Estilos completos del sistema
+        ├── global.css           # Estilos completos del sistema
+        └── code-editor.css      # Estilos del editor de código
 ```
 
 ## 🛠️ Tecnologías Utilizadas
@@ -252,6 +350,7 @@ fullstack-interview/
 - **React 19** - Framework principal
 - **React Router 6** - Navegación entre páginas
 - **Vite 7** - Build tool y dev server
+- **Monaco Editor** (`@monaco-editor/react`) - Editor de código profesional
 - **Firebase Realtime Database** - Comunicación en tiempo real
 - **LocalStorage** - Persistencia de datos
 - **CSS moderno** - Grid, Flexbox, animaciones
@@ -282,6 +381,97 @@ const ejemplo = "hola";`,
 ```
 
 Luego, actualiza el objeto `STACK_ASSIGNMENTS` en el mismo archivo para asignar la pregunta al stack correspondiente.
+
+## 🚀 Roadmap: Plataforma de Entrevistas Real
+
+### Fase 1: Mejoras Core (MVP+)
+
+| Prioridad | Feature | Descripción | Complejidad |
+|-----------|---------|-------------|-------------|
+| 🔴 Alta | **Autenticación** | Login con Google/GitHub, roles (admin, entrevistador, candidato) | Media |
+| 🔴 Alta | **Base de datos persistente** | Migrar de localStorage a Supabase/Firebase Firestore | Media |
+| 🔴 Alta | **Historial de entrevistas** | Dashboard con todas las sesiones pasadas y resultados | Media |
+| 🟡 Media | **Perfiles de candidato** | Guardar info del candidato, CV, notas del entrevistador | Baja |
+| 🟡 Media | **Exportar resultados** | Generar PDF con reporte completo de la entrevista | Baja |
+| 🟡 Media | **Estadísticas agregadas** | Analytics de preguntas más falladas, tiempos promedio | Media |
+
+### Fase 2: Mejoras de Evaluación
+
+| Prioridad | Feature | Descripción | Complejidad |
+|-----------|---------|-------------|-------------|
+| 🔴 Alta | **Tests personalizados** | Crear tests custom seleccionando preguntas específicas | Media |
+| 🔴 Alta | **Banco de preguntas propio** | UI para crear/editar/eliminar preguntas sin tocar código | Alta |
+| 🟡 Media | **Categorías dinámicas** | Crear nuevos stacks/categorías desde la UI | Media |
+| 🟡 Media | **Peso por pregunta** | Asignar puntos diferentes según dificultad/importancia | Baja |
+| 🟢 Baja | **Preguntas condicionales** | Mostrar preguntas basadas en respuestas anteriores | Alta |
+
+### Fase 3: Mejoras del Editor de Código
+
+| Prioridad | Feature | Descripción | Complejidad |
+|-----------|---------|-------------|-------------|
+| 🔴 Alta | **Más lenguajes** | Agregar Python, TypeScript, SQL | Alta |
+| 🔴 Alta | **Backend sandbox** | Ejecutar código en servidor (Docker containers) | Alta |
+| 🟡 Media | **Code review en vivo** | Entrevistador ve código en tiempo real mientras escribe | Media |
+| 🟡 Media | **Ejercicios SQL** | Conectar a DB temporal y ejecutar queries reales | Alta |
+| 🟢 Baja | **Pair programming** | Modo colaborativo donde ambos pueden editar | Alta |
+
+### Fase 4: Comunicación y Colaboración
+
+| Prioridad | Feature | Descripción | Complejidad |
+|-----------|---------|-------------|-------------|
+| 🟡 Media | **Video call integrado** | WebRTC para video durante la entrevista | Alta |
+| 🟡 Media | **Chat en tiempo real** | Mensajes entre entrevistador y candidato | Media |
+| 🟡 Media | **Notas del entrevistador** | Área para tomar notas durante la sesión | Baja |
+| 🟢 Baja | **Grabación de sesión** | Grabar la entrevista para revisión posterior | Alta |
+
+### Fase 5: Gestión Empresarial
+
+| Prioridad | Feature | Descripción | Complejidad |
+|-----------|---------|-------------|-------------|
+| 🟡 Media | **Multi-tenant** | Organizaciones separadas con sus propios datos | Alta |
+| 🟡 Media | **Invitaciones por email** | Enviar link de test al candidato por correo | Baja |
+| 🟡 Media | **Calendario integrado** | Programar entrevistas con Calendly/Google Calendar | Media |
+| 🟢 Baja | **API pública** | Integrar con ATS (Greenhouse, Lever, etc.) | Alta |
+| 🟢 Baja | **Reportes de equipo** | Estadísticas de entrevistadores y hiring pipeline | Media |
+
+### Fase 6: IA y Automatización
+
+| Prioridad | Feature | Descripción | Complejidad |
+|-----------|---------|-------------|-------------|
+| 🟢 Baja | **Generación de preguntas con IA** | Crear nuevas preguntas basadas en prompts | Alta |
+| 🟢 Baja | **Evaluación automática de código** | IA que sugiere puntuación basada en calidad del código | Alta |
+| 🟢 Baja | **Resumen de entrevista** | IA que genera resumen automático de la sesión | Media |
+
+---
+
+### 🛠️ Stack Tecnológico Recomendado para Escalar
+
+| Componente | Tecnología Actual | Recomendación para Producción |
+|------------|-------------------|-------------------------------|
+| Frontend | React + Vite | Next.js (SSR, mejor SEO) |
+| Auth | - | Clerk / Auth0 / Supabase Auth |
+| Database | LocalStorage | Supabase / PlanetScale / Firebase |
+| Real-time | Firebase RTDB | Supabase Realtime / Pusher |
+| Hosting | GitHub Pages | Vercel / Railway / Fly.io |
+| Code Execution | Client-side | Judge0 / Piston API / Docker |
+| Email | - | Resend / SendGrid |
+| Analytics | - | Plausible / Mixpanel |
+| Payments | - | Stripe / Lemonsqueezy |
+
+---
+
+### 💰 Modelo de Negocio Potencial
+
+**Freemium:**
+- **Free**: 5 entrevistas/mes, preguntas básicas
+- **Pro ($29/mes)**: Ilimitadas, todas las preguntas, editor de código
+- **Team ($99/mes)**: Multi-usuario, analytics, API
+
+**Por Entrevista:**
+- $5-10 por entrevista completada
+- Descuentos por volumen
+
+---
 
 ## 📄 Licencia
 

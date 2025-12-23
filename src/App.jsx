@@ -1,10 +1,10 @@
-import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import Home from "./pages/Home.jsx";
-import NuevosEjercicios from "./pages/NuevosEjercicios.jsx";
-import NuevosResultados from "./pages/NuevosResultados.jsx";
-import Monitor from "./pages/Monitor.jsx";
-import CodeEditor from "./pages/CodeEditor.jsx";
+import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import Home from './pages/Home.jsx';
+import Exercises from './pages/Exercises.jsx';
+import Results from './pages/Results.jsx';
+import Monitor from './pages/Monitor.jsx';
+import CodeEditor from './pages/CodeEditor.jsx';
 
 // Componente para manejar redirecciones desde 404.html
 function RedirectHandler() {
@@ -37,20 +37,20 @@ function App() {
           <h1>🎯 Evaluación Técnica</h1>
           <div className="nav-links">
             <Link to="/">Inicio</Link>
-            <Link to="/ejercicios">Ejercicios</Link>
+            <Link to="/exercises">Ejercicios</Link>
             <Link to="/editor">Editor de Código</Link>
-            <Link to="/respuestas">Resultados</Link>
+            <Link to="/results">Resultados</Link>
           </div>
         </nav>
       </header>
       <main className="container">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/ejercicios" element={<NuevosEjercicios />} />
-          <Route path="/test/:sessionId" element={<NuevosEjercicios />} />
+          <Route path="/exercises" element={<Exercises />} />
+          <Route path="/test/:sessionId" element={<Exercises />} />
           <Route path="/monitor/:sessionId" element={<Monitor />} />
           <Route path="/editor" element={<CodeEditor />} />
-          <Route path="/respuestas" element={<NuevosResultados />} />
+          <Route path="/results" element={<Results />} />
         </Routes>
       </main>
     </BrowserRouter>

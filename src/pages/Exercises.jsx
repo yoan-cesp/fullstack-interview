@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { buildQuestionSet } from "../data/exercises";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { buildQuestionSet, getExercisesByIds } from "../data/exercises";
 import { TECH_STACKS, STACK_DICTIONARY, LEVEL_DICTIONARY, LEVELS, getQuestionTargetByStacks } from "../data/stackConfig.js";
 import { useSessionBroadcast } from "../hooks/useSessionBroadcast.js";
 
@@ -26,20 +26,69 @@ const hydrateConfig = () => {
   }
 };
 
-function NuevosEjercicios() {
+function Exercises() {
   const navigate = useNavigate();
   const { sessionId } = useParams(); // Obtener sessionId de la URL si existe
-  const [evaluationConfig, setEvaluationConfig] = useState(DEFAULT_CONFIG);
-  const [questionSet, setQuestionSet] = useState(() => buildQuestionSet(DEFAULT_CONFIG));
+  const [searchParams] = useSearchParams();
+  
+  // Detectar modo consulta (review=true en la URL)
+  const isReviewMode = searchParams.get('review') === 'true';
+  
+  // En modo consulta, cargar las preguntas del examen anterior
+  const loadReviewData = () => {
+    if (isReviewMode) {
+      try {
+        const savedQuestionSet = localStorage.getItem('interview-question-set');
+        const savedOptionOrder = localStorage.getItem('option-order');
+        const savedAnswers = localStorage.getItem('interview-answers');
+        
+        if (savedQuestionSet) {
+          const questionIds = JSON.parse(savedQuestionSet);
+          const questions = getExercisesByIds(questionIds);
+          return {
+            questionSet: questions,
+            optionOrder: savedOptionOrder ? JSON.parse(savedOptionOrder) : {},
+            answers: savedAnswers ? JSON.parse(savedAnswers) : {}
+          };
+        }
+      } catch (e) {
+        console.warn('Error loading review data:', e);
+      }
+    }
+    return null;
+  };
+  
+  const reviewData = loadReviewData();
+  
+  // Inicializar con la config guardada en localStorage, no con DEFAULT_CONFIG
+  const [evaluationConfig, setEvaluationConfig] = useState(() => hydrateConfig());
+  const [questionSet, setQuestionSet] = useState(() => {
+    if (reviewData) return reviewData.questionSet;
+    return buildQuestionSet(hydrateConfig());
+  });
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState(() => {
+    if (reviewData) return reviewData.answers;
     const saved = localStorage.getItem('interview-answers');
     return saved ? JSON.parse(saved) : {};
   });
   const [selectedOption, setSelectedOption] = useState(null);
   const [timeLeft, setTimeLeft] = useState(0);
-  const [timerActive, setTimerActive] = useState(true);
-  const [optionOrder, setOptionOrder] = useState({});
+  const [timerActive, setTimerActive] = useState(!isReviewMode); // Desactivar timer en modo consulta
+  const [optionOrder, setOptionOrder] = useState(() => {
+    if (reviewData) return reviewData.optionOrder;
+    return {};
+  });
+  
+  // Obtener la respuesta correcta mapeada para modo consulta
+  const [correctAnswerMap, setCorrectAnswerMap] = useState(() => {
+    try {
+      const saved = localStorage.getItem('correct-answer-map');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
   
   // Hook para emitir eventos de sesión
   const { emit } = useSessionBroadcast(sessionId || null);
@@ -60,53 +109,78 @@ function NuevosEjercicios() {
   const shortage =
     targetQuestionCount && questionSet.length < targetQuestionCount;
 
+  // Efecto para manejar sessionId en la URL
   useEffect(() => {
-    const config = hydrateConfig();
-    // Si hay sessionId en la URL, agregarlo al config
     if (sessionId) {
+      const config = hydrateConfig();
       config.sessionId = sessionId;
-    }
-    const questions = buildQuestionSet(config);
-    setEvaluationConfig(config);
-    setQuestionSet(questions);
-    
-    // Emitir evento de inicio de test si hay sesión (solo una vez)
-    if (sessionId && emit) {
-      console.log('📤 Emitiendo inicio de test, sessionId:', sessionId);
-      // Múltiples intentos para asegurar que el monitor reciba el mensaje
-      const emitStart = () => {
-        emit({
-          status: 'in_progress',
-          currentQuestion: 1,
-          currentQuestionId: questions[0]?.id || null,
-          totalQuestions: questions.length,
-          config: config,
-          answers: {},
-          timeLeft: questions[0]?.timeLimit || 0,
-          progress: 0,
-          timestamp: Date.now()
-        });
-      };
+      const questions = buildQuestionSet(config);
+      setEvaluationConfig(config);
+      setQuestionSet(questions);
       
-      // Emitir inmediatamente
-      emitStart();
-      
-      // Y también después de un delay por si el monitor aún no está listo
-      setTimeout(emitStart, 500);
-      setTimeout(emitStart, 1000);
+      // Emitir evento de inicio de test si hay sesión (solo una vez)
+      if (emit) {
+        console.log('📤 Emitiendo inicio de test, sessionId:', sessionId);
+        // Múltiples intentos para asegurar que el monitor reciba el mensaje
+        const emitStart = () => {
+          emit({
+            status: 'in_progress',
+            currentQuestion: 1,
+            currentQuestionId: questions[0]?.id || null,
+            totalQuestions: questions.length,
+            config: config,
+            answers: {},
+            timeLeft: questions[0]?.timeLimit || 0,
+            progress: 0,
+            timestamp: Date.now()
+          });
+        };
+        
+        // Emitir inmediatamente
+        emitStart();
+        
+        // Y también después de un delay por si el monitor aún no está listo
+        setTimeout(emitStart, 500);
+        setTimeout(emitStart, 1000);
+      }
     }
-  }, [sessionId]); // Removido 'emit' de dependencias
+  }, [sessionId]); // Solo se ejecuta si hay sessionId
 
+  // Crear un identificador único basado en los IDs del questionSet
+  const questionSetKey = questionSet.map((ex) => ex.id).join(',');
+  
   useEffect(() => {
     if (!questionSet.length) return;
+    
+    // En modo consulta, NO regenerar opciones ni limpiar respuestas
+    // Solo cargar el orden guardado
+    if (isReviewMode) {
+      const savedOrder = localStorage.getItem('option-order');
+      if (savedOrder) {
+        try {
+          setOptionOrder(JSON.parse(savedOrder));
+        } catch (e) {
+          console.warn('Error loading option order:', e);
+        }
+      }
+      return; // Salir del efecto sin hacer nada más
+    }
+    
     const questionIds = questionSet.map((exercise) => exercise.id);
     const questionIdsString = JSON.stringify(questionIds);
-    const savedIds = localStorage.getItem('interview-question-set');
     
-    // Solo actualizar si los IDs cambiaron
-    if (savedIds !== questionIdsString) {
-      localStorage.setItem('interview-question-set', questionIdsString);
+    // Siempre guardar los IDs de las preguntas actuales
+    localStorage.setItem('interview-question-set', questionIdsString);
+    
+    // Verificar si necesitamos regenerar el orden de opciones
+    const savedIds = localStorage.getItem('interview-question-set-key');
+    const currentKey = questionSetKey;
+    
+    // Solo regenerar orden si el set de preguntas cambió
+    if (savedIds !== currentKey) {
+      localStorage.setItem('interview-question-set-key', currentKey);
       setCurrentStep(0);
+      
       const orderMap = {};
       const correctAnswerMap = {}; // Mapeo: exerciseId -> ID de la opción correcta (A, B, C, D)
       
@@ -166,8 +240,22 @@ function NuevosEjercicios() {
       localStorage.setItem('correct-answer-map', JSON.stringify(correctAnswerMap));
       // También guardar el orden de opciones para los resultados
       localStorage.setItem('option-order', JSON.stringify(orderMap));
+      
+      // Limpiar respuestas anteriores cuando cambia el set de preguntas
+      localStorage.removeItem('interview-answers');
+      setAnswers({});
+    } else {
+      // Si el set no cambió, cargar el orden guardado
+      const savedOrder = localStorage.getItem('option-order');
+      if (savedOrder) {
+        try {
+          setOptionOrder(JSON.parse(savedOrder));
+        } catch (e) {
+          console.warn('Error loading option order:', e);
+        }
+      }
     }
-  }, [questionSet.length]); // Solo cuando cambia la longitud
+  }, [questionSetKey, isReviewMode]); // Ahora depende de los IDs reales y del modo consulta
 
   useEffect(() => {
     if (!currentExercise) return;
@@ -176,6 +264,13 @@ function NuevosEjercicios() {
       setSelectedOption(answers[currentExercise.id]);
     } else {
       setSelectedOption(null);
+    }
+    
+    // En modo consulta, no activar el timer
+    if (isReviewMode) {
+      setTimeLeft(currentExercise.timeLimit);
+      setTimerActive(false);
+      return;
     }
     
     // Reiniciar el timer
@@ -269,7 +364,7 @@ function NuevosEjercicios() {
 
     // Avanzar a la siguiente pregunta
     if (isLastStep) {
-      navigate('/respuestas');
+      navigate('/results');
     } else {
       setCurrentStep(currentStep + 1);
     }
@@ -340,7 +435,7 @@ function NuevosEjercicios() {
     }
 
     if (isLastStep) {
-      navigate('/respuestas');
+      navigate('/results');
     } else {
       setCurrentStep(currentStep + 1);
     }
@@ -355,7 +450,7 @@ function NuevosEjercicios() {
   const handleSkip = () => {
     if (!currentExercise) return;
     if (isLastStep) {
-      navigate('/respuestas');
+      navigate('/results');
     } else {
       setCurrentStep(currentStep + 1);
     }
@@ -430,20 +525,33 @@ function NuevosEjercicios() {
         <div className="progress-bar__fill" style={{ width: `${progress}%` }}></div>
       </div>
 
-      {/* Timer */}
-      <div className={`timer-container ${getTimerClass()}`}>
-        <div className="timer-icon">⏱️</div>
-        <div className="timer-text">
-          <span className="timer-label">Tiempo restante:</span>
-          <span className="timer-value">{formatTime(timeLeft)}</span>
+      {/* Review Mode Banner */}
+      {isReviewMode && (
+        <div className="review-mode-banner">
+          <span className="review-mode-icon">📖</span>
+          <span className="review-mode-text">Modo Consulta - Revisando respuestas del examen</span>
+          <button className="btn-back-results" onClick={() => navigate('/results')}>
+            ← Volver a Resultados
+          </button>
         </div>
-        <div className="timer-bar">
-          <div 
-            className="timer-bar__fill" 
-            style={{ width: `${(timeLeft / currentExercise.timeLimit) * 100}%` }}
-          ></div>
+      )}
+
+      {/* Timer - Solo mostrar si NO es modo consulta */}
+      {!isReviewMode && (
+        <div className={`timer-container ${getTimerClass()}`}>
+          <div className="timer-icon">⏱️</div>
+          <div className="timer-text">
+            <span className="timer-label">Tiempo restante:</span>
+            <span className="timer-value">{formatTime(timeLeft)}</span>
+          </div>
+          <div className="timer-bar">
+            <div 
+              className="timer-bar__fill" 
+              style={{ width: `${(timeLeft / currentExercise.timeLimit) * 100}%` }}
+            ></div>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="card exam-config-card">
         <div className="exam-config-item">
@@ -493,25 +601,71 @@ function NuevosEjercicios() {
 
           {/* Options */}
           <div className="card options-card">
-            <h3>Selecciona la respuesta correcta:</h3>
+            <h3>{isReviewMode ? 'Respuestas:' : 'Selecciona la respuesta correcta:'}</h3>
             <div className="options-list">
-              {(optionOrder[currentExercise.id] || currentExercise.options).map((option) => (
-                <label
-                  key={option.id}
-                  className={`option-item ${selectedOption === option.id ? 'option-item--selected' : ''}`}
-                >
-                  <input
-                    type="radio"
-                    name="answer"
-                    value={option.id}
-                    checked={selectedOption === option.id}
-                    onChange={() => handleOptionSelect(option.id)}
-                  />
-                  <span className="option-label">{option.id.toUpperCase()}</span>
-                  <span className="option-text">{option.text}</span>
-                </label>
-              ))}
+              {(optionOrder[currentExercise.id] || currentExercise.options).map((option) => {
+                const userAnswer = answers[currentExercise.id];
+                const correctAnswer = correctAnswerMap[currentExercise.id];
+                const isUserAnswer = option.id === userAnswer;
+                const isCorrectAnswer = option.id === correctAnswer;
+                const isUserWrong = isUserAnswer && !isCorrectAnswer && userAnswer !== 'timeout';
+                
+                // Clases para modo consulta
+                let reviewClass = '';
+                if (isReviewMode) {
+                  if (isCorrectAnswer) {
+                    reviewClass = 'option-item--correct';
+                  }
+                  if (isUserWrong) {
+                    reviewClass = 'option-item--wrong';
+                  }
+                  if (isUserAnswer && isCorrectAnswer) {
+                    reviewClass = 'option-item--user-correct';
+                  }
+                }
+                
+                return (
+                  <label
+                    key={option.id}
+                    className={`option-item ${selectedOption === option.id && !isReviewMode ? 'option-item--selected' : ''} ${reviewClass}`}
+                  >
+                    <input
+                      type="radio"
+                      name="answer"
+                      value={option.id}
+                      checked={selectedOption === option.id}
+                      onChange={() => !isReviewMode && handleOptionSelect(option.id)}
+                      disabled={isReviewMode}
+                    />
+                    <span className="option-label">{option.id.toUpperCase()}</span>
+                    <span className="option-text">{option.text}</span>
+                    {isReviewMode && (
+                      <div className="option-indicators">
+                        {isUserWrong && <span className="option-indicator option-indicator--wrong">❌ Tu respuesta</span>}
+                        {isCorrectAnswer && <span className="option-indicator option-indicator--correct">✅ Correcta</span>}
+                        {isUserAnswer && isCorrectAnswer && <span className="option-indicator option-indicator--user-correct">🎉 ¡Acertaste!</span>}
+                      </div>
+                    )}
+                  </label>
+                );
+              })}
             </div>
+            
+            {/* Explicación en modo consulta */}
+            {isReviewMode && currentExercise.explanation && (
+              <div className="review-explanation">
+                <h4>💡 Explicación:</h4>
+                <p>{currentExercise.explanation}</p>
+              </div>
+            )}
+            
+            {/* Mostrar si se agotó el tiempo */}
+            {isReviewMode && answers[currentExercise.id] === 'timeout' && (
+              <div className="review-timeout">
+                <span className="timeout-icon">⏱️</span>
+                <span>No se respondió a tiempo</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -548,19 +702,31 @@ function NuevosEjercicios() {
           ← Anterior
         </button>
         
-        <button
-          className="btn-nav btn-nav--tertiary"
-          onClick={handleSkip}
-        >
-          {isLastStep ? 'Finalizar' : 'Saltar'}
-        </button>
+        {isReviewMode ? (
+          <button
+            className="btn-nav btn-nav--tertiary"
+            onClick={() => navigate('/results')}
+          >
+            📊 Ver Resultados
+          </button>
+        ) : (
+          <button
+            className="btn-nav btn-nav--tertiary"
+            onClick={handleSkip}
+          >
+            {isLastStep ? 'Finalizar' : 'Saltar'}
+          </button>
+        )}
 
         <button
           className="btn-nav btn-nav--primary"
-          onClick={handleNext}
-          disabled={!selectedOption}
+          onClick={isReviewMode 
+            ? (isLastStep ? () => navigate('/results') : () => setCurrentStep(currentStep + 1))
+            : handleNext
+          }
+          disabled={!isReviewMode && !selectedOption}
         >
-          {isLastStep ? 'Ver Resultados →' : 'Siguiente →'}
+          {isLastStep ? (isReviewMode ? '📊 Ver Resultados' : 'Ver Resultados →') : 'Siguiente →'}
         </button>
       </div>
 
@@ -578,4 +744,4 @@ function NuevosEjercicios() {
   );
 }
 
-export default NuevosEjercicios;
+export default Exercises;

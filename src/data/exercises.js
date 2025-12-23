@@ -5979,6 +5979,624 @@ public class Animal { }`,
     ],
     correctAnswer: "a",
     explanation: "Estrategias: SINGLE_TABLE: todas las clases en 1 tabla, @DiscriminatorColumn diferencia tipos, eficiente queries, columnas null. JOINED: tabla por clase, JOINs para queries, normalizado. TABLE_PER_CLASS: tabla por clase con todas las columnas, UNION para polimorfismo, no recomendado. Elegir según: queries frecuentes (SINGLE_TABLE), normalización (JOINED), performance vs estructura."
+  },
+
+  // ===== BUSINESS ANALYST (250-269) =====
+  // Preguntas prácticas para evaluar competencias de Business Analyst
+  // NOTA: Opciones diseñadas para ser de longitud similar y todas plausibles
+  
+  // Tema 1: Levantamiento y análisis de requisitos
+  {
+    id: 250,
+    title: "Requisitos contradictorios en e-commerce",
+    category: "Levantamiento de Requisitos",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Estás levantando requisitos para un nuevo módulo de checkout en un e-commerce. El Director Comercial quiere un checkout de 1 solo paso para maximizar conversiones. El Director de Finanzas exige verificación de fraude en 3 pasos. El equipo de UX propone 2 pasos con validación progresiva. ¿Cuál es tu siguiente acción como BA?",
+    code: `Stakeholders y sus requisitos:
+    
+┌─────────────────────────────────────────────────────────────┐
+│ Director Comercial: "Checkout en 1 paso = más ventas"       │
+│ Director Finanzas:  "3 pasos de verificación = menos fraude"│
+│ Equipo UX:          "2 pasos = balance usabilidad/seguridad"│
+└─────────────────────────────────────────────────────────────┘
+
+Contexto adicional:
+- Tasa actual de abandono de carrito: 68%
+- Fraude reportado último trimestre: 2.3% de transacciones
+- Competidores directos usan checkout de 2 pasos`,
+    options: [
+      { id: "a", text: "Escalar inmediatamente a gerencia general con un documento formal detallando las tres propuestas, sus pros y contras, para que la alta dirección tome la decisión final sobre el diseño del checkout" },
+      { id: "b", text: "Facilitar una sesión conjunta con los tres stakeholders para analizar datos objetivos, identificar las necesidades subyacentes de cada uno, y co-crear una solución que satisfaga los objetivos reales de negocio" },
+      { id: "c", text: "Implementar la propuesta del equipo UX de 2 pasos ya que representa el punto medio entre las posiciones extremas, documentando formalmente que los otros stakeholders fueron consultados" },
+      { id: "d", text: "Realizar un análisis comparativo detallado de los competidores del mercado, documentar sus soluciones de checkout, y proponer adoptar la práctica más común de la industria como estándar" }
+    ],
+    correctAnswer: "b",
+    explanation: "Un BA senior no escala decisiones sin antes facilitar el análisis. La clave está en identificar las NECESIDADES SUBYACENTES (no las soluciones propuestas): Comercial necesita conversiones, Finanzas necesita reducir fraude. Una sesión de trabajo conjunto con datos objetivos permite encontrar soluciones creativas que satisfagan ambas necesidades, como verificación inteligente basada en riesgo."
+  },
+  {
+    id: 251,
+    title: "Técnicas de elicitación para migración de sistema",
+    category: "Levantamiento de Requisitos",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Tu empresa va a migrar un sistema legacy de 15 años a una plataforma moderna. Los usuarios dicen que 'el sistema hace todo lo que necesitan' pero no pueden explicar exactamente qué hace. La documentación está desactualizada. ¿Qué combinación de técnicas de elicitación usarías PRIMERO?",
+    code: `Situación actual:
+    
+Sistema Legacy:
+├── 15 años de antigüedad
+├── Documentación: 60% desactualizada
+├── Usuarios: "Funciona bien, no sabemos cómo"
+├── 200+ pantallas
+└── Sin tests automatizados
+
+Restricciones:
+├── Presupuesto: 6 meses de discovery
+├── Usuarios disponibles: 2 horas/semana
+└── Acceso al código: Solo lectura`,
+    options: [
+      { id: "a", text: "Entrevistas estructuradas exhaustivas con todos los usuarios clave del sistema, utilizando cuestionarios predefinidos para documentar sistemáticamente cada funcionalidad y flujo de trabajo existente" },
+      { id: "b", text: "Shadowing (observación directa) de usuarios en su trabajo diario, combinado con análisis de logs del sistema para identificar patrones de uso, y workshops de validación con grupos focales" },
+      { id: "c", text: "Revisión exhaustiva del código fuente con el equipo técnico para extraer y documentar toda la lógica de negocio implementada, creando diagramas de flujo a partir del código existente" },
+      { id: "d", text: "Crear prototipos interactivos del nuevo sistema basados en las mejores prácticas de la industria, y validarlos iterativamente con los usuarios para descubrir qué funcionalidades necesitan" }
+    ],
+    correctAnswer: "b",
+    explanation: "Cuando los usuarios no pueden articular qué hace el sistema (conocimiento tácito), el Shadowing permite observar cómo REALMENTE lo usan. Los logs revelan funcionalidades frecuentes vs. raramente usadas. Los workshops validan hallazgos. Las entrevistas solas fallan porque dependen de la memoria. El código no revela el 'por qué' del negocio. Los prototipos sin entender el estado actual generan gaps."
+  },
+
+  // Tema 2: Identificación de stakeholders
+  {
+    id: 252,
+    title: "Stakeholder oculto en proyecto de automatización",
+    category: "Identificación de Stakeholders",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Llevas 2 meses en un proyecto de automatización de aprobaciones de crédito. Todo iba bien hasta que el equipo de Cumplimiento (Compliance) aparece exigiendo cambios mayores porque el proceso no cumple regulaciones bancarias. El proyecto está en riesgo. ¿Qué falló en tu análisis inicial y cómo lo corriges ahora?",
+    code: `Línea de tiempo del proyecto:
+
+Mes 1: Kickoff con Gerente de Créditos ✓
+       Requisitos levantados con analistas ✓
+       Prototipo aprobado por usuarios ✓
+
+Mes 2: Desarrollo al 60% completado
+       ⚠️ Compliance aparece: "No cumple regulación X"
+       
+Impacto del cambio de Compliance:
+├── Rediseño del 40% de pantallas
+├── Nueva integración con sistema regulatorio
+├── 6 semanas adicionales mínimo
+└── Presupuesto excedido en 30%`,
+    options: [
+      { id: "a", text: "El error fue no hacer un análisis de stakeholders completo al inicio del proyecto; ahora debo realizar un mapeo formal de poder/interés e involucrar a Compliance en la aprobación de requisitos antes de continuar" },
+      { id: "b", text: "El Gerente de Créditos como sponsor del proyecto tenía la responsabilidad de identificar a todos los stakeholders de su área; debo documentar formalmente esta falla para evitar que se repita en futuros proyectos" },
+      { id: "c", text: "El equipo de Compliance llegó tarde al proyecto por lo que debe adaptarse a las decisiones ya tomadas y aprobadas; puedo negociar implementar sus requisitos en una fase posterior del proyecto" },
+      { id: "d", text: "Debo escalar inmediatamente a la gerencia general para obtener una decisión ejecutiva sobre el alcance del proyecto, solicitando extensión de presupuesto y tiempo para acomodar los nuevos requisitos" }
+    ],
+    correctAnswer: "a",
+    explanation: "Un BA siempre debe realizar un análisis de stakeholders completo usando técnicas como matriz de poder/interés o RACI. Compliance es un stakeholder regulatorio típico que debe identificarse en cualquier proyecto financiero. El error no es de otros - es del BA no hacer el mapeo completo. La corrección: parar, hacer el análisis ahora, involucrar a Compliance formalmente, y ajustar el plan."
+  },
+  {
+    id: 253,
+    title: "Matriz de stakeholders para dashboard ejecutivo",
+    category: "Identificación de Stakeholders",
+    difficulty: "Básico",
+    timeLimit: TIME_LIMITS["Básico"],
+    question: "Estás iniciando un proyecto para crear un dashboard ejecutivo que mostrará KPIs de todas las áreas. Según la matriz de poder/interés, ¿cómo deberías gestionar a cada stakeholder?",
+    code: `Stakeholders identificados:
+
+A) CEO: Patrocinador del proyecto
+   - Poder: Alto | Interés: Alto
+   
+B) Gerentes de área: Proveerán datos de sus KPIs
+   - Poder: Alto | Interés: Bajo (tienen otras prioridades)
+   
+C) Analista de BI: Construirá el dashboard
+   - Poder: Bajo | Interés: Alto
+   
+D) Usuarios finales: Asistentes ejecutivos
+   - Poder: Bajo | Interés: Bajo`,
+    options: [
+      { id: "a", text: "A: Gestionar de cerca con reuniones frecuentes | B: Mantener satisfecho con updates periódicos | C: Mantener informado del progreso | D: Monitorear sin involucrar activamente" },
+      { id: "b", text: "A: Mantener informado con reportes semanales | B: Gestionar de cerca porque proveen los datos | C: Monitorear su trabajo técnico | D: Mantener satisfecho con el resultado final" },
+      { id: "c", text: "Todos deben ser gestionados de cerca con la misma frecuencia de comunicación porque es un proyecto de alta visibilidad ejecutiva que afecta a toda la organización" },
+      { id: "d", text: "A: Gestionar de cerca | B: Monitorear su disponibilidad | C: Gestionar de cerca porque hace el trabajo | D: Mantener informado del cronograma de entregas" }
+    ],
+    correctAnswer: "a",
+    explanation: "La matriz poder/interés indica: Alto poder + Alto interés = Gestionar de cerca (CEO). Alto poder + Bajo interés = Mantener satisfecho (Gerentes - necesitas sus datos). Bajo poder + Alto interés = Mantener informado (Analista BI). Bajo poder + Bajo interés = Monitorear (Asistentes). Esto optimiza tu tiempo y asegura que los stakeholders críticos estén alineados."
+  },
+
+  // Tema 3: Traducción de negocio a requisitos funcionales
+  {
+    id: 254,
+    title: "Traducir necesidad de negocio a user story",
+    category: "Requisitos Funcionales",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "El Director de Ventas te dice: 'Necesito saber en tiempo real cuánto está vendiendo cada vendedor para poder motivar al equipo'. ¿Cuál es la MEJOR traducción a requisito funcional?",
+    code: `Contexto del negocio:
+    
+- 50 vendedores en campo
+- Meta mensual por vendedor: variable
+- Actualidad: reportes manuales cada viernes
+- Director quiere: "motivar al equipo"
+
+Sistemas existentes:
+├── CRM: registra ventas (delay 24h)
+├── ERP: facturación (tiempo real)
+└── App móvil vendedores: solo catálogo`,
+    options: [
+      { id: "a", text: "COMO Director de Ventas QUIERO recibir notificaciones automáticas cada vez que un vendedor cierre una venta PARA poder felicitarlo inmediatamente y mantener la motivación del equipo en tiempo real" },
+      { id: "b", text: "COMO Director de Ventas QUIERO un dashboard con ventas actualizadas cada hora por vendedor, comparadas contra su meta mensual, con ranking visible y alertas al 80% de meta PARA reconocer logros y ofrecer coaching oportuno" },
+      { id: "c", text: "COMO Director de Ventas QUIERO acceso directo al ERP con un reporte personalizado que muestre las ventas del día por vendedor en formato exportable PARA poder analizar el desempeño del equipo cuando lo necesite" },
+      { id: "d", text: "COMO Director de Ventas QUIERO que el CRM se sincronice en tiempo real con el ERP eliminando el delay de 24 horas PARA tener información actualizada sobre las ventas de mi equipo comercial" }
+    ],
+    correctAnswer: "b",
+    explanation: "La opción B traduce la necesidad real (motivar = reconocer logros + coaching) en requisitos específicos y medibles: frecuencia (cada hora), comparación (vs meta), visualización (ranking), y triggers de acción (alertas al 80%). Las otras opciones se enfocan en soluciones técnicas o parciales sin capturar completamente el objetivo de negocio de 'motivar al equipo'."
+  },
+  {
+    id: 255,
+    title: "Criterios de aceptación para proceso de devoluciones",
+    category: "Requisitos Funcionales",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Debes escribir criterios de aceptación para: 'COMO cliente QUIERO solicitar devolución de un producto PARA recibir mi dinero si no estoy satisfecho'. ¿Cuál set de criterios es más completo y testeable?",
+    code: `Reglas de negocio del e-commerce:
+
+- Devolución permitida: hasta 30 días post-compra
+- Productos no retornables: alimentos, ropa interior
+- Reembolso: mismo método de pago original
+- Estados del producto: nuevo, usado, dañado
+- Tiempo de reembolso: 5-7 días hábiles`,
+    options: [
+      { id: "a", text: "DADO un cliente con una compra válida en su historial, CUANDO accede a la sección de devoluciones y selecciona el producto, ENTONCES el sistema procesa automáticamente el reembolso al método de pago original" },
+      { id: "b", text: "DADO cliente con compra <30 días Y producto retornable, CUANDO inicia devolución ENTONCES ve formulario de motivo | DADO producto 'nuevo' o 'usado-buen estado', CUANDO se aprueba ENTONCES reembolso en 5-7 días | DADO producto 'dañado' o 'no retornable', CUANDO intenta devolver ENTONCES ve mensaje con opciones alternativas" },
+      { id: "c", text: "DADO un cliente que desea devolver un producto, CUANDO completa el formulario de devolución con todos los campos requeridos, ENTONCES el sistema envía una confirmación por email y genera un ticket para el equipo de soporte" },
+      { id: "d", text: "DADO un cliente con una compra realizada en los últimos 30 días, CUANDO solicita la devolución del producto a través del portal web, ENTONCES el sistema valida elegibilidad y muestra el tiempo estimado de reembolso" }
+    ],
+    correctAnswer: "b",
+    explanation: "La opción B usa el formato Gherkin correctamente y cubre múltiples escenarios: el happy path, las condiciones de aprobación, Y los casos de error. Las otras opciones solo cubren un escenario o son demasiado genéricas. Buenos criterios de aceptación deben ser específicos, testeables, y cubrir tanto casos exitosos como de error."
+  },
+
+  // Tema 4: KPIs y métricas
+  {
+    id: 256,
+    title: "Definir KPIs para nuevo feature de suscripciones",
+    category: "KPIs y Métricas",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Tu empresa de streaming lanza un nuevo plan de suscripción familiar. Te piden definir los KPIs para medir el éxito del feature. ¿Cuál es el set más completo y accionable?",
+    code: `Contexto del lanzamiento:
+
+Plan Familiar:
+├── Precio: $15/mes (vs $10 plan individual)
+├── Incluye: hasta 5 perfiles
+├── Target: usuarios actuales con familias
+└── Objetivo negocio: aumentar ARPU
+
+Baseline actual:
+├── ARPU: $9.50
+├── Churn mensual: 4.2%
+├── Usuarios activos: 2M
+└── % usuarios con >1 perfil: 35%`,
+    options: [
+      { id: "a", text: "Número total de suscripciones al plan familiar por mes, revenue mensual generado por el plan familiar, y cantidad de nuevos usuarios que eligen el plan familiar como primera opción de suscripción" },
+      { id: "b", text: "Tasa de conversión individual→familiar (meta: 15% en 3 meses), incremento ARPU post-lanzamiento (meta: +8%), churn plan familiar vs individual (meta: -20%), NPS usuarios familiares (meta: >50), perfiles activos por cuenta (meta: >3 de 5)" },
+      { id: "c", text: "Revenue total del plan familiar comparado con proyecciones iniciales, número de suscriptores activos del plan, tasa de renovación mensual, y feedback cualitativo de usuarios obtenido mediante encuestas trimestrales" },
+      { id: "d", text: "Porcentaje de usuarios que migran del plan individual al familiar, tiempo promedio de permanencia en el plan familiar, cantidad de perfiles creados por cuenta, y número de dispositivos conectados simultáneamente" }
+    ],
+    correctAnswer: "b",
+    explanation: "KPIs efectivos deben ser SMART: Específicos, Medibles, Alcanzables, Relevantes, Temporales. La opción B es la única que incluye METAS NUMÉRICAS ESPECÍFICAS y cubre todas las dimensiones del éxito: adquisición, monetización, retención, satisfacción y engagement. Las otras opciones listan métricas pero sin metas concretas, lo que dificulta evaluar el éxito."
+  },
+  {
+    id: 257,
+    title: "Interpretar métricas de funnel de conversión",
+    category: "KPIs y Métricas",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Analizas el funnel de tu e-commerce y encuentras estos datos. ¿Dónde está el problema principal y qué investigarías primero?",
+    code: `Funnel de conversión (último mes):
+
+Visitantes únicos:     100,000 (100%)
+    ↓ -45%
+Ven producto:           55,000 (55%)
+    ↓ -15%
+Agregan al carrito:     47,000 (47%)
+    ↓ -70% ⚠️
+Inician checkout:       14,100 (14.1%)
+    ↓ -10%
+Completan compra:       12,700 (12.7%)
+
+Benchmark industria:
+├── Visitante → Producto: 50-60% ✓
+├── Producto → Carrito: 40-50% ✓
+├── Carrito → Checkout: 50-60% ✗
+└── Checkout → Compra: 85-95% ✓`,
+    options: [
+      { id: "a", text: "El problema principal está en la adquisición de tráfico; con solo 100K visitantes mensuales debemos invertir más en SEO, SEM y redes sociales para aumentar el volumen de usuarios que llegan al sitio" },
+      { id: "b", text: "La caída crítica es Carrito→Checkout con 70% de abandono (vs 40-50% benchmark); investigaría costos de envío sorpresa, registro obligatorio antes de comprar, opciones de pago limitadas, y problemas de UX en el carrito" },
+      { id: "c", text: "El problema está en las páginas de producto donde 45% de visitantes no las ven; debemos mejorar la navegación del sitio, el buscador interno y las categorías para que más usuarios encuentren productos" },
+      { id: "d", text: "El checkout tiene 10% de abandono en el último paso; debemos optimizar el formulario de pago, agregar más métodos de pago, y simplificar la confirmación final para recuperar esas ventas perdidas" }
+    ],
+    correctAnswer: "b",
+    explanation: "Un BA debe identificar dónde está la mayor oportunidad comparando contra benchmarks. El paso Carrito→Checkout tiene 70% de abandono vs 40-50% de la industria - es donde perdemos más vs la competencia. Los otros pasos están dentro del benchmark normal, optimizarlos tendría menor impacto relativo."
+  },
+
+  // Tema 5: Priorización (MoSCoW, valor vs esfuerzo)
+  {
+    id: 258,
+    title: "Priorización MoSCoW para MVP de marketplace",
+    category: "Priorización",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Tienes 3 meses para lanzar el MVP de un marketplace. El backlog tiene 40 features. Usando MoSCoW, ¿cómo clasificarías estos 5 features?",
+    code: `Features a clasificar:
+
+1. Registro de usuarios y login
+2. Búsqueda de productos con filtros avanzados
+3. Carrito de compras y checkout
+4. Sistema de reviews y ratings
+5. Chat en tiempo real vendedor-comprador
+
+Restricciones:
+├── Tiempo: 3 meses para MVP
+├── Equipo: 4 desarrolladores
+├── Presupuesto: fijo, sin extensión
+└── Objetivo: validar product-market fit
+
+Nota: MoSCoW = Must/Should/Could/Won't`,
+    options: [
+      { id: "a", text: "Must: 1,2,3,4,5 - Todos son necesarios para competir porque los usuarios esperan estas funcionalidades estándar en cualquier marketplace moderno del mercado actual" },
+      { id: "b", text: "Must: 1,3 | Should: 2 (solo búsqueda básica) | Could: 4,5 | Won't: filtros avanzados para después - enfocarse en flujo mínimo de compra para validar product-market fit" },
+      { id: "c", text: "Must: 1,2,3,4 | Should: 5 | Could: ninguno | Won't: ninguno - reviews son esenciales para generar confianza en un marketplace nuevo donde nadie conoce a los vendedores" },
+      { id: "d", text: "Must: 1,3,5 | Should: 2,4 | Could: ninguno | Won't: ninguno - el chat es crítico porque la comunicación directa entre comprador y vendedor es el diferenciador principal" }
+    ],
+    correctAnswer: "b",
+    explanation: "MoSCoW para MVP debe ser estricto. MUST = sin esto, el producto no funciona (registro, checkout). SHOULD = importante pero puede ser básico primero. COULD = nice to have, post-MVP. La trampa común es hacer todo 'Must' - esto mata el MVP. El objetivo es validar product-market fit con el mínimo viable, no construir el producto completo."
+  },
+  {
+    id: 259,
+    title: "Matriz valor vs esfuerzo para backlog",
+    category: "Priorización",
+    difficulty: "Básico",
+    timeLimit: TIME_LIMITS["Básico"],
+    question: "Tienes estos 4 items en el backlog. Según la matriz de Valor vs Esfuerzo, ¿en qué orden deberían implementarse?",
+    code: `Backlog items con estimaciones:
+
+A) Integración con pasarela de pago local
+   Valor: Alto (15% más conversiones esperadas)
+   Esfuerzo: Bajo (API bien documentada, 1 semana)
+
+B) Rediseño completo del homepage
+   Valor: Medio (mejora percepción de marca)
+   Esfuerzo: Alto (3 meses, involucra diseño+dev+contenido)
+
+C) Notificaciones push para ofertas
+   Valor: Bajo (nice to have, pocos usuarios opt-in)
+   Esfuerzo: Bajo (1 semana)
+
+D) Sistema de recomendaciones con ML
+   Valor: Alto (20% más ticket promedio esperado)
+   Esfuerzo: Alto (6 meses, requiere data team)`,
+    options: [
+      { id: "a", text: "D, A, B, C - Priorizar por valor absoluto: empezar siempre por los items que generan mayor impacto en el negocio independientemente del esfuerzo requerido para implementarlos" },
+      { id: "b", text: "A, C, B, D - Quick wins primero (alto valor/bajo esfuerzo), luego fill-ins (bajo/bajo), después evaluar items de alto esfuerzo según ROI y capacidad del equipo disponible" },
+      { id: "c", text: "A, D, B, C - Alto valor primero sin importar esfuerzo: los items A y D generan más impacto de negocio, luego B mejora la marca, y C es solo nice-to-have al final" },
+      { id: "d", text: "C, A, D, B - Esfuerzo bajo primero: completar las tareas fáciles libera al equipo rápidamente y genera momentum, después abordar los proyectos más complejos con foco" }
+    ],
+    correctAnswer: "b",
+    explanation: "La matriz Valor/Esfuerzo prioriza: 1) QUICK WINS (alto valor, bajo esfuerzo) primero. 2) FILL-INS (bajo valor, bajo esfuerzo) porque son fáciles. 3) STRATEGIC (alto valor, alto esfuerzo) requieren análisis de ROI. 4) THANKLESS (bajo valor, alto esfuerzo) evitar. Este orden maximiza valor entregado por unidad de esfuerzo."
+  },
+
+  // Tema 6: Análisis de procesos
+  {
+    id: 260,
+    title: "Identificar ineficiencias en proceso de onboarding",
+    category: "Análisis de Procesos",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Mapeas el proceso actual de onboarding de clientes B2B. ¿Cuáles son los principales problemas y qué recomendarías?",
+    code: `Proceso actual de onboarding (AS-IS):
+
+1. Cliente firma contrato (Ventas)
+      ↓ [espera 2-3 días]
+2. Ventas envía email a Operaciones
+      ↓ [espera 1-2 días]
+3. Operaciones crea ticket en sistema A
+      ↓ [manual, 30 min]
+4. Operaciones crea usuario en sistema B
+      ↓ [manual, 20 min, mismo data]
+5. Operaciones envía credenciales por email
+      ↓ [espera 1 día]
+6. Cliente recibe acceso
+
+Tiempo total: 5-7 días
+Errores reportados: 23% (datos mal copiados)
+Clientes quejándose: "tarda mucho en activarme"`,
+    options: [
+      { id: "a", text: "Contratar 2 personas adicionales para el equipo de Operaciones para reducir los tiempos de espera entre pasos y procesar más tickets de onboarding en paralelo durante horas pico" },
+      { id: "b", text: "Problemas identificados: duplicación de data entry (sistemas A y B con mismos datos), handoffs manuales por email, esperas innecesarias. Solución: automatizar creación en ambos sistemas desde contrato firmado, eliminar pasos manuales" },
+      { id: "c", text: "Implementar un SLA estricto de 24 horas máximo para que el equipo de Operaciones complete todo el proceso, con métricas de seguimiento y escalamiento automático a supervisores" },
+      { id: "d", text: "El proceso actual está bien estructurado pero necesita mejor capacitación del equipo de Operaciones para reducir el 23% de errores y documentación más clara de cada paso" }
+    ],
+    correctAnswer: "b",
+    explanation: "El análisis de procesos identifica WASTE (esperas, duplicación), HANDOFFS propensos a error (email entre áreas), y REWORK (23% de errores por data entry duplicado). La solución no es más personas o SLAs más estrictos, sino rediseñar el proceso eliminando actividades que no agregan valor."
+  },
+  {
+    id: 261,
+    title: "BPMN para proceso de aprobación de gastos",
+    category: "Análisis de Procesos",
+    difficulty: "Básico",
+    timeLimit: TIME_LIMITS["Básico"],
+    question: "Estás documentando el proceso de aprobación de gastos. Según las reglas, ¿qué elemento BPMN representa correctamente la lógica de aprobación?",
+    code: `Reglas de aprobación de gastos:
+
+- Gastos < $500: aprobación automática
+- Gastos $500-$5000: aprueba jefe directo
+- Gastos > $5000: aprueba jefe + Director de Finanzas
+
+Elementos BPMN disponibles:
+├── ○ Evento de inicio/fin
+├── □ Tarea/Actividad
+├── ◇ Gateway (decisión)
+└── → Flujo de secuencia`,
+    options: [
+      { id: "a", text: "Un gateway exclusivo (XOR) con 3 ramas salientes que dirigen el flujo según el monto del gasto, donde solo una rama se activa dependiendo de si es <$500, $500-$5000, o >$5000" },
+      { id: "b", text: "Tres subprocesos independientes modelados por separado, uno para cada rango de monto, que se invocan desde el proceso principal según corresponda al caso específico" },
+      { id: "c", text: "Un gateway paralelo (AND) que envía el gasto simultáneamente a todos los posibles aprobadores, permitiendo que cada uno decida si aplica su aprobación según el monto" },
+      { id: "d", text: "Una única tarea de 'Evaluar y Aprobar gasto' que internamente contiene toda la lógica de decisión según montos, sin necesidad de gateways explícitos en el diagrama" }
+    ],
+    correctAnswer: "a",
+    explanation: "El gateway exclusivo (XOR) es correcto cuando hay múltiples caminos MUTUAMENTE EXCLUYENTES basados en una condición. Solo UNA rama se activa. El gateway paralelo (AND) activaría TODOS los caminos simultáneamente, lo cual es incorrecto aquí."
+  },
+
+  // Tema 7: Comunicación BA–equipo técnico
+  {
+    id: 262,
+    title: "Comunicar requisito ambiguo al equipo de desarrollo",
+    category: "Comunicación Técnica",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "El Product Owner te dice: 'Los reportes deben cargar rápido'. Necesitas traducir esto para el equipo técnico. ¿Cuál es la mejor forma de comunicar este requisito?",
+    code: `Contexto:
+- Reportes actuales: 8-15 segundos de carga
+- Usuarios: gerentes revisando datos en reuniones
+- Competencia: reportes en <3 segundos
+
+El equipo técnico pregunta:
+"¿Qué significa 'rápido'? ¿Cuál es el SLA?"`,
+    options: [
+      { id: "a", text: "Comunicar al equipo que 'rápido' significa optimizar al máximo posible con la infraestructura actual, dejando que ellos determinen el mejor resultado alcanzable técnicamente sin comprometer estabilidad" },
+      { id: "b", text: "Requisito no funcional específico: tiempo de carga ≤3 segundos para percentil 95 de requests, medido con 100 usuarios concurrentes, excluyendo reportes >1M registros que tienen SLA separado de 10 segundos" },
+      { id: "c", text: "Solicitar al Product Owner que agende una reunión con el equipo técnico para definir conjuntamente qué significa 'rápido' basándose en las capacidades actuales del sistema y la infraestructura" },
+      { id: "d", text: "Dejar que el equipo técnico proponga un SLA razonable basado en su conocimiento de la arquitectura actual, y luego validar con el PO si ese tiempo es aceptable para los usuarios de negocio" }
+    ],
+    correctAnswer: "b",
+    explanation: "El rol del BA es traducir requisitos vagos a especificaciones medibles. 'Rápido' debe convertirse en métricas específicas con condiciones de medición y excepciones documentadas. Esto permite al equipo técnico diseñar la solución y establecer pruebas de rendimiento claras."
+  },
+  {
+    id: 263,
+    title: "Manejar desacuerdo técnico sobre solución propuesta",
+    category: "Comunicación Técnica",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Propones una solución donde los datos de clientes se sincronizan en tiempo real entre dos sistemas. El Tech Lead dice que es muy costoso y propone sincronización cada 6 horas. El usuario de negocio insiste en tiempo real. ¿Cómo manejas esta situación?",
+    code: `Posiciones:
+
+Usuario de negocio:
+"Necesito ver los datos actualizados inmediatamente 
+cuando un cliente llama, sino damos mal servicio"
+
+Tech Lead:
+"Tiempo real requiere arquitectura de eventos,
+cuesta 3x más y toma 2 meses adicionales"
+
+Tu rol como BA: facilitar una solución`,
+    options: [
+      { id: "a", text: "Apoyar la posición del usuario de negocio porque ellos son quienes atienden a los clientes directamente y entienden mejor las necesidades operativas reales del día a día en el call center" },
+      { id: "b", text: "Investigar el caso de uso real preguntando: ¿cuántas llamadas ocurren justo después de una actualización? ¿Qué impacto tiene un delay de 15 minutos? Proponer solución intermedia basada en datos concretos" },
+      { id: "c", text: "Aceptar la propuesta técnica del Tech Lead porque él conoce las limitaciones de la arquitectura actual y los costos reales de implementar soluciones de sincronización en tiempo real" },
+      { id: "d", text: "Escalar la decisión a gerencia para que evalúen el trade-off entre el costo adicional de $X y el beneficio de mejor servicio al cliente, presentando ambas opciones formalmente" }
+    ],
+    correctAnswer: "b",
+    explanation: "El BA debe descubrir la NECESIDAD REAL detrás de las posiciones. 'Tiempo real' vs '6 horas' es una falsa dicotomía. Investigando datos reales probablemente descubras que un sync intermedio (15-30 min) satisface la mayoría de casos, con opción de refresh manual para excepciones."
+  },
+
+  // Tema 8: Manejo de cambios en requisitos
+  {
+    id: 264,
+    title: "Gestionar cambio de alcance en sprint activo",
+    category: "Manejo de Cambios",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Estás en día 5 de un sprint de 10 días. El CEO pide urgente agregar una nueva funcionalidad porque un cliente grande la necesita para firmar contrato. El Scrum Master dice que no se puede cambiar el sprint. ¿Cuál es tu rol como BA?",
+    code: `Situación actual del sprint:
+
+Sprint Goal: Mejorar proceso de checkout
+Días restantes: 5 de 10
+Velocidad: 75% completado
+
+Nuevo requisito del CEO:
+- Integración con sistema de facturación del cliente
+- Cliente firmaría contrato de $500K si está listo en 2 semanas
+- Estimación inicial: 8 puntos de historia
+
+Opciones sobre la mesa:
+A) Agregar al sprint actual
+B) Esperar al siguiente sprint
+C) Crear sprint especial
+D) Negociar alcance`,
+    options: [
+      { id: "a", text: "Apoyar firmemente la posición del Scrum Master porque las prácticas ágiles establecen que el sprint backlog no debe modificarse una vez iniciado para proteger al equipo y mantener predictibilidad" },
+      { id: "b", text: "Evaluar los trade-offs reales presentando opciones: ¿qué items se pueden sacar del sprint actual? ¿El valor del contrato de $500K justifica el riesgo? Facilitar decisión informada con impacto real" },
+      { id: "c", text: "Ayudar al CEO a comprender que aunque el contrato es importante, interrumpir el sprint actual generaría deuda técnica y afectaría la moral del equipo, proponiendo el siguiente sprint como alternativa" },
+      { id: "d", text: "Comenzar inmediatamente a levantar y documentar los requisitos detallados del nuevo feature para tenerlos listos, mientras el equipo de desarrollo termina el trabajo del sprint actual" }
+    ],
+    correctAnswer: "b",
+    explanation: "El BA no defiende reglas ciegamente ni ignora el negocio. Su rol es facilitar decisiones INFORMADAS presentando trade-offs reales y opciones concretas. Las reglas de Scrum existen por buenas razones, pero el BA ayuda a tomar excepciones conscientes cuando el valor lo justifica."
+  },
+  {
+    id: 265,
+    title: "Documentar impacto de cambio en requisitos",
+    category: "Manejo de Cambios",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "El cliente solicita cambiar el campo 'Fecha de nacimiento' (obligatorio) a 'Año de nacimiento' (opcional) en el formulario de registro. Parece un cambio simple. ¿Qué análisis de impacto deberías hacer?",
+    code: `Cambio solicitado:
+- De: Campo "Fecha de nacimiento" (DD/MM/YYYY, obligatorio)
+- A: Campo "Año de nacimiento" (YYYY, opcional)
+
+Sistemas que usan este dato:
+├── Formulario de registro (frontend)
+├── Base de datos de clientes
+├── Cálculo de edad para promociones
+├── Segmentación de marketing
+├── Reportes de demografía
+└── Integración con sistema de seguros (requiere fecha exacta)`,
+    options: [
+      { id: "a", text: "Es un cambio simple de interfaz de usuario que solo afecta al formulario frontend; el equipo de desarrollo puede implementarlo en 1-2 días sin mayor análisis porque solo cambia la validación del campo" },
+      { id: "b", text: "Análisis completo: 1) Frontend (UI+validación), 2) Backend (migración datos existentes), 3) Lógica de edad (cambio de cálculo), 4) Marketing (ajustar segmentos), 5) Reportes, 6) Seguros (BLOQUEANTE: requiere fecha exacta), 7) Compliance/GDPR" },
+      { id: "c", text: "Rechazar el cambio formalmente porque la integración con el sistema de seguros requiere fecha exacta, y modificar este campo rompería esa integración crítica para el negocio afectando clientes existentes" },
+      { id: "d", text: "Aprobar el cambio y comunicar a cada equipo afectado para que ajusten sus sistemas de forma independiente según sus propios cronogramas, coordinando una fecha límite común para el go-live" }
+    ],
+    correctAnswer: "b",
+    explanation: "Un 'cambio simple' frecuentemente tiene impacto en múltiples sistemas. El BA debe hacer análisis de impacto COMPLETO antes de aceptar: sistemas afectados, datos existentes, integraciones, compliance, y dependencias bloqueantes. Solo después de este análisis se puede estimar y decidir correctamente."
+  },
+
+  // Tema 9: Pensamiento crítico y toma de decisiones
+  {
+    id: 266,
+    title: "Cuestionar supuesto de negocio",
+    category: "Pensamiento Crítico",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "El Director de Marketing quiere invertir $200K en una app móvil porque 'todos los competidores tienen una'. Como BA, revisas los datos disponibles. ¿Cuál es tu recomendación?",
+    code: `Datos disponibles:
+
+Tráfico actual del sitio web:
+├── 85% desktop
+├── 12% móvil (web responsive)
+└── 3% tablet
+
+Comportamiento móvil:
+├── Bounce rate móvil: 65%
+├── Tiempo en sitio móvil: 45 segundos
+├── Conversiones desde móvil: 0.3%
+└── Conversiones desde desktop: 4.2%
+
+Competidores con app:
+├── Competidor A: 50K descargas, 2.1 rating
+├── Competidor B: 120K descargas, 3.8 rating
+├── Competidor C: Sin app, líder del mercado
+
+Costo estimado de la app: $200K + $50K/año mantenimiento`,
+    options: [
+      { id: "a", text: "Apoyar la decisión del Director de Marketing porque tiene más experiencia en el mercado y conoce mejor las expectativas de los clientes respecto a canales móviles y tendencias de consumo" },
+      { id: "b", text: "Cuestionar el supuesto con datos: ¿El problema es falta de app o mala experiencia web móvil? Proponer alternativa de menor riesgo: invertir $50K en optimizar web móvil, medir resultados en 3 meses, luego decidir sobre app" },
+      { id: "c", text: "Rechazar formalmente la propuesta elaborando un documento con los datos que demuestran que la inversión en app móvil no tiene fundamento suficiente según las métricas actuales de comportamiento de usuarios" },
+      { id: "d", text: "Proponer desarrollar la app con un presupuesto reducido de $100K utilizando frameworks híbridos como React Native o Flutter para reducir el riesgo financiero mientras se valida la demanda del mercado" }
+    ],
+    correctAnswer: "b",
+    explanation: "Pensamiento crítico significa cuestionar supuestos ('necesitamos app porque otros la tienen') con datos. Los datos sugieren: poco tráfico móvil, mala experiencia móvil actual (65% bounce), y el competidor líder no tiene app. Un BA propone hipótesis alternativas y experimentos de menor costo para validar antes de invertir $200K."
+  },
+  {
+    id: 267,
+    title: "Evaluar propuesta de automatización con IA",
+    category: "Pensamiento Crítico",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Un vendor propone usar IA para automatizar la clasificación de tickets de soporte, prometiendo 80% de reducción de tiempo. El equipo está emocionado. ¿Qué preguntas críticas harías antes de recomendar la implementación?",
+    code: `Propuesta del vendor:
+
+"Nuestro modelo de IA clasifica tickets de soporte 
+con 95% de precisión, reduciendo 80% del tiempo 
+de clasificación manual"
+
+Datos actuales de soporte:
+├── Tickets/mes: 5,000
+├── Tiempo clasificación manual: 2 min/ticket
+├── Costo actual: 1 FTE dedicado
+├── Categorías: 15 tipos de ticket
+└── Escalaciones por mala clasificación: 8%
+
+Costo propuesto: $30K setup + $2K/mes`,
+    options: [
+      { id: "a", text: "Aprobar la implementación porque el 95% de precisión es un estándar excelente en la industria, el vendor tiene experiencia demostrada en IA, y el equipo de soporte podría beneficiarse inmediatamente de la automatización" },
+      { id: "b", text: "Hacer preguntas críticas: ¿Cómo se midió el 95%? ¿Cuál es el costo del 5% de errores? ¿Se entrenó con datos similares a los nuestros? ¿Cómo se mantiene cuando cambian categorías? ¿El ROI justifica el riesgo?" },
+      { id: "c", text: "Rechazar la propuesta documentando que las soluciones de IA para clasificación de texto aún no están lo suficientemente maduras para nuestro contexto específico de soporte técnico con terminología especializada" },
+      { id: "d", text: "Proponer un piloto controlado de 30 días con un subset de tickets para evaluar el rendimiento real del modelo en nuestro contexto antes de tomar una decisión definitiva sobre la implementación completa" }
+    ],
+    correctAnswer: "b",
+    explanation: "Antes de adoptar tecnología, un BA hace preguntas críticas: ¿Las métricas del vendor son comparables a nuestro contexto? ¿Cuál es el costo del error? ¿El ahorro justifica el costo + riesgo? Un piloto es bueno pero DESPUÉS de entender estas preguntas. 95% suena bien, pero si el 5% de errores causa escalaciones costosas, puede no valer la pena."
+  },
+
+  // Tema 10: Casos con datos incompletos o ambiguos
+  {
+    id: 268,
+    title: "Tomar decisión con información incompleta",
+    category: "Datos Incompletos",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Tienes que decidir el orden de migración de 4 módulos legacy. No tienes métricas de uso de todos, y los usuarios de 2 módulos no responden encuestas. ¿Cómo procedes?",
+    code: `Módulos a migrar (información disponible):
+
+Módulo A - Facturación
+├── Usuarios activos: 150 (dato confirmado)
+├── Incidentes/mes: 12
+└── Urgencia usuario: Alta (encuesta)
+
+Módulo B - Inventario  
+├── Usuarios activos: ??? (sistema no trackea)
+├── Incidentes/mes: 3
+└── Urgencia usuario: ??? (no responden)
+
+Módulo C - Reportes
+├── Usuarios activos: 45 (dato confirmado)
+├── Incidentes/mes: 25
+└── Urgencia usuario: Media (encuesta)
+
+Módulo D - RRHH
+├── Usuarios activos: ??? (sistema no trackea)
+├── Incidentes/mes: 1
+└── Urgencia usuario: ??? (no responden)
+
+Deadline: Decidir orden de migración hoy`,
+    options: [
+      { id: "a", text: "Posponer la decisión hasta obtener todos los datos faltantes de los módulos B y D, solicitando a TI que implemente tracking de usuarios y enviando recordatorios urgentes a los usuarios para completar las encuestas" },
+      { id: "b", text: "Usar datos proxy para B y D (logs de servidor, entrevistas rápidas con usuarios clave), documentar suposiciones explícitamente, proponer orden tentativo (A por urgencia, C por incidentes) con checkpoints de revalidación" },
+      { id: "c", text: "Migrar los módulos en orden alfabético (A, B, C, D) para mantener objetividad y evitar sesgos en la priorización, ya que no tenemos información completa para tomar una decisión basada en datos" },
+      { id: "d", text: "Delegar la decisión completa al equipo técnico de infraestructura porque ellos conocen la complejidad técnica de cada módulo y pueden determinar el orden óptimo basándose en dependencias del sistema" }
+    ],
+    correctAnswer: "b",
+    explanation: "En la realidad, nunca tienes información perfecta. Un BA senior busca datos proxy cuando los directos no existen, hace suposiciones EXPLÍCITAS y las documenta, toma decisiones con la mejor información disponible, y establece checkpoints para revalidar. Posponer indefinidamente no es opción cuando hay deadline."
+  },
+  {
+    id: 269,
+    title: "Requisito ambiguo del cliente",
+    category: "Datos Incompletos",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "El cliente dice: 'El sistema debe ser seguro'. Tienes una reunión en 2 horas para definir los requisitos de seguridad. No tienes tiempo para una investigación exhaustiva. ¿Cómo preparas la reunión?",
+    code: `Información disponible:
+
+Tipo de sistema: E-commerce B2C
+Datos que manejará:
+├── Datos personales (nombre, email, dirección)
+├── Datos de pago (tarjetas)
+└── Historial de compras
+
+Industria: Retail (no regulado específicamente)
+Usuarios esperados: 10,000/mes
+Geografía: Latam (múltiples países)
+
+Tiempo disponible: 2 horas para preparar`,
+    options: [
+      { id: "a", text: "Enviar un email al cliente antes de la reunión pidiéndole que prepare una lista detallada de lo que significa 'seguro' para él, incluyendo ejemplos específicos de funcionalidades de seguridad que espera" },
+      { id: "b", text: "Preparar una checklist estructurada de aspectos de seguridad relevantes (autenticación, encriptación, PCI-DSS para pagos, leyes de datos por país) con preguntas específicas y opciones de nivel para facilitar la conversación" },
+      { id: "c", text: "Proponer al cliente implementar todas las mejores prácticas de seguridad disponibles en el mercado para garantizar la máxima protección posible de los datos de sus usuarios sin comprometer funcionalidad" },
+      { id: "d", text: "Solicitar que el arquitecto de soluciones o el equipo técnico de seguridad participe en la reunión para que ellos definan los requisitos técnicos específicos basándose en estándares de la industria" }
+    ],
+    correctAnswer: "b",
+    explanation: "Cuando un requisito es ambiguo, el BA no llega sin preparación ni pide al cliente que haga su trabajo. Prepara una ESTRUCTURA para la conversación con áreas relevantes para el contexto (e-commerce = PCI-DSS obligatorio), preguntas específicas, y opciones de nivel. Esto transforma 'quiero seguridad' en requisitos concretos y medibles."
   }
 ];
 
@@ -6234,6 +6852,27 @@ const STACK_ASSIGNMENTS = {
   247: ["java"],
   248: ["java"],
   249: ["java"],
+  // ===== Business Analyst (250-269) = 20 preguntas =====
+  250: ["business-analyst"],
+  251: ["business-analyst"],
+  252: ["business-analyst"],
+  253: ["business-analyst"],
+  254: ["business-analyst"],
+  255: ["business-analyst"],
+  256: ["business-analyst"],
+  257: ["business-analyst"],
+  258: ["business-analyst"],
+  259: ["business-analyst"],
+  260: ["business-analyst"],
+  261: ["business-analyst"],
+  262: ["business-analyst"],
+  263: ["business-analyst"],
+  264: ["business-analyst"],
+  265: ["business-analyst"],
+  266: ["business-analyst"],
+  267: ["business-analyst"],
+  268: ["business-analyst"],
+  269: ["business-analyst"],
 };
 
 const DEFAULT_STACK = ["react"];
@@ -6252,7 +6891,7 @@ const shuffleArray = (items = []) => {
   return arr;
 };
 
-function getExercisesByIds(questionIds) {
+export function getExercisesByIds(questionIds) {
   if (!Array.isArray(questionIds) || questionIds.length === 0) {
     return exercises;
   }
@@ -6377,7 +7016,7 @@ export function calculateScore(userAnswers, options = {}) {
     if (correctDisplayId) {
       // Usar el mapeo: la respuesta correcta está en la posición A, B, C, o D
       if (userAnswer === correctDisplayId) {
-        correct++;
+      correct++;
       }
     } else {
       // Fallback: comparación original
@@ -6432,7 +7071,7 @@ export function getDetailedResults(userAnswers, options = {}) {
     const orderedOptions = optionOrder[exercise.id] || exercise.options;
     
     return {
-      ...exercise,
+    ...exercise,
       userAnswer: userAnswer,
       isCorrect: isCorrect,
       correctAnswer: correctDisplayId || exercise.correctAnswer, // Usar el ID mapeado para mostrar

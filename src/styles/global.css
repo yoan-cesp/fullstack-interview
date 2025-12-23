@@ -17,7 +17,7 @@ a {
 .container {
   max-width: 1600px;
   margin: 0 auto;
-  padding: 1.5rem 1rem;
+  padding: 1rem;
 }
 
 .toolbar {
@@ -25,6 +25,7 @@ a {
   color: #f6f8fb;
   display: flex;
   align-items: center;
+  padding: 0.25rem 0;
 }
 
 .toolbar .container {
@@ -32,18 +33,25 @@ a {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+}
+
+.toolbar h1 {
+  font-size: 1.1rem;
+  margin: 0;
 }
 
 .nav-links {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .nav-links a {
   border-bottom: 2px solid transparent;
-  padding-bottom: 0.25rem;
+  padding-bottom: 0.15rem;
 }
 
 .nav-links a:hover,
@@ -54,9 +62,9 @@ a {
 .card {
   background: #fff;
   border-radius: 0.75rem;
-  padding: 1.25rem;
+  padding: 1rem;
   box-shadow: 0 10px 30px rgba(12, 24, 37, 0.08);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .button {
@@ -662,31 +670,36 @@ select:focus {
 }
 
 .exam-config-card {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border-radius: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .exam-config-item {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.15rem;
 }
 
 .exam-config-label {
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #6b7280;
 }
 
 .exam-config-value {
-  font-weight: 700;
+  font-weight: 600;
   color: #111827;
+  font-size: 0.9rem;
 }
 
 .exam-config-note {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: #6b7280;
 }
 
@@ -722,16 +735,28 @@ select:focus {
 
 /* Exercise Page Styles */
 .exercises-container {
-  max-width: 1400px;
+  max-width: 1800px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0.5rem 0.75rem;
+}
+
+/* Ocultar step indicators cuando hay muchas preguntas */
+.exercises-container .step-indicators {
+  display: none;
+}
+
+/* Mostrar step indicators solo cuando hay pocas preguntas */
+@media (min-height: 800px) {
+  .exercises-container .step-indicators {
+    display: flex;
+  }
 }
 
 .progress-bar {
   background: #e5e7eb;
-  height: 8px;
-  border-radius: 4px;
-  margin-bottom: 2rem;
+  height: 6px;
+  border-radius: 3px;
+  margin-bottom: 0.75rem;
   overflow: hidden;
 }
 
@@ -744,13 +769,13 @@ select:focus {
 /* Timer Styles */
 .timer-container {
   background: #fff;
-  border-radius: 0.75rem;
-  padding: 1rem 1.5rem;
-  box-shadow: 0 4px 15px rgba(12, 24, 37, 0.1);
-  margin-bottom: 1.5rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 2px 8px rgba(12, 24, 37, 0.08);
+  margin-bottom: 0.75rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   border: 2px solid transparent;
   transition: all 0.3s ease;
 }
@@ -788,7 +813,7 @@ select:focus {
 }
 
 .timer-icon {
-  font-size: 2rem;
+  font-size: 1.5rem;
   animation: tick 1s ease-in-out infinite;
 }
 
@@ -804,18 +829,19 @@ select:focus {
 .timer-text {
   flex: 1;
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .timer-label {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: #52606d;
   font-weight: 600;
 }
 
 .timer-value {
-  font-size: 1.75rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #1f2933;
   font-family: 'Courier New', monospace;
@@ -863,21 +889,22 @@ select:focus {
 .exercise-main {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: start;
 }
 
 .exercise-left {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.75rem;
 }
 
 .exercise-right {
   position: sticky;
-  top: 1rem;
+  top: 0.5rem;
   height: fit-content;
-  max-height: calc(100vh - 250px);
+  max-height: calc(100vh - 180px);
 }
 
 .exercise-right .code-card {
@@ -885,8 +912,9 @@ select:focus {
 }
 
 .exercise-right .code-block {
-  max-height: calc(100vh - 350px);
+  max-height: calc(100vh - 280px);
   overflow-y: auto;
+  font-size: 0.8rem;
 }
 
 .exercise-header {
@@ -894,8 +922,8 @@ select:focus {
 }
 
 .exercise-header h2 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.375rem;
+  margin: 0 0 0.25rem 0;
+  font-size: 1.1rem;
   color: #1f2933;
   line-height: 1.3;
 }
@@ -904,13 +932,13 @@ select:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.35rem;
 }
 
 .exercise-number {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #52606d;
   font-weight: 600;
 }
@@ -922,9 +950,9 @@ select:focus {
 }
 
 .badge {
-  padding: 0.25rem 0.75rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 1rem;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
@@ -949,54 +977,56 @@ select:focus {
 }
 
 .exercise-question {
-  font-size: 1.0rem;
+  font-size: 0.9rem;
   color: #52606d;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
   margin-bottom: 0;
+  line-height: 1.4;
 }
 
 .code-card {
   margin-bottom: 0;
+  padding: 0.75rem;
 }
 
 .code-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .code-language {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: #52606d;
   font-weight: 600;
 }
 
 .btn-copy {
-  background: #e5e7eb;
+  background:rgb(119, 121, 125);
   border: none;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 0.35rem;
   cursor: pointer;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   transition: background 0.2s ease;
 }
 
 .btn-copy:hover {
-  background: #d1d5db;
+  background: #1e293b;
 }
 
 .code-block {
   background: #1e293b;
   color: #e2e8f0;
-  padding: 1rem;
-  border-radius: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 0.35rem;
   overflow-x: auto;
   font-family: 'Courier New', Courier, monospace;
-  font-size: 0.85rem;
-  line-height: 1.5;
+  font-size: 0.75rem;
+  line-height: 1.4;
   margin: 0;
 }
 
@@ -1006,28 +1036,29 @@ select:focus {
 
 .options-card {
   margin-bottom: 0;
+  padding: 0.75rem;
 }
 
 .options-card h3 {
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.35rem 0;
   color: #1f2933;
-  font-size: 1.0625rem;
+  font-size: 0.9rem;
 }
 
 .options-list {
   display: flex;
   flex-direction: column;
-  gap: 0.625rem;
-  margin-top: 0.75rem;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
 }
 
 .option-item {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.875rem;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
   border: 2px solid #e5e7eb;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -1045,36 +1076,42 @@ select:focus {
 .option-item input[type="radio"] {
   width: auto;
   margin: 0;
+  margin-top: 0.1rem;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .option-label {
   font-weight: 700;
   color: #1f7a8c;
-  min-width: 30px;
+  min-width: 20px;
+  font-size: 0.85rem;
+  flex-shrink: 0;
 }
 
 .option-text {
   flex: 1;
   color: #1f2933;
+  font-size: 0.85rem;
+  line-height: 1.4;
 }
 
 .exercise-navigation {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   justify-content: space-between;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   flex-wrap: wrap;
 }
 
 .btn-nav {
-  padding: 0.75rem 1.5rem;
+  padding: 0.6rem 1.25rem;
   border: none;
   border-radius: 0.5rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 .btn-nav--primary {
@@ -1115,14 +1152,19 @@ select:focus {
 
 .step-indicators {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.25rem;
   justify-content: center;
   flex-wrap: wrap;
+  padding: 0.5rem;
+  background: #f8fafc;
+  border-radius: 0.5rem;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 .step-indicator {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #e5e7eb;
   cursor: pointer;
@@ -1131,12 +1173,12 @@ select:focus {
 
 .step-indicator:hover {
   background: #d1d5db;
-  transform: scale(1.2);
+  transform: scale(1.15);
 }
 
 .step-indicator--active {
   background: #1f7a8c;
-  transform: scale(1.3);
+  transform: scale(1.2);
 }
 
 .step-indicator--completed {
@@ -1417,36 +1459,106 @@ select:focus {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 0.75rem;
+  padding: 0.75rem 1rem;
   border: 2px solid #e5e7eb;
   border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  position: relative;
+  flex-wrap: wrap;
 }
 
-.answer-option--user {
+/* Respuesta incorrecta del usuario - BORDE ROJO */
+.answer-option--wrong {
   border-color: #ef4444;
-  background: #fef2f2;
+  border-width: 3px;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
 }
 
+.answer-option--wrong .answer-label {
+  background: #ef4444;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* Respuesta correcta - BORDE VERDE */
 .answer-option--correct {
   border-color: #10b981;
-  background: #ecfdf5;
+  border-width: 3px;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
 }
 
-.answer-option--user.answer-option--correct {
+.answer-option--correct .answer-label {
+  background: #10b981;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* Cuando el usuario acertó */
+.answer-option--user-correct {
   border-color: #10b981;
-  background: #ecfdf5;
+  border-width: 3px;
+  background: linear-gradient(135deg, #ecfdf5 0%, #a7f3d0 100%);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
 }
 
 .answer-label {
   font-weight: 700;
   color: #1f7a8c;
   min-width: 30px;
+  text-align: center;
 }
 
 .answer-text {
   flex: 1;
 }
 
+/* Indicadores de respuesta */
+.answer-indicators {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.answer-indicator {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  white-space: nowrap;
+}
+
+.answer-indicator--wrong {
+  background: #fecaca;
+  color: #991b1b;
+}
+
+.answer-indicator--correct {
+  background: #a7f3d0;
+  color: #065f46;
+}
+
+.answer-indicator--user-correct {
+  background: #6ee7b7;
+  color: #064e3b;
+  display: none;
+}
+
+/* Si el usuario acertó, mostrar solo el indicador de "¡Acertaste!" */
+.answer-option--user-correct .answer-indicator--correct {
+  display: none;
+}
+
+.answer-option--user-correct .answer-indicator--user-correct {
+  display: inline-block;
+}
+
+/* Legacy - mantener compatibilidad */
 .answer-badge {
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
@@ -1509,7 +1621,31 @@ select:focus {
   flex: 1;
 }
 
-@media (max-width: 1200px) {
+/* Pantallas grandes - layout horizontal compacto */
+@media (min-width: 1201px) {
+  .exercise-main {
+    grid-template-columns: 55% 45%;
+  }
+}
+
+/* Pantallas medianas - ajustar proporciones */
+@media (max-width: 1400px) and (min-width: 1001px) {
+  .exercise-main {
+    grid-template-columns: 50% 50%;
+    gap: 0.75rem;
+  }
+  
+  .exercise-right .code-block {
+    max-height: calc(100vh - 250px);
+    font-size: 0.7rem;
+  }
+  
+  .option-text {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 1000px) {
   .exercise-main {
     grid-template-columns: 1fr;
   }
@@ -1517,10 +1653,11 @@ select:focus {
   .exercise-right {
     position: static;
     max-height: none;
+    order: -1; /* Código primero en móvil */
   }
   
   .exercise-right .code-block {
-    max-height: 500px;
+    max-height: 250px;
   }
 }
 
@@ -1529,14 +1666,18 @@ select:focus {
     padding: 0 0.5rem;
   }
   
+  .container {
+    padding: 0.5rem;
+  }
+  
   .timer-container {
-    flex-direction: column;
-    align-items: stretch;
-    text-align: center;
+    padding: 0.4rem 0.75rem;
   }
   
   .timer-text {
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
   }
   
   .timer-bar {
@@ -1554,6 +1695,7 @@ select:focus {
   
   .btn-nav {
     width: 100%;
+    padding: 0.75rem;
   }
   
   .result-header {
@@ -1567,7 +1709,24 @@ select:focus {
   }
   
   .exercise-right .code-block {
-    max-height: 400px;
+    max-height: 200px;
+    font-size: 0.7rem;
+  }
+  
+  .option-item {
+    padding: 0.5rem;
+  }
+  
+  .option-text {
+    font-size: 0.8rem;
+  }
+  
+  .exercise-header h2 {
+    font-size: 1rem;
+  }
+  
+  .exercise-question {
+    font-size: 0.85rem;
   }
 }
 
@@ -1956,5 +2115,195 @@ select:focus {
   .monitor-footer {
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+/* ==================== MODO CONSULTA ==================== */
+.review-mode-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 12px;
+  color: white;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  flex-wrap: wrap;
+}
+
+.review-mode-icon {
+  font-size: 1.5rem;
+}
+
+.review-mode-text {
+  font-weight: 600;
+  flex: 1;
+}
+
+.btn-back-results {
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-back-results:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Opciones en modo consulta */
+.option-item--correct {
+  border-color: #10b981 !important;
+  border-width: 3px !important;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.option-item--correct .option-label {
+  background: #10b981;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.option-item--wrong {
+  border-color: #ef4444 !important;
+  border-width: 3px !important;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.option-item--wrong .option-label {
+  background: #ef4444;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.option-item--user-correct {
+  border-color: #10b981 !important;
+  border-width: 3px !important;
+  background: linear-gradient(135deg, #ecfdf5 0%, #a7f3d0 100%) !important;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
+}
+
+/* Indicadores de opción */
+.option-indicators {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.option-indicator {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  white-space: nowrap;
+}
+
+.option-indicator--wrong {
+  background: #fecaca;
+  color: #991b1b;
+}
+
+.option-indicator--correct {
+  background: #a7f3d0;
+  color: #065f46;
+}
+
+.option-indicator--user-correct {
+  background: #6ee7b7;
+  color: #064e3b;
+  display: none;
+}
+
+.option-item--user-correct .option-indicator--correct {
+  display: none;
+}
+
+.option-item--user-correct .option-indicator--user-correct {
+  display: inline-block;
+}
+
+/* Explicación en modo consulta */
+.review-explanation {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 12px;
+  border-left: 4px solid #0ea5e9;
+}
+
+.review-explanation h4 {
+  margin: 0 0 0.5rem 0;
+  color: #0369a1;
+  font-size: 1rem;
+}
+
+.review-explanation p {
+  margin: 0;
+  color: #334155;
+  line-height: 1.6;
+}
+
+/* Timeout en modo consulta */
+.review-timeout {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: #fef3c7;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #92400e;
+  font-weight: 500;
+}
+
+.review-timeout .timeout-icon {
+  font-size: 1.25rem;
+}
+
+/* Botón de peligro (reiniciar) */
+.button--danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.button--danger:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+/* Deshabilitar opciones en modo consulta */
+.option-item input[disabled] {
+  cursor: default;
+}
+
+.option-item input[disabled] + .option-label {
+  cursor: default;
+}
+
+@media (max-width: 768px) {
+  .review-mode-banner {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+  
+  .btn-back-results {
+    width: 100%;
+  }
+  
+  .option-indicators {
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+    margin-left: 0;
   }
 }

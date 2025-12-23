@@ -11,7 +11,7 @@ const FALLBACK_CONFIG = {
   questionCount: getQuestionTargetByStacks(FALLBACK_STACKS),
 };
 
-function NuevosResultados() {
+function Results() {
   const [answers, setAnswers] = useState({});
   const [score, setScore] = useState(null);
   const [results, setResults] = useState([]);
@@ -45,7 +45,7 @@ function NuevosResultados() {
           // Intentar parsear como JSON primero
           try {
             questionIds = JSON.parse(savedQuestionSet);
-          } catch {
+      } catch {
             // Si falla, intentar como string separado por comas (compatibilidad con versiones antiguas)
             const idsAsString = savedQuestionSet.trim();
             if (idsAsString) {
@@ -84,6 +84,9 @@ function NuevosResultados() {
     if (window.confirm('¿Estás seguro de que quieres reiniciar el examen? Se perderán todas tus respuestas.')) {
       localStorage.removeItem('interview-answers');
       localStorage.removeItem('interview-question-set');
+      localStorage.removeItem('interview-question-set-key');
+      localStorage.removeItem('correct-answer-map');
+      localStorage.removeItem('option-order');
       setAnswers({});
       setScore(null);
       setResults([]);
@@ -135,7 +138,7 @@ function NuevosResultados() {
         <div className="card">
           <h2>📊 Resultados</h2>
           <p>No hay resultados disponibles todavía.</p>
-          <Link to="/ejercicios" className="button">
+          <Link to="/exercises" className="button">
             Comenzar ejercicios
           </Link>
         </div>
@@ -227,12 +230,12 @@ function NuevosResultados() {
           </div>
         </div>
         <div className="score-actions">
-          <button className="button" onClick={handleReset}>
+          <Link to="/exercises?review=true" className="button secondary">
+            📖 Revisar Preguntas
+          </Link>
+          <button className="button button--danger" onClick={handleReset}>
             🔄 Reiniciar Examen
           </button>
-          <Link to="/ejercicios" className="button secondary">
-            📝 Revisar Preguntas
-          </Link>
         </div>
       </div>
 
@@ -304,16 +307,28 @@ function NuevosResultados() {
                     {result.options.map((option) => {
                       const isUserAnswer = option.id === result.userAnswer;
                       const isCorrectAnswer = option.id === result.correctAnswer;
+                      const isUserWrong = isUserAnswer && !isCorrectAnswer && !isTimeout;
+                      
+                      let optionClass = 'answer-option';
+                      if (isCorrectAnswer) {
+                        optionClass += ' answer-option--correct';
+                      }
+                      if (isUserWrong) {
+                        optionClass += ' answer-option--wrong';
+                      }
+                      if (isUserAnswer && isCorrectAnswer) {
+                        optionClass += ' answer-option--user-correct';
+                      }
                       
                       return (
-                        <div
-                          key={option.id}
-                          className={`answer-option ${isUserAnswer && !isTimeout ? 'answer-option--user' : ''} ${isCorrectAnswer ? 'answer-option--correct' : ''}`}
-                        >
+                        <div key={option.id} className={optionClass}>
                           <span className="answer-label">{option.id.toUpperCase()}</span>
                           <span className="answer-text">{option.text}</span>
-                          {isUserAnswer && !isCorrectAnswer && !isTimeout && <span className="answer-badge">Tu respuesta</span>}
-                          {isCorrectAnswer && <span className="answer-badge answer-badge--correct">Correcta</span>}
+                          <div className="answer-indicators">
+                            {isUserWrong && <span className="answer-indicator answer-indicator--wrong">❌ Tu respuesta</span>}
+                            {isCorrectAnswer && <span className="answer-indicator answer-indicator--correct">✅ Correcta</span>}
+                            {isUserAnswer && isCorrectAnswer && <span className="answer-indicator answer-indicator--user-correct">🎉 ¡Acertaste!</span>}
+                          </div>
                         </div>
                       );
                     })}
@@ -344,4 +359,4 @@ function NuevosResultados() {
   );
 }
 
-export default NuevosResultados;
+export default Results;

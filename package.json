@@ -3,7 +3,18 @@
   "version": "1.0.0",
   "type": "module",
   "private": true,
-  "description": "Sistema de evaluación técnica interactivo - React, Node.js, Git, CSS y AWS",
+  "description": "Sistema de evaluación técnica interactivo - React, Node.js, Git, CSS, AWS, QA, Arquitectura, Business Analyst",
+  "author": "Yoan Cespedes Williams",
+  "email": "yoan.cesp@gmail.com",
+  "url": "https://github.com/yoan-cesp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yoan-cesp/fullstack-interview.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yoan-cesp/fullstack-interview/issues"
+  },
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -18,6 +29,10 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.1.0",
+    "eslint": "^9.22.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "prettier": "^3.5.3",
     "vite": "^7.1.12"
   },
   "keywords": [
@@ -28,7 +43,5 @@
     "quiz",
     "evaluation",
     "stackblitz"
-  ],
-  "author": "",
-  "license": "MIT"
+  ]
 }

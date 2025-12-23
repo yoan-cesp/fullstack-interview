@@ -100,6 +100,13 @@ export const TECH_STACKS = [
     description: "Hibernate ORM, Spring Framework, Beans, JPA, Annotations y patrones enterprise.",
     focus: "Backend enterprise con Spring y persistencia ORM.",
   },
+  {
+    id: "business-analyst",
+    label: "Business Analyst",
+    icon: "📊",
+    description: "Requisitos, stakeholders, KPIs, priorización MoSCoW, análisis de procesos y comunicación técnica.",
+    focus: "Traducción de negocio a soluciones técnicas y toma de decisiones.",
+  },
 ];
 
 export const STACK_DICTIONARY = TECH_STACKS.reduce((acc, stack) => {

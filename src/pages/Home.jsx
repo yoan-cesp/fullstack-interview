@@ -73,7 +73,7 @@ function Home() {
         setFormError("Error al crear sesión. Por favor, intenta de nuevo.");
       });
     } else {
-      navigate("/ejercicios");
+    navigate("/exercises");
     }
   };
 
@@ -118,56 +118,56 @@ function Home() {
         <p>
           Crea una sesión con ID único para monitorear en tiempo real las respuestas del candidato.
           Comparte la URL con el candidato y observa su progreso desde el dashboard.
-        </p>
+          </p>
         
         {!createdSessionId ? (
           <>
-            <div className="home-config-section">
-              <h4>Stacks disponibles</h4>
-              <div className="stack-grid">
-                {TECH_STACKS.map((stack) => {
-                  const isSelected = selectedStacks.includes(stack.id);
-                  return (
-                    <button
-                      type="button"
-                      key={stack.id}
-                      className={`stack-chip ${isSelected ? "stack-chip--selected" : ""}`}
-                      onClick={() => toggleStack(stack.id)}
-                      aria-pressed={isSelected}
-                    >
-                      <div className="stack-chip__icon">{stack.icon}</div>
-                      <div className="stack-chip__body">
-                        <span className="stack-chip__title">{stack.label}</span>
-                        <span className="stack-chip__desc">{stack.description}</span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+        <div className="home-config-section">
+          <h4>Stacks disponibles</h4>
+          <div className="stack-grid">
+            {TECH_STACKS.map((stack) => {
+              const isSelected = selectedStacks.includes(stack.id);
+              return (
+                <button
+                  type="button"
+                  key={stack.id}
+                  className={`stack-chip ${isSelected ? "stack-chip--selected" : ""}`}
+                  onClick={() => toggleStack(stack.id)}
+                  aria-pressed={isSelected}
+                >
+                  <div className="stack-chip__icon">{stack.icon}</div>
+                  <div className="stack-chip__body">
+                    <span className="stack-chip__title">{stack.label}</span>
+                    <span className="stack-chip__desc">{stack.description}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-            <div className="home-config-section">
-              <h4>Nivel del candidato</h4>
-              <div className="level-grid">
-                {LEVELS.map((level) => (
-                  <label
-                    key={level.id}
-                    className={`level-card ${selectedLevel === level.id ? "level-card--active" : ""}`}
-                  >
-                    <input
-                      type="radio"
-                      name="candidate-level"
-                      value={level.id}
-                      checked={selectedLevel === level.id}
-                      onChange={() => handleLevelChange(level.id)}
-                    />
-                    <div>
-                      <strong>{level.label}</strong>
-                      <p>{level.description}</p>
-                    </div>
-                  </label>
-                ))}
-              </div>
+        <div className="home-config-section">
+          <h4>Nivel del candidato</h4>
+          <div className="level-grid">
+            {LEVELS.map((level) => (
+              <label
+                key={level.id}
+                className={`level-card ${selectedLevel === level.id ? "level-card--active" : ""}`}
+              >
+                <input
+                  type="radio"
+                  name="candidate-level"
+                  value={level.id}
+                  checked={selectedLevel === level.id}
+                  onChange={() => handleLevelChange(level.id)}
+                />
+                <div>
+                  <strong>{level.label}</strong>
+                  <p>{level.description}</p>
+                </div>
+              </label>
+            ))}
+          </div>
             </div>
 
             {formError && <p className="form-error">{formError}</p>}
@@ -262,34 +262,34 @@ function Home() {
             <p>
               Si prefieres hacer el test sin monitoreo en tiempo real, usa esta opción.
             </p>
-          </div>
+        </div>
 
-          <div className="home-config-summary">
-            <div>
-              <strong>Stacks seleccionados:</strong>
-              <p>
-                {selectedStackDetails.length
-                  ? selectedStackDetails.map((stack) => stack.label).join(", ")
-                  : "Selecciona al menos una tecnología"}
-              </p>
-            </div>
-            <div>
-              <strong>Nivel objetivo:</strong>
-              <p>{levelInfo?.label}</p>
-            </div>
-            <div>
-              <strong>Preguntas:</strong>
+        <div className="home-config-summary">
+          <div>
+            <strong>Stacks seleccionados:</strong>
+            <p>
+              {selectedStackDetails.length
+                ? selectedStackDetails.map((stack) => stack.label).join(", ")
+                : "Selecciona al menos una tecnología"}
+            </p>
+          </div>
+          <div>
+            <strong>Nivel objetivo:</strong>
+            <p>{levelInfo?.label}</p>
+          </div>
+          <div>
+            <strong>Preguntas:</strong>
               <p>{questionTarget} ejercicios</p>
             </div>
           </div>
 
-          <button
-            type="button"
+        <button
+          type="button"
             className="home-card__button home-card__button--secondary"
             onClick={() => handleStart(false)}
-          >
+        >
             Iniciar evaluación sin monitoreo →
-          </button>
+        </button>
         </div>
       )}
 
@@ -325,7 +325,7 @@ function Home() {
           </ul>
         </div>
 
-        <Link to="/respuestas" className="home-card home-card--secondary">
+        <Link to="/results" className="home-card home-card--secondary">
           <div className="home-card__icon">📊</div>
           <h3>Ver Resultados</h3>
           <p>Revisa tus respuestas y aprende de las explicaciones</p>
