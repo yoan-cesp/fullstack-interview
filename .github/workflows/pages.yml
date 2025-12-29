@@ -17,6 +17,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: github-pages
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,6 +30,20 @@ jobs:
       
       - name: Install dependencies
         run: npm ci
+      
+      - name: Debug - Verificar secrets (GitHub oculta valores reales)
+        run: |
+          echo "=== Verificando variables de Firebase ==="
+          echo "VITE_FIREBASE_API_KEY está definida: ${{ secrets.VITE_FIREBASE_API_KEY != '' }}"
+          echo "VITE_FIREBASE_AUTH_DOMAIN está definida: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN != '' }}"
+          echo "VITE_FIREBASE_DATABASE_URL está definida: ${{ secrets.VITE_FIREBASE_DATABASE_URL != '' }}"
+          echo "VITE_FIREBASE_PROJECT_ID está definida: ${{ secrets.VITE_FIREBASE_PROJECT_ID != '' }}"
+          echo "VITE_FIREBASE_STORAGE_BUCKET está definida: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET != '' }}"
+          echo "VITE_FIREBASE_MESSAGING_SENDER_ID está definida: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID != '' }}"
+          echo "VITE_FIREBASE_APP_ID está definida: ${{ secrets.VITE_FIREBASE_APP_ID != '' }}"
+          echo "=== Longitud de API_KEY: ${#VITE_FIREBASE_API_KEY} caracteres ==="
+        env:
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
       
       - name: Build
         run: npm run build
