@@ -3,6 +3,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { buildQuestionSet, getExercisesByIds } from "../data/exercises";
 import { TECH_STACKS, STACK_DICTIONARY, LEVEL_DICTIONARY, LEVELS, getQuestionTargetByStacks } from "../data/stackConfig.js";
 import { useSessionBroadcast } from "../hooks/useSessionBroadcast.js";
+import { getSessionConfig } from "../utils/firebaseSession.js";
 
 const DEFAULT_STACKS = [TECH_STACKS[0].id];
 
@@ -26,10 +27,51 @@ const hydrateConfig = () => {
   }
 };
 
+// Componente de loading mientras se carga la configuración remota
+function LoadingSession({ sessionId }) {
+  return (
+    <section className="card loading-session">
+      <div className="loading-spinner"></div>
+      <h2>🔄 Cargando Test...</h2>
+      <p>Obteniendo configuración de la sesión <strong>{sessionId}</strong></p>
+      <p className="loading-note">Esto puede tomar unos segundos...</p>
+    </section>
+  );
+}
+
+// Componente de error si no se puede cargar la sesión
+function SessionError({ sessionId, onRetry }) {
+  return (
+    <section className="card session-error">
+      <h2>⚠️ Error al Cargar Sesión</h2>
+      <p>No se pudo cargar la configuración de la sesión <strong>{sessionId}</strong></p>
+      <p>Esto puede deberse a:</p>
+      <ul>
+        <li>El ID de sesión no existe o expiró</li>
+        <li>Problemas de conexión a internet</li>
+        <li>La sesión fue creada sin configuración</li>
+      </ul>
+      <div className="session-error-actions">
+        <button className="button" onClick={onRetry}>
+          🔄 Reintentar
+        </button>
+        <a href="/" className="button button-secondary">
+          ← Volver al Inicio
+        </a>
+      </div>
+    </section>
+  );
+}
+
 function Exercises() {
   const navigate = useNavigate();
   const { sessionId } = useParams(); // Obtener sessionId de la URL si existe
   const [searchParams] = useSearchParams();
+  
+  // Estados para manejar carga de sesión remota
+  const [isLoadingSession, setIsLoadingSession] = useState(!!sessionId);
+  const [sessionLoadError, setSessionLoadError] = useState(false);
+  const [remoteConfigLoaded, setRemoteConfigLoaded] = useState(false);
   
   // Detectar modo consulta (review=true en la URL)
   const isReviewMode = searchParams.get('review') === 'true';
@@ -64,6 +106,8 @@ function Exercises() {
   const [evaluationConfig, setEvaluationConfig] = useState(() => hydrateConfig());
   const [questionSet, setQuestionSet] = useState(() => {
     if (reviewData) return reviewData.questionSet;
+    // Si hay sessionId, inicializar vacío hasta cargar desde Firebase
+    if (sessionId) return [];
     return buildQuestionSet(hydrateConfig());
   });
   const [currentStep, setCurrentStep] = useState(0);
@@ -109,41 +153,137 @@ function Exercises() {
   const shortage =
     targetQuestionCount && questionSet.length < targetQuestionCount;
 
-  // Efecto para manejar sessionId en la URL
+  // Efecto para cargar configuración desde Firebase cuando hay sessionId
   useEffect(() => {
-    if (sessionId) {
-      const config = hydrateConfig();
-      config.sessionId = sessionId;
-      const questions = buildQuestionSet(config);
-      setEvaluationConfig(config);
-      setQuestionSet(questions);
-      
-      // Emitir evento de inicio de test si hay sesión (solo una vez)
-      if (emit) {
-        console.log('📤 Emitiendo inicio de test, sessionId:', sessionId);
-        // Múltiples intentos para asegurar que el monitor reciba el mensaje
-        const emitStart = () => {
-          emit({
-            status: 'in_progress',
-            currentQuestion: 1,
-            currentQuestionId: questions[0]?.id || null,
-            totalQuestions: questions.length,
-            config: config,
-            answers: {},
-            timeLeft: questions[0]?.timeLimit || 0,
-            progress: 0,
-            timestamp: Date.now()
-          });
-        };
-        
-        // Emitir inmediatamente
-        emitStart();
-        
-        // Y también después de un delay por si el monitor aún no está listo
-        setTimeout(emitStart, 500);
-        setTimeout(emitStart, 1000);
-      }
+    if (!sessionId) {
+      setIsLoadingSession(false);
+      return;
     }
+    
+    let isMounted = true;
+    
+    const loadRemoteConfig = async () => {
+      console.log('🔄 Cargando configuración remota para sesión:', sessionId);
+      setIsLoadingSession(true);
+      setSessionLoadError(false);
+      
+      try {
+        const remoteConfig = await getSessionConfig(sessionId);
+        
+        if (!isMounted) return;
+        
+        if (remoteConfig && remoteConfig.questionIds && remoteConfig.questionIds.length > 0) {
+          console.log('✅ Configuración remota cargada:', remoteConfig);
+          
+          // Usar los IDs exactos de las preguntas del entrevistador
+          const questions = getExercisesByIds(remoteConfig.questionIds);
+          
+          if (questions.length === 0) {
+            console.error('❌ No se encontraron preguntas con los IDs:', remoteConfig.questionIds);
+            setSessionLoadError(true);
+            setIsLoadingSession(false);
+            return;
+          }
+          
+          const config = {
+            stacks: remoteConfig.stacks || [],
+            level: remoteConfig.level || 'intermedio',
+            questionCount: remoteConfig.questionCount || questions.length,
+            sessionId: sessionId
+          };
+          
+          // Guardar en localStorage para que funcione igual que antes
+          localStorage.setItem("interview-config", JSON.stringify(config));
+          localStorage.setItem("interview-question-set", JSON.stringify(remoteConfig.questionIds));
+          
+          // Usar el orden de opciones del entrevistador si existe
+          if (remoteConfig.optionOrder && Object.keys(remoteConfig.optionOrder).length > 0) {
+            setOptionOrder(remoteConfig.optionOrder);
+            localStorage.setItem("option-order", JSON.stringify(remoteConfig.optionOrder));
+          }
+          
+          // Usar el mapeo de respuestas correctas del entrevistador
+          if (remoteConfig.correctAnswerMap && Object.keys(remoteConfig.correctAnswerMap).length > 0) {
+            setCorrectAnswerMap(remoteConfig.correctAnswerMap);
+            localStorage.setItem("correct-answer-map", JSON.stringify(remoteConfig.correctAnswerMap));
+          }
+          
+          // Limpiar respuestas anteriores para nueva sesión
+          localStorage.removeItem("interview-answers");
+          setAnswers({});
+          
+          setEvaluationConfig(config);
+          setQuestionSet(questions);
+          setCurrentStep(0);
+          setRemoteConfigLoaded(true);
+          setIsLoadingSession(false);
+          
+          // Emitir evento de inicio de test
+          console.log('📤 Emitiendo inicio de test, sessionId:', sessionId);
+          const emitStart = () => {
+            emit({
+              status: 'in_progress',
+              currentQuestion: 1,
+              currentQuestionId: questions[0]?.id || null,
+              totalQuestions: questions.length,
+              config: config,
+              answers: {},
+              timeLeft: questions[0]?.timeLimit || 0,
+              progress: 0,
+              timestamp: Date.now()
+            });
+          };
+          
+          // Emitir inmediatamente y con delays
+          emitStart();
+          setTimeout(emitStart, 500);
+          setTimeout(emitStart, 1500);
+          setTimeout(emitStart, 3000);
+          
+        } else {
+          console.warn('⚠️ No hay configuración remota, usando fallback local');
+          // Fallback: usar configuración local (para compatibilidad hacia atrás)
+          const config = hydrateConfig();
+          config.sessionId = sessionId;
+          const questions = buildQuestionSet(config);
+          
+          setEvaluationConfig(config);
+          setQuestionSet(questions);
+          setIsLoadingSession(false);
+          
+          // Emitir evento de inicio
+          const emitStart = () => {
+            emit({
+              status: 'in_progress',
+              currentQuestion: 1,
+              currentQuestionId: questions[0]?.id || null,
+              totalQuestions: questions.length,
+              config: config,
+              answers: {},
+              timeLeft: questions[0]?.timeLimit || 0,
+              progress: 0,
+              timestamp: Date.now()
+            });
+          };
+          
+          emitStart();
+          setTimeout(emitStart, 500);
+          setTimeout(emitStart, 1500);
+        }
+      } catch (error) {
+        console.error('❌ Error cargando configuración remota:', error);
+        if (isMounted) {
+          setSessionLoadError(true);
+          setIsLoadingSession(false);
+        }
+      }
+    };
+    
+    loadRemoteConfig();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [sessionId]); // Solo se ejecuta si hay sessionId
 
   // Crear un identificador único basado en los IDs del questionSet
@@ -505,6 +645,21 @@ function Exercises() {
         return 'JavaScript (React)';
     }
   };
+
+  // Mostrar loading mientras se carga la sesión remota
+  if (isLoadingSession && sessionId) {
+    return <LoadingSession sessionId={sessionId} />;
+  }
+  
+  // Mostrar error si falló la carga de la sesión
+  if (sessionLoadError && sessionId) {
+    return (
+      <SessionError 
+        sessionId={sessionId} 
+        onRetry={() => window.location.reload()} 
+      />
+    );
+  }
 
   if (!questionSet.length) {
     return (

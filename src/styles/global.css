@@ -2307,3 +2307,100 @@ select:focus {
     margin-left: 0;
   }
 }
+
+/* ====================================
+   Estilos para Loading de Sesión
+   ==================================== */
+
+.loading-session {
+  text-align: center;
+  padding: 3rem 2rem;
+  max-width: 500px;
+  margin: 2rem auto;
+}
+
+.loading-session h2 {
+  margin-top: 1.5rem;
+  color: #1f7a8c;
+}
+
+.loading-session p {
+  color: #616e7c;
+  margin: 0.5rem 0;
+}
+
+.loading-session .loading-note {
+  font-size: 0.85rem;
+  color: #9aa5b1;
+  margin-top: 1rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e2e8f0;
+  border-top-color: #1f7a8c;
+  border-radius: 50%;
+  margin: 0 auto;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ====================================
+   Estilos para Error de Sesión
+   ==================================== */
+
+.session-error {
+  text-align: center;
+  padding: 2rem;
+  max-width: 500px;
+  margin: 2rem auto;
+  border: 2px solid #fcd34d;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+}
+
+.session-error h2 {
+  color: #b45309;
+  margin-bottom: 1rem;
+}
+
+.session-error p {
+  color: #78350f;
+}
+
+.session-error ul {
+  text-align: left;
+  color: #78350f;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.session-error ul li {
+  margin: 0.5rem 0;
+}
+
+.session-error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.session-error-actions .button {
+  padding: 0.75rem 1.5rem;
+}
+
+.session-error-actions .button-secondary {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.session-error-actions .button-secondary:hover {
+  background: #e5e7eb;
+}

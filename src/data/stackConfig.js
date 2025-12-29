@@ -1,4 +1,4 @@
-export const DEFAULT_QUESTION_COUNT = 20;
+export const DEFAULT_QUESTION_COUNT = 10;
 export const MULTI_STACK_QUESTION_COUNT = 15;
 
 export const LEVELS = [

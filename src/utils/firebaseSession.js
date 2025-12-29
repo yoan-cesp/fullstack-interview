@@ -45,8 +45,14 @@ async function initFirebase() {
  * Genera un ID de sesión único (2 dígitos: 00-99)
  * Verifica en Firebase que no exista antes de retornarlo
  * Si hay más de 100 sesiones activas, usa alfanumérico
+ * 
+ * @param {Object} sessionConfig - Configuración del test a guardar con la sesión
+ * @param {string[]} sessionConfig.stacks - Stacks seleccionados
+ * @param {string} sessionConfig.level - Nivel del test
+ * @param {number} sessionConfig.questionCount - Cantidad de preguntas
+ * @param {number[]} sessionConfig.questionIds - IDs de las preguntas seleccionadas
  */
-export async function generateSessionId() {
+export async function generateSessionId(sessionConfig = null) {
   await initFirebase();
   
   // Función auxiliar para generar un ID aleatorio
@@ -57,6 +63,7 @@ export async function generateSessionId() {
   
   // Si Firebase no está disponible, generar ID simple (modo local)
   if (!firebaseDatabase) {
+    console.warn('⚠️ Firebase no disponible, usando modo local');
     return generateRandomId();
   }
   
@@ -71,6 +78,12 @@ export async function generateSessionId() {
       
       if (!exists) {
         console.log(`✅ ID de sesión único generado: ${candidateId} (intento ${attempt + 1})`);
+        
+        // Si hay configuración, guardarla en Firebase
+        if (sessionConfig) {
+          await saveSessionConfig(candidateId, sessionConfig);
+        }
+        
         return candidateId;
       } else {
         console.log(`⚠️ ID ${candidateId} ya existe, intentando otro...`);
@@ -86,6 +99,72 @@ export async function generateSessionId() {
   console.warn('⚠️ No se pudo generar ID único después de 10 intentos, usando timestamp');
   const timestampId = Date.now().toString().slice(-4); // Últimos 4 dígitos del timestamp
   return timestampId.padStart(2, '0').slice(-2); // Asegurar 2 dígitos
+}
+
+/**
+ * Guarda la configuración de una sesión en Firebase
+ * Esto permite que el candidato reciba exactamente las mismas preguntas
+ */
+async function saveSessionConfig(sessionId, config) {
+  if (!firebaseDatabase) {
+    console.warn('⚠️ Firebase no disponible, no se puede guardar configuración');
+    return;
+  }
+
+  try {
+    const { ref, set, serverTimestamp } = await import('firebase/database');
+    const configRef = ref(firebaseDatabase, `sessions/${sessionId}/config`);
+    
+    const configToSave = {
+      stacks: config.stacks || [],
+      level: config.level || 'intermedio',
+      questionCount: config.questionCount || 20,
+      questionIds: config.questionIds || [],
+      optionOrder: config.optionOrder || {},
+      correctAnswerMap: config.correctAnswerMap || {},
+      createdAt: serverTimestamp()
+    };
+    
+    console.log('💾 Guardando configuración de sesión en Firebase:', configToSave);
+    await set(configRef, configToSave);
+    console.log('✅ Configuración guardada exitosamente');
+  } catch (error) {
+    console.error('❌ Error guardando configuración de sesión:', error);
+    throw error;
+  }
+}
+
+/**
+ * Recupera la configuración de una sesión desde Firebase
+ * @returns {Object|null} La configuración o null si no existe
+ */
+export async function getSessionConfig(sessionId) {
+  await initFirebase();
+  
+  if (!firebaseDatabase) {
+    console.warn('⚠️ Firebase no disponible, no se puede recuperar configuración');
+    return null;
+  }
+
+  try {
+    const { ref, get } = await import('firebase/database');
+    const configRef = ref(firebaseDatabase, `sessions/${sessionId}/config`);
+    
+    console.log('📥 Recuperando configuración de sesión desde Firebase, sessionId:', sessionId);
+    const snapshot = await get(configRef);
+    
+    if (snapshot.exists()) {
+      const config = snapshot.val();
+      console.log('✅ Configuración recuperada:', config);
+      return config;
+    } else {
+      console.log('⚠️ No existe configuración para esta sesión');
+      return null;
+    }
+  } catch (error) {
+    console.error('❌ Error recuperando configuración de sesión:', error);
+    return null;
+  }
 }
 
 /**

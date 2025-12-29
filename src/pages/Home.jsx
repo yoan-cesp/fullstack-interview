@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { TECH_STACKS, LEVELS, DEFAULT_QUESTION_COUNT, MULTI_STACK_QUESTION_COUNT, getQuestionTargetByStacks } from "../data/stackConfig.js";
 import { generateSessionId } from "../utils/firebaseSession.js";
+import { buildQuestionSet } from "../data/exercises.js";
 
 function Home() {
   const navigate = useNavigate();
@@ -61,10 +62,77 @@ function Home() {
     localStorage.removeItem("interview-answers");
     
     if (withSession) {
-      // Crear sesión con ID único para monitoreo
-      generateSessionId().then((sessionId) => {
+      // Generar las preguntas ANTES de crear la sesión
+      // Esto asegura que el candidato reciba exactamente las mismas preguntas
+      const questionSet = buildQuestionSet(config);
+      const questionIds = questionSet.map(q => q.id);
+      
+      // Generar el orden aleatorio de opciones y el mapeo de respuestas correctas
+      const optionOrder = {};
+      const correctAnswerMap = {};
+      
+      questionSet.forEach((exercise) => {
+        const originalOptions = [...exercise.options];
+        const correctAnswerId = exercise.correctAnswer;
+        
+        const correctOption = originalOptions.find(opt => opt.id === correctAnswerId);
+        const otherOptions = originalOptions.filter(opt => opt.id !== correctAnswerId);
+        
+        // Mezclar opciones incorrectas
+        for (let i = otherOptions.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [otherOptions[i], otherOptions[j]] = [otherOptions[j], otherOptions[i]];
+        }
+        
+        // Posición aleatoria para la respuesta correcta
+        const correctPosition = Math.floor(Math.random() * 4);
+        const correctDisplayId = String.fromCharCode(65 + correctPosition);
+        
+        correctAnswerMap[exercise.id] = correctDisplayId;
+        
+        const finalOptions = [];
+        let otherIndex = 0;
+        
+        for (let i = 0; i < 4; i++) {
+          const displayId = String.fromCharCode(65 + i);
+          
+          if (i === correctPosition) {
+            finalOptions.push({
+              ...correctOption,
+              id: displayId,
+              originalId: correctOption.id
+            });
+          } else {
+            finalOptions.push({
+              ...otherOptions[otherIndex],
+              id: displayId,
+              originalId: otherOptions[otherIndex].id
+            });
+            otherIndex++;
+          }
+        }
+        
+        optionOrder[exercise.id] = finalOptions;
+      });
+      
+      // Configuración completa para guardar en Firebase
+      const sessionConfig = {
+        stacks: selectedStacks,
+        level: selectedLevel,
+        questionCount,
+        questionIds, // IDs exactos de las preguntas
+        optionOrder, // Orden de las opciones por pregunta
+        correctAnswerMap // Mapeo de respuestas correctas
+      };
+      
+      // Crear sesión con ID único y guardar configuración
+      generateSessionId(sessionConfig).then((sessionId) => {
         config.sessionId = sessionId;
         localStorage.setItem("interview-config", JSON.stringify(config));
+        // También guardar localmente para cuando el entrevistador haga el test
+        localStorage.setItem("interview-question-set", JSON.stringify(questionIds));
+        localStorage.setItem("option-order", JSON.stringify(optionOrder));
+        localStorage.setItem("correct-answer-map", JSON.stringify(correctAnswerMap));
         setCreatedSessionId(sessionId);
         setFormError(""); // Limpiar errores
         // No navegar inmediatamente, mostrar URL para compartir
@@ -73,7 +141,7 @@ function Home() {
         setFormError("Error al crear sesión. Por favor, intenta de nuevo.");
       });
     } else {
-    navigate("/exercises");
+      navigate("/exercises");
     }
   };
 
