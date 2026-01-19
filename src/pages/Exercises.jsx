@@ -852,7 +852,7 @@ function Exercises() {
         <button
           className="btn-nav btn-nav--secondary"
           onClick={handlePrevious}
-          disabled={currentStep === 0}
+          disabled={!isReviewMode || currentStep === 0}
         >
           ← Anterior
         </button>
