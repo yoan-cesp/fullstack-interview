@@ -1,3 +1,5 @@
+import { DEFAULT_QUESTION_COUNT } from "../data/stackConfig.js";
+
 // Firebase imports - solo se cargan si está disponible
 let firebaseApp = null;
 let firebaseDatabase = null;
@@ -118,7 +120,7 @@ async function saveSessionConfig(sessionId, config) {
     const configToSave = {
       stacks: config.stacks || [],
       level: config.level || 'intermedio',
-      questionCount: config.questionCount || 20,
+      questionCount: config.questionCount || DEFAULT_QUESTION_COUNT,
       questionIds: config.questionIds || [],
       optionOrder: config.optionOrder || {},
       correctAnswerMap: config.correctAnswerMap || {},
@@ -406,4 +408,3 @@ export async function cleanupSession(sessionId) {
     return Promise.resolve();
   }
 }
-
