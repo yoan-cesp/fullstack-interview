@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "private": true,
-  "description": "Sistema de evaluación técnica interactivo - React, Node.js, Git, CSS, AWS, QA, Arquitectura, Business Analyst",
+  "description": "Sistema de evaluación técnica interactivo",
   "author": "Yoan Cespedes Williams",
   "email": "yoan.cesp@gmail.com",
   "url": "https://github.com/yoan-cesp",

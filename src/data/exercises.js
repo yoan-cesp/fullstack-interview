@@ -6450,6 +6450,485 @@ Propuesto:
     correctAnswer: "b",
     explanation: "Un requisito ambiguo requiere estructura: objetivos, KPIs, metodo de inferencia y calidad de datos. Eso alinea expectativas y habilita decisiones."
   }
+,
+
+  // ===== MOBILE DEV (Flutter/Android/iOS) =====
+  // Preguntas practicas con enfoque tecnico (Intermedio/Avanzado)
+
+  // --- Flutter (270-276) ---
+  {
+    id: 270,
+    title: "Flutter - Estado no reactivo en UI",
+    category: "Flutter",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "El contador no se actualiza en pantalla. ¿Cual es la correccion correcta?",
+    code: `class Counter extends StatefulWidget {
+  @override
+  State<Counter> createState() => _CounterState();
+}
+
+class _CounterState extends State<Counter> {
+  int count = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        count++;
+      },
+      child: Text('Count: $count'),
+    );
+  }
+}`,
+    options: [
+      { id: "a", text: "Mover count a una variable local dentro de build()" },
+      { id: "b", text: "Usar setState(() { count++; }) dentro de onPressed" },
+      { id: "c", text: "Cambiar ElevatedButton por GestureDetector" },
+      { id: "d", text: "Hacer count static para compartir el estado" }
+    ],
+    correctAnswer: "b",
+    explanation: "Sin setState no hay rebuild. El estado debe actualizarse dentro de setState para que el widget se redibuje."
+  },
+  {
+    id: 271,
+    title: "Flutter - FutureBuilder y null safety",
+    category: "Flutter",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Este widget lanza una excepcion al iniciar. ¿Que cambio evita el crash?",
+    code: `FutureBuilder<List<String>>(
+  future: fetchItems(),
+  builder: (context, snapshot) {
+    return ListView.builder(
+      itemCount: snapshot.data!.length,
+      itemBuilder: (_, i) => Text(snapshot.data![i]),
+    );
+  },
+);`,
+    options: [
+      { id: "a", text: "Usar snapshot.data ?? [] y verificar snapshot.hasData antes" },
+      { id: "b", text: "Cambiar FutureBuilder por StreamBuilder" },
+      { id: "c", text: "Hacer fetchItems() sincronico" },
+      { id: "d", text: "Eliminar itemCount para que sea infinito" }
+    ],
+    correctAnswer: "a",
+    explanation: "Al inicio snapshot.data es null. Se debe validar snapshot.hasData y/o usar un fallback antes de acceder."
+  },
+  {
+    id: 272,
+    title: "Flutter - setState dentro de build",
+    category: "Flutter",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Este codigo genera un loop de builds. ¿Cual es la causa?",
+    code: `@override
+Widget build(BuildContext context) {
+  setState(() {
+    total = items.length;
+  });
+  return Text('Total: $total');
+}`,
+    options: [
+      { id: "a", text: "setState en build provoca renders infinitos" },
+      { id: "b", text: "items.length es O(n)" },
+      { id: "c", text: "Text no puede renderizar enteros" },
+      { id: "d", text: "Debe usarse StatelessWidget" }
+    ],
+    correctAnswer: "a",
+    explanation: "build no debe disparar setState; eso provoca un ciclo de render infinito."
+  },
+  {
+    id: 273,
+    title: "Flutter - dispose de AnimationController",
+    category: "Flutter",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "El siguiente widget muestra un warning de fuga. ¿Que falta?",
+    code: `class FadeBox extends State<FadeBox> with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AnimationController(vsync: this, duration: Duration(seconds: 1));
+  }
+
+  @override
+  Widget build(BuildContext context) => FadeTransition(opacity: controller, child: Container());
+}`,
+    options: [
+      { id: "a", text: "Llamar controller.forward() en build" },
+      { id: "b", text: "Agregar dispose() y llamar controller.dispose()" },
+      { id: "c", text: "Eliminar SingleTickerProviderStateMixin" },
+      { id: "d", text: "Cambiar AnimationController por Tween" }
+    ],
+    correctAnswer: "b",
+    explanation: "Los controllers deben liberarse en dispose() para evitar fugas."
+  },
+  {
+    id: 274,
+    title: "Flutter - ListView con estado",
+    category: "Flutter",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Los switches pierden su estado al hacer scroll. ¿Como se corrige?",
+    code: `ListView.builder(
+  itemCount: items.length,
+  itemBuilder: (context, i) {
+    return SwitchListTile(
+      value: items[i].enabled,
+      onChanged: (v) => setState(() => items[i].enabled = v),
+      title: Text(items[i].name),
+    );
+  },
+);`,
+    options: [
+      { id: "a", text: "Agregar Key unica por item (ValueKey)" },
+      { id: "b", text: "Cambiar a ListView.separated" },
+      { id: "c", text: "Usar const en SwitchListTile" },
+      { id: "d", text: "Mover items a una variable local" }
+    ],
+    correctAnswer: "a",
+    explanation: "Sin keys estables, el reciclado de celdas puede mezclar estados. ValueKey mantiene el estado por item."
+  },
+  {
+    id: 275,
+    title: "Flutter - Context y Navigator",
+    category: "Flutter",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Este pop falla con \"Looking up a deactivated widget\". ¿Cual es la solucion?",
+    code: `void onSave() async {
+  await saveData();
+  Navigator.of(context).pop();
+}`,
+    options: [
+      { id: "a", text: "Usar if (!mounted) return; antes de Navigator.pop" },
+      { id: "b", text: "Usar Navigator.pop(context) dentro de initState" },
+      { id: "c", text: "Eliminar await saveData()" },
+      { id: "d", text: "Usar WidgetsBinding.instance.addPostFrameCallback" }
+    ],
+    correctAnswer: "a",
+    explanation: "Tras await, el widget puede estar desmontado. Se debe validar mounted antes de usar context."
+  },
+  {
+    id: 276,
+    title: "Flutter - Isolate para trabajo pesado",
+    category: "Flutter",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "El parsing bloquea la UI. ¿Que cambio es correcto?",
+    code: `final result = parseHugeJson(raw); // tarda 2s
+setState(() => data = result);`,
+    options: [
+      { id: "a", text: "Mover el parseo a compute() o a un Isolate" },
+      { id: "b", text: "Usar setState async" },
+      { id: "c", text: "Ejecutar parseHugeJson en build()" },
+      { id: "d", text: "Cambiar JSON por Map literal" }
+    ],
+    correctAnswer: "a",
+    explanation: "Trabajo pesado debe ir a un isolate para no bloquear el hilo principal."
+  },
+
+  // --- Android (277-283) ---
+  {
+    id: 277,
+    title: "Android - Coroutines y thread principal",
+    category: "Android",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "La UI se congela al ejecutar esta funcion. ¿Que cambio es correcto?",
+    code: `fun load() {
+  GlobalScope.launch(Dispatchers.Main) {
+    val data = api.fetch() // llamada de red
+    textView.text = data
+  }
+}`,
+    options: [
+      { id: "a", text: "Cambiar a Dispatchers.IO para la llamada y volver a Main" },
+      { id: "b", text: "Usar Thread.sleep() para esperar" },
+      { id: "c", text: "Mover la llamada a onCreate" },
+      { id: "d", text: "Eliminar coroutine y usar blocking call" }
+    ],
+    correctAnswer: "a",
+    explanation: "La red debe ejecutarse en IO y luego actualizar UI en Main."
+  },
+  {
+    id: 278,
+    title: "Android - LiveData no actualiza",
+    category: "Android",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "La UI no observa cambios. ¿Cual es el error?",
+    code: `val items = MutableLiveData<List<String>>()
+
+fun addItem(v: String) {
+  val current = items.value ?: emptyList()
+  current.toMutableList().add(v)
+  items.value = current
+}`,
+    options: [
+      { id: "a", text: "items.value debe asignarse a la nueva lista mutable" },
+      { id: "b", text: "Se debe usar setValue desde background" },
+      { id: "c", text: "LiveData no soporta listas" },
+      { id: "d", text: "Debe ser LiveData sin Mutable" }
+    ],
+    correctAnswer: "a",
+    explanation: "Se crea una lista mutable pero no se asigna. Debe publicarse la nueva lista para notificar cambios."
+  },
+  {
+    id: 279,
+    title: "Android - RecyclerView diff",
+    category: "Android",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "El adapter no actualiza cambios parciales. ¿Que usar?",
+    code: `class UserAdapter : RecyclerView.Adapter<ViewHolder>() {
+  var items: List<User> = emptyList()
+  fun submit(list: List<User>) {
+    items = list
+    notifyDataSetChanged()
+  }
+}`,
+    options: [
+      { id: "a", text: "Usar DiffUtil y ListAdapter" },
+      { id: "b", text: "Usar notifyItemInserted siempre" },
+      { id: "c", text: "Hacer items mutable" },
+      { id: "d", text: "Mover notifyDataSetChanged a onBindViewHolder" }
+    ],
+    correctAnswer: "a",
+    explanation: "DiffUtil calcula cambios y evita redraw completo. ListAdapter lo integra."
+  },
+  {
+    id: 280,
+    title: "Android - Room y suspend",
+    category: "Android",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Esta consulta bloquea la UI. ¿Cual es la solucion correcta?",
+    code: `@Query("SELECT * FROM orders")
+fun getOrders(): List<Order>`,
+    options: [
+      { id: "a", text: "Cambiar a suspend fun getOrders(): List<Order>" },
+      { id: "b", text: "Usar allowMainThreadQueries" },
+      { id: "c", text: "Mover la query al Application" },
+      { id: "d", text: "Hacer la tabla @Transaction" }
+    ],
+    correctAnswer: "a",
+    explanation: "Room debe ejecutar queries fuera del main thread; usar suspend o Flow."
+  },
+  {
+    id: 281,
+    title: "Android - Lifecycle y coroutines",
+    category: "Android",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Hay fugas porque la coroutine vive mas que el Activity. ¿Que cambio es correcto?",
+    code: `GlobalScope.launch {
+  val data = api.fetch()
+  runOnUiThread { textView.text = data }
+}`,
+    options: [
+      { id: "a", text: "Usar lifecycleScope.launch para atar al ciclo de vida" },
+      { id: "b", text: "Usar Thread en vez de coroutine" },
+      { id: "c", text: "Hacer textView nullable" },
+      { id: "d", text: "Cambiar a Dispatchers.Default" }
+    ],
+    correctAnswer: "a",
+    explanation: "lifecycleScope cancela automaticamente cuando el Activity/Fragment se destruye."
+  },
+  {
+    id: 282,
+    title: "Android - ViewModel y state",
+    category: "Android",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "El estado se pierde al rotar. ¿Cual es la solucion?",
+    code: `class LoginActivity : AppCompatActivity() {
+  var email = ""
+}`,
+    options: [
+      { id: "a", text: "Mover estado a ViewModel" },
+      { id: "b", text: "Usar onDestroy" },
+      { id: "c", text: "Hacer email companion object" },
+      { id: "d", text: "Desactivar la rotacion" }
+    ],
+    correctAnswer: "a",
+    explanation: "ViewModel sobrevive a cambios de configuracion y mantiene el estado."
+  },
+  {
+    id: 283,
+    title: "Android - Network en strict mode",
+    category: "Android",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Se lanza NetworkOnMainThreadException. ¿Cual es la solucion correcta?",
+    code: `val response = URL(url).readText()
+textView.text = response`,
+    options: [
+      { id: "a", text: "Mover la llamada a IO (coroutine/Executor)" },
+      { id: "b", text: "Agregar StrictMode permitAll()" },
+      { id: "c", text: "Aumentar timeout" },
+      { id: "d", text: "Usar runBlocking en Main" }
+    ],
+    correctAnswer: "a",
+    explanation: "Las operaciones de red deben ir fuera del main thread para evitar bloqueos."
+  },
+
+  // --- iOS (284-290) ---
+  {
+    id: 284,
+    title: "iOS - Captura de self en closures",
+    category: "iOS",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Este codigo filtra pero genera memory leak. ¿Cual es la correccion?",
+    code: `class UsersVC: UIViewController {
+  var users: [User] = []
+  func load() {
+    api.fetch { result in
+      self.users = result
+      self.tableView.reloadData()
+    }
+  }
+}`,
+    options: [
+      { id: "a", text: "Usar [weak self] en el closure" },
+      { id: "b", text: "Hacer users static" },
+      { id: "c", text: "Mover reloadData a viewDidAppear" },
+      { id: "d", text: "Usar guard let self = self fuera del closure" }
+    ],
+    correctAnswer: "a",
+    explanation: "El closure retiene a self; usar [weak self] evita ciclos de retencion."
+  },
+  {
+    id: 285,
+    title: "iOS - UITableView y datasource",
+    category: "iOS",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "La app crashea con index out of range. ¿Cual es el fix correcto?",
+    code: `func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+  let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+  cell.textLabel?.text = items[indexPath.row]
+  return cell
+}
+
+func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+  return items.count - 1
+}`,
+    options: [
+      { id: "a", text: "Hacer numberOfRowsInSection retornar items.count" },
+      { id: "b", text: "Usar items.first en cellForRowAt" },
+      { id: "c", text: "Restar 2 al count" },
+      { id: "d", text: "Cambiar a UICollectionView" }
+    ],
+    correctAnswer: "a",
+    explanation: "El datasource debe retornar el mismo numero de filas que accesos en cellForRowAt."
+  },
+  {
+    id: 286,
+    title: "iOS - DispatchQueue y UI",
+    category: "iOS",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Este codigo a veces no actualiza la UI. ¿Que falta?",
+    code: `DispatchQueue.global().async {
+  let data = loadData()
+  self.label.text = data
+}`,
+    options: [
+      { id: "a", text: "Actualizar UI en DispatchQueue.main.async" },
+      { id: "b", text: "Cambiar a DispatchQueue.global(qos: .background)" },
+      { id: "c", text: "Hacer label weak" },
+      { id: "d", text: "Usar OperationQueue" }
+    ],
+    correctAnswer: "a",
+    explanation: "La UI solo puede actualizarse en el main thread."
+  },
+  {
+    id: 287,
+    title: "iOS - Optionals y crash",
+    category: "iOS",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Este codigo crashea en produccion. ¿Cual es el fix correcto?",
+    code: `let userId: String? = fetchId()
+let token = "Bearer \(userId!)"`,
+    options: [
+      { id: "a", text: "Usar guard let id = userId else { return }" },
+      { id: "b", text: "Usar ?? '' sin validar" },
+      { id: "c", text: "Convertir a Int" },
+      { id: "d", text: "Hacer userId global" }
+    ],
+    correctAnswer: "a",
+    explanation: "Force unwrap puede crashear. guard let valida y evita nil."
+  },
+  {
+    id: 288,
+    title: "iOS - Auto Layout constraints",
+    category: "iOS",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Al crear vistas programaticamente, no aparecen. ¿Que falta?",
+    code: `let view = UIView()
+container.addSubview(view)
+NSLayoutConstraint.activate([
+  view.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+  view.trailingAnchor.constraint(equalTo: container.trailingAnchor)
+])`,
+    options: [
+      { id: "a", text: "Asignar view.translatesAutoresizingMaskIntoConstraints = false" },
+      { id: "b", text: "Usar frame en vez de constraints" },
+      { id: "c", text: "Llamar layoutIfNeeded en view" },
+      { id: "d", text: "Agregar heightAnchor primero" }
+    ],
+    correctAnswer: "a",
+    explanation: "Sin desactivar autoresizing, las constraints no aplican correctamente."
+  },
+  {
+    id: 289,
+    title: "iOS - Reutilizacion de celdas",
+    category: "iOS",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Las celdas muestran imagenes incorrectas. ¿Que cambio es correcto?",
+    code: `func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+  let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! UserCell
+  cell.avatar.image = UIImage(named: users[indexPath.row].avatar)
+  return cell
+}`,
+    options: [
+      { id: "a", text: "Resetear imagen en prepareForReuse" },
+      { id: "b", text: "Desactivar reuseIdentifier" },
+      { id: "c", text: "Usar static cells" },
+      { id: "d", text: "Cambiar a collection view" }
+    ],
+    correctAnswer: "a",
+    explanation: "Las celdas se reutilizan; se debe limpiar estado en prepareForReuse."
+  },
+  {
+    id: 290,
+    title: "iOS - URLSession y parseo",
+    category: "iOS",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Este parseo falla con data vacia. ¿Que validacion falta?",
+    code: `URLSession.shared.dataTask(with: url) { data, _, _ in
+  let items = try! JSONDecoder().decode([Item].self, from: data!)
+  self.items = items
+}.resume()`,
+    options: [
+      { id: "a", text: "Validar data != nil y manejar error antes de decode" },
+      { id: "b", text: "Cambiar a URLSessionConfiguration" },
+      { id: "c", text: "Usar JSONSerialization" },
+      { id: "d", text: "Hacer items var global" }
+    ],
+    correctAnswer: "a",
+    explanation: "data puede ser nil o invalida; se debe validar y manejar errores antes del decode."
+  }
+
 ];
 
 const STACK_ASSIGNMENTS = {
@@ -6725,6 +7204,28 @@ const STACK_ASSIGNMENTS = {
   267: ["business-analyst"],
   268: ["business-analyst"],
   269: ["business-analyst"],
+  // ===== Mobile (270-290) =====
+  270: ["flutter"],
+  271: ["flutter"],
+  272: ["flutter"],
+  273: ["flutter"],
+  274: ["flutter"],
+  275: ["flutter"],
+  276: ["flutter"],
+  277: ["android"],
+  278: ["android"],
+  279: ["android"],
+  280: ["android"],
+  281: ["android"],
+  282: ["android"],
+  283: ["android"],
+  284: ["ios"],
+  285: ["ios"],
+  286: ["ios"],
+  287: ["ios"],
+  288: ["ios"],
+  289: ["ios"],
+  290: ["ios"],
 };
 
 const DEFAULT_STACK = ["react"];

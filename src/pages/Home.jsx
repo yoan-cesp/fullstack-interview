@@ -414,7 +414,7 @@ function Home() {
           <li>Lee cada pregunta y analiza el código cuidadosamente</li>
           <li>Selecciona la respuesta que consideres correcta</li>
           <li>
-            Siempre son {questionTarget} preguntas con temporizador individual (7 si practicas un stack, 15 al combinar varios)
+            Siempre son {questionTarget} preguntas con temporizador individual (7 si practicas un stack, 10 al combinar varios)
           </li>
           <li>Puedes navegar entre preguntas usando los botones de navegación</li>
           <li>Al finalizar, podrás ver tus resultados y explicaciones detalladas</li>

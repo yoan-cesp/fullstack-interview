@@ -168,14 +168,16 @@ function Monitor() {
                 if (!question) return null;
                 
                 // Obtener el mapeo de respuestas correctas si existe
-                let correctAnswerMap = {};
-                try {
-                  const storedMap = localStorage.getItem('correct-answer-map');
-                  if (storedMap) {
-                    correctAnswerMap = JSON.parse(storedMap);
+                let correctAnswerMap = candidateData?.config?.correctAnswerMap || {};
+                if (!correctAnswerMap || Object.keys(correctAnswerMap).length === 0) {
+                  try {
+                    const storedMap = localStorage.getItem('correct-answer-map');
+                    if (storedMap) {
+                      correctAnswerMap = JSON.parse(storedMap);
+                    }
+                  } catch (e) {
+                    // Si no hay mapeo, usar comparación original
                   }
-                } catch (e) {
-                  // Si no hay mapeo, usar comparación original
                 }
                 
                 const correctDisplayId = correctAnswerMap[questionId] || question.correctAnswer;
@@ -237,4 +239,3 @@ function Monitor() {
 }
 
 export default Monitor;
-

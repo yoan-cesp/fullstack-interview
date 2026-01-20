@@ -1,5 +1,5 @@
 export const DEFAULT_QUESTION_COUNT = 7;
-export const MULTI_STACK_QUESTION_COUNT = 15;
+export const MULTI_STACK_QUESTION_COUNT = 10;
 
 export const LEVELS = [
   {
@@ -99,6 +99,27 @@ export const TECH_STACKS = [
     icon: "☕",
     description: "Hibernate ORM, Spring Framework, Beans, JPA, Annotations y patrones enterprise.",
     focus: "Backend enterprise con Spring y persistencia ORM.",
+  },
+  {
+    id: "flutter",
+    label: "Flutter",
+    icon: "🦋",
+    description: "Widgets, estado, async, performance y arquitectura en Dart.",
+    focus: "Apps multiplataforma con Flutter.",
+  },
+  {
+    id: "android",
+    label: "Android",
+    icon: "🤖",
+    description: "Kotlin, coroutines, lifecycle, Room, RecyclerView y arquitectura.",
+    focus: "Apps nativas Android.",
+  },
+  {
+    id: "ios",
+    label: "iOS",
+    icon: "🍎",
+    description: "Swift, UIKit, concurrency, Auto Layout y lifecycle.",
+    focus: "Apps nativas iOS.",
   },
   {
     id: "business-analyst",

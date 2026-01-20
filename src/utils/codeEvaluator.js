@@ -97,13 +97,7 @@ export function evaluateCode(code, tests) {
           actual = test.testFunction(userFunction);
         } else {
           // Ejecutar la función con los inputs
-          // Manejar arrays como argumentos individuales si es necesario
-          if (Array.isArray(test.input) && test.input.length === 1 && Array.isArray(test.input[0])) {
-            // Si el input es un array dentro de un array, expandirlo
-            actual = userFunction(...test.input[0]);
-          } else {
-            actual = userFunction(...test.input);
-          }
+          actual = userFunction(...test.input);
         }
 
         const executionTime = Date.now() - startTime;
