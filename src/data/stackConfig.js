@@ -87,6 +87,13 @@ export const TECH_STACKS = [
     focus: "Decisiones de alto nivel para equipos senior.",
   },
   {
+    id: "aws",
+    label: "AWS",
+    icon: "☁️",
+    description: "IAM, EC2, S3, Lambda, redes y observabilidad en AWS.",
+    focus: "Buenas practicas y trade-offs en infraestructura AWS.",
+  },
+  {
     id: "vue",
     label: "Vue.js",
     icon: "🟢",

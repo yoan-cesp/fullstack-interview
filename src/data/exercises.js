@@ -816,10 +816,10 @@ LIMIT 20;`,
 // C) Escribir directamente en S3 y correr cron que procese archivos
 // D) Usar WebSockets a todos los consumidores en tiempo real`,
     options: [
-      { id: "a", text: "A) porque la base relacional garantiza ACID en todos los escenarios." },
-      { id: "b", text: "B) porque un log distribuido garantiza orden, retención y reintentos independientes." },
-      { id: "c", text: "C) porque archivos en S3 permiten consultas ad-hoc con Athena." },
-      { id: "d", text: "D) porque WebSockets evitan colas y hacen broadcast instantáneo." }
+      { id: "a", text: "A) porque una tabla relacional con workers internos maneja reintentos de forma simple." },
+      { id: "b", text: "B) porque un log distribuido permite offsets, relectura y consumidores independientes." },
+      { id: "c", text: "C) porque S3 + batch ofrece durabilidad y procesamientos programados." },
+      { id: "d", text: "D) porque WebSockets entregan eventos en tiempo real sin necesidad de colas." }
     ],
     correctAnswer: "b",
     explanation: "Un log distribuido (Kafka/Kinesis) desacopla productores y múltiples consumidores. Soporta throughput alto, relectura con offsets para reintentos e idempotencia en los consumidores. La tabla relacional o los cron sobre S3 no manejan el volumen ni la necesidad de múltiples pipelines independientes.",
@@ -4401,10 +4401,10 @@ SELECT * FROM users WHERE id = 1 USING CONSISTENCY QUORUM;`,
 // Server 1, Server 2, Server 3
 // Requests con sesiones deben ir al mismo servidor`,
     options: [
-      { id: "a", text: "IP Hash o Cookie-based sticky sessions para mantener usuario en mismo servidor" },
-      { id: "b", text: "Round Robin siempre" },
-      { id: "c", text: "Random" },
-      { id: "d", text: "No es posible" }
+      { id: "a", text: "IP hash o cookie affinity para fijar al usuario en el mismo nodo" },
+      { id: "b", text: "Least connections con sesiones externas (Redis) para evitar afinidad" },
+      { id: "c", text: "Round robin con replicación síncrona de sesiones entre nodos" },
+      { id: "d", text: "Consistent hashing a nivel de app sin soporte del balanceador" }
     ],
     correctAnswer: "a",
     explanation: "Algoritmos: Round Robin (distribuye igual), Least Connections (al menos cargado), IP Hash (mismo IP -> mismo server), Cookie-based sticky (sesión -> server). Sticky sessions: útil para state en servidor pero complica escalado. Mejor: stateless servers + external session store (Redis). Health checks para remover servidores caídos."
@@ -4427,10 +4427,10 @@ if (!data) {
 db.write(data);
 cache.set(key, data);`,
     options: [
-      { id: "a", text: "Cache-Aside: app maneja cache (lazy load); Write-Through: cache se actualiza en cada write" },
-      { id: "b", text: "Son idénticos" },
-      { id: "c", text: "Write-Through no existe" },
-      { id: "d", text: "Cache-Aside es siempre mejor" }
+      { id: "a", text: "Cache-Aside: la app carga bajo demanda; Write-Through: cada write actualiza cache y DB" },
+      { id: "b", text: "Cache-Aside escribe siempre en cache y evita tocar DB en writes" },
+      { id: "c", text: "Write-Through persiste a DB de forma asíncrona después de cachear" },
+      { id: "d", text: "Cache-Aside requiere precargar todo el cache al inicio" }
     ],
     correctAnswer: "a",
     explanation: "Patrones: Cache-Aside (app maneja, popular, solo cachea lo usado), Write-Through (cache siempre sync, add latency a writes), Write-Behind (async write, riesgo de pérdida), Read-Through (cache maneja DB fetch). Cache invalidation: TTL, event-based, write-invalidate. Thundering herd: usa locking."
@@ -4447,10 +4447,10 @@ cache.set(key, data);`,
 // - Evitar abuse
 // - Distribuir límite en ventana de tiempo`,
     options: [
-      { id: "a", text: "Token Bucket (permite bursts controlados) o Sliding Window (más preciso que fixed window)" },
-      { id: "b", text: "Fixed Window Counter (permite spike al final + inicio de ventana)" },
-      { id: "c", text: "No limitar nunca" },
-      { id: "d", text: "Solo IP blacklist" }
+      { id: "a", text: "Token Bucket o Sliding Window para admitir bursts sin perder el límite promedio" },
+      { id: "b", text: "Fixed Window con ventanas cortas y jitter para reducir picos" },
+      { id: "c", text: "Leaky Bucket para suavizar el tráfico aunque limite los bursts" },
+      { id: "d", text: "Rate limit solo en el firewall por IP, sin estado por usuario" }
     ],
     correctAnswer: "a",
     explanation: "Algoritmos: Fixed Window (simple, spike problem), Sliding Window (preciso, costoso), Token Bucket (popular, permite bursts), Leaky Bucket (suaviza tráfico). Token Bucket: agrega tokens a rate constante, request consume token. Implementación: Redis INCR + EXPIRE. Layer 7 (application) mejor que Layer 4 (network) para APIs."
@@ -4465,10 +4465,10 @@ cache.set(key, data);`,
     code: `// CDN Nodes: Tokyo, London, NY, Sydney
 // User en Tokyo request: https://cdn.example.com/image.jpg`,
     options: [
-      { id: "a", text: "Contenido estático (imágenes, CSS, JS, videos) en edge locations cercanas al usuario" },
-      { id: "b", text: "Solo bases de datos" },
-      { id: "c", text: "Solo APIs dinámicas" },
-      { id: "d", text: "No cachea nada, solo redirecciona" }
+      { id: "a", text: "Contenido cacheable en edge (estáticos y GETs con headers adecuados)" },
+      { id: "b", text: "HTML dinámico generado en origen, pero no JS/CSS/imagenes" },
+      { id: "c", text: "Respuestas de APIs autenticadas incluso sin headers de cache" },
+      { id: "d", text: "Solo actúa como proxy TLS sin almacenamiento en edge" }
     ],
     correctAnswer: "a",
     explanation: "CDN (CloudFlare, CloudFront): cache geográficamente distribuida. Cachea assets estáticos cerca del usuario (reduce latency). Headers: Cache-Control, ETag controlan caching. También: DDoS protection, SSL termination. Cache invalidation: purge manual o versioned URLs (/v2/image.jpg). CDN pull (fetch on miss) vs push (preload)."
@@ -4483,10 +4483,10 @@ cache.set(key, data);`,
     code: `// Startup temprano, equipo pequeño (3 devs)
 // Producto en fase de experimentación rápida`,
     options: [
-      { id: "a", text: "Startups tempranos, equipos pequeños, dominios poco claros: monolith es mejor (menos overhead)" },
-      { id: "b", text: "Siempre usa microservicios" },
-      { id: "c", text: "Microservicios son siempre más rápidos" },
-      { id: "d", text: "Monolith es legacy, nunca lo uses" }
+      { id: "a", text: "Equipos pequenos, dominio inestable y alto riesgo de overhead operativo" },
+      { id: "b", text: "Equipos con ownership claro y despliegues independientes por dominio" },
+      { id: "c", text: "Cuando necesitas escalar un modulo sin tocar el resto del sistema" },
+      { id: "d", text: "Cuando el producto ya tiene madurez y fronteras estables" }
     ],
     correctAnswer: "a",
     explanation: "Microservicios: pros (escalado independiente, tech diversity, ownership), cons (complejidad operacional, network overhead, transacciones distribuidas difíciles). Monolith para: MVP, equipos pequeños, dominios no claros. Puedes empezar monolith, luego extraer servicios (strangler pattern). 'Monolith primero' - Martin Fowler."
@@ -4502,10 +4502,10 @@ cache.set(key, data);`,
 // Servicio A produce mensajes
 // Servicio B consume cuando puede`,
     options: [
-      { id: "a", text: "Desacoplar servicios, async processing, absorber spikes de tráfico, garantizar entrega" },
-      { id: "b", text: "Reemplazar bases de datos" },
-      { id: "c", text: "Solo para enviar emails" },
-      { id: "d", text: "No tienen utilidad real" }
+      { id: "a", text: "Desacoplar productores/consumidores y absorber picos con entrega confiable" },
+      { id: "b", text: "Garantizar orden total y consultas temporales como en un log analitico" },
+      { id: "c", text: "Sustituir la base de datos principal para evitar transacciones" },
+      { id: "d", text: "Evitar reintentos en integraciones externas por completo" }
     ],
     correctAnswer: "a",
     explanation: "Message queues: desacoplan producer/consumer temporalmente. Casos: background jobs (emails, thumbnails), absorber spikes (Black Friday), garantizar processing (at-least-once delivery). Patrones: fan-out (1->N), fan-in (N->1), priority queues. Alternativas: Kafka (event streaming, retention), Redis (simple), SQS (managed)."
@@ -4522,10 +4522,10 @@ cache.set(key, data);`,
 
 // ¿Cómo garantizar idempotency?`,
     options: [
-      { id: "a", text: "Idempotency key (UUID del cliente), almacenar en DB, rechazar duplicados" },
-      { id: "b", text: "No es posible hacer POSTs idempotentes" },
-      { id: "c", text: "Solo usar GET" },
-      { id: "d", text: "Confiar en que el cliente no reintenta" }
+      { id: "a", text: "Idempotency key de cliente + almacenamiento de resultado para deduplicar" },
+      { id: "b", text: "Usar timestamp y rechazar si llega el mismo payload en 60 segundos" },
+      { id: "c", text: "Depender de retries del cliente sin identificador unico" },
+      { id: "d", text: "Generar un nuevo id en cada intento y limpiar duplicados despues" }
     ],
     correctAnswer: "a",
     explanation: "Idempotent: múltiples requests idénticas tienen mismo efecto que una. GET/PUT/DELETE son idempotentes por naturaleza. POST no lo es. Solución: client-generated idempotency key (Stripe usa esto), servidor checkea duplicados en DB. Útil para: retries, network failures, garantizar exactly-once processing. TTL en keys (24h típico)."
@@ -4540,10 +4540,10 @@ cache.set(key, data);`,
     code: `// Vertical: 1 server (4 CPU) -> 1 server (16 CPU)
 // Horizontal: 1 server -> 4 servers`,
     options: [
-      { id: "a", text: "Vertical: más recursos al mismo server; Horizontal: más servers (mejor para availability)" },
-      { id: "b", text: "Son lo mismo" },
-      { id: "c", text: "Horizontal es siempre más caro" },
-      { id: "d", text: "Vertical es ilimitado" }
+      { id: "a", text: "Vertical: mas recursos en un nodo; Horizontal: mas nodos con balanceo" },
+      { id: "b", text: "Horizontal es escalar CPU/RAM; Vertical es agregar mas instancias" },
+      { id: "c", text: "Horizontal solo aplica a lectura; vertical solo a escritura" },
+      { id: "d", text: "Vertical es practicamente ilimitado en la nube" }
     ],
     correctAnswer: "a",
     explanation: "Vertical: más CPU/RAM al server (límite hardware, single point of failure, menos complejidad). Horizontal: más servers (ilimitado teóricamente, require load balancer, app debe ser stateless). Horizontal mejor para: high availability, fault tolerance. Vertical más simple inicialmente. Combina ambos."
@@ -4561,10 +4561,10 @@ cache.set(key, data);`,
 
 // ¿Cuántas connections simultáneas?`,
     options: [
-      { id: "a", text: "100 * 20 = 2000 connections (puede saturar la DB, necesitas proxy/pgBouncer)" },
-      { id: "b", text: "Solo 20 connections" },
-      { id: "c", text: "100 connections" },
-      { id: "d", text: "La DB maneja infinitas connections sin problema" }
+      { id: "a", text: "100 * 20 = 2000 conexiones (riesgo de saturar la DB)" },
+      { id: "b", text: "100 conexiones porque el pool es global en la app" },
+      { id: "c", text: "20 conexiones si todos comparten un proxy de pools" },
+      { id: "d", text: "Depende solo de max_connections y no del pool por app" }
     ],
     correctAnswer: "a",
     explanation: "Problema común: cada app server abre su pool, saturando DB. Solución: connection proxy/pooler (PgBouncer para Postgres, ProxySQL para MySQL). Reduce connections a DB manteniendo pools en app. También: reduce pool size si tienes muchos app servers. Postgres típicamente max_connections=100-200."
@@ -4580,10 +4580,10 @@ cache.set(key, data);`,
 // Opción B: Header: Accept: application/vnd.api+json; version=1
 // Opción C: Query param: /api/users?version=1`,
     options: [
-      { id: "a", text: "URL path (/v1/, /v2/) es más explícito y fácil de cachear que headers" },
-      { id: "b", text: "Nunca versiones APIs, siempre breaking changes" },
-      { id: "c", text: "Headers son siempre mejores que URL" },
-      { id: "d", text: "No existe consenso, todas son malas" }
+      { id: "a", text: "Versionar en URL (/v1/) es explicito y cacheable" },
+      { id: "b", text: "Versionar en headers para no tocar rutas ni contratos visibles" },
+      { id: "c", text: "Usar query params porque permite cambiar version por request" },
+      { id: "d", text: "Evitar versionado y romper clientes con feature flags" }
     ],
     correctAnswer: "a",
     explanation: "URL versioning (/v1/) es más popular: explicit, fácil de testear/cachear, visible. Header versioning (Accept): más 'RESTful' pero menos visible. Query params: raro, problemas con caching. Regla: mantén backward compatibility cuando sea posible. Major version para breaking changes. Sunset viejas versiones con antelación."
@@ -4600,10 +4600,10 @@ cache.set(key, data);`,
 // - Sin circuit breaker: A sigue intentando (timeout cada request)
 // - Con circuit breaker: A deja de intentar temporalmente`,
     options: [
-      { id: "a", text: "Prevenir cascading failures: si servicio falla, abrir circuito (fail-fast) en lugar de timeouts lentos" },
-      { id: "b", text: "Es un mecanismo de seguridad eléctrica" },
-      { id: "c", text: "Solo para balanceo de carga" },
-      { id: "d", text: "Reemplaza try-catch" }
+      { id: "a", text: "Evitar cascading failures con fail-fast y cooldown cuando un servicio cae" },
+      { id: "b", text: "Limitar concurrencia de llamadas con bulkheads" },
+      { id: "c", text: "Agregar retries con backoff como estrategia principal" },
+      { id: "d", text: "Hacer rate limiting para proteger el servicio destino" }
     ],
     correctAnswer: "a",
     explanation: "Circuit Breaker (Netflix Hystrix, resilience4j): monitorea failures. Estados: Closed (normal), Open (tras threshold, fail-fast sin llamar servicio), Half-Open (prueba si servicio se recuperó). Previene cascading failures, thread exhaustion, da tiempo al servicio a recuperarse. Combina con: retries, timeouts, fallbacks."
@@ -4621,10 +4621,10 @@ cache.set(key, data);`,
 // Con consistent hashing:
 // Agregar/quitar server -> solo K/N keys se mueven`,
     options: [
-      { id: "a", text: "Minimiza rehashing cuando agregas/quitas servidores (crítico para caches distribuidos)" },
-      { id: "b", text: "Es solo una función hash normal" },
-      { id: "c", text: "Solo funciona con 2 servidores" },
-      { id: "d", text: "No tiene ventajas reales" }
+      { id: "a", text: "Minimiza el movimiento de claves al agregar/quitar nodos" },
+      { id: "b", text: "Distribuye claves con hash modulo N para balance perfecto" },
+      { id: "c", text: "Garantiza orden global de claves en un cluster" },
+      { id: "d", text: "Evita hotspots solo con replicas multiples" }
     ],
     correctAnswer: "a",
     explanation: "Hash simple (key % N): agregar/quitar servidor invalida casi todo el cache. Consistent hashing: servidores y keys en anillo hash, key va al siguiente servidor clockwise. Agregar/quitar servidor solo mueve K/N keys. Usado en: DynamoDB, Cassandra, Memcached. Virtual nodes mejoran distribución."
@@ -4640,10 +4640,10 @@ cache.set(key, data);`,
 // Queries (reads) -> Read DB (optimized for reads, denormalized)
 // Sync async entre ambas`,
     options: [
-      { id: "a", text: "Separar modelos de lectura y escritura, optimizando cada uno independientemente" },
-      { id: "b", text: "Es lo mismo que tener replicas read" },
-      { id: "c", text: "Solo para event sourcing" },
-      { id: "d", text: "No tiene aplicaciones prácticas" }
+      { id: "a", text: "Separar modelos de lectura y escritura y optimizar cada uno" },
+      { id: "b", text: "Usar replicas read-only con el mismo modelo de datos" },
+      { id: "c", text: "Cambiar solo el ORM para lecturas y escrituras" },
+      { id: "d", text: "Aplicable unicamente cuando hay Event Sourcing" }
     ],
     correctAnswer: "a",
     explanation: "CQRS: separa commands (writes) y queries (reads) en modelos diferentes. Ventajas: optimiza cada lado independientemente, escala reads/writes por separado. Desventajas: complejidad, eventual consistency. Casos: sistemas complejos con diferentes necesidades read/write. A menudo combinado con Event Sourcing."
@@ -4658,10 +4658,10 @@ cache.set(key, data);`,
     code: `// Order Service -> Payment Service -> Inventory Service
 // ¿Cómo garantizar atomicidad sin distributed transactions?`,
     options: [
-      { id: "a", text: "Saga pattern: secuencia de transacciones locales con compensating transactions si falla" },
-      { id: "b", text: "2PC (Two-Phase Commit) siempre" },
-      { id: "c", text: "No es posible garantizar consistencia" },
-      { id: "d", text: "Usar solo una base de datos" }
+      { id: "a", text: "Saga: transacciones locales + compensaciones cuando hay fallos" },
+      { id: "b", text: "Two-Phase Commit con coordinator y locks distribuidos" },
+      { id: "c", text: "Unificar todo en una sola base de datos compartida" },
+      { id: "d", text: "Reintentar indefinidamente hasta que todos concuerden" }
     ],
     correctAnswer: "a",
     explanation: "Saga: cada servicio hace transacción local, publica evento. Si falla, ejecuta compensating transaction (undo). Tipos: Choreography (event-driven, descentralizado), Orchestration (coordinador central). 2PC es complejo y bloquea. Saga es eventual consistency. Alternativa: evitar transacciones distribuidas con buen diseño de bounded contexts."
@@ -4678,10 +4678,10 @@ cache.set(key, data);`,
 
 // ¿Cómo garantizar entrega?`,
     options: [
-      { id: "a", text: "Retry con exponential backoff, queue persistente, webhook signature (HMAC) para seguridad" },
-      { id: "b", text: "Intentar una vez y olvidar" },
-      { id: "c", text: "No hay forma de hacerlos confiables" },
-      { id: "d", text: "Solo usar polling" }
+      { id: "a", text: "Queue persistente + retries con backoff + firma HMAC" },
+      { id: "b", text: "Reintentar en loop inmediato hasta que responda" },
+      { id: "c", text: "Migrar a polling y desactivar webhooks" },
+      { id: "d", text: "Mantener un WebSocket permanente por cliente" }
     ],
     correctAnswer: "a",
     explanation: "Webhooks confiables: 1) Queue persistente (SQS), 2) Retries con exponential backoff, 3) Dead letter queue tras N intentos, 4) Idempotency en receptor, 5) Signature HMAC para verificar origen, 6) Timeout configurado. Ofrece también: webhook logs, manual retry, testing endpoint. Stripe/GitHub hacen esto bien."
@@ -4699,10 +4699,10 @@ cache.set(key, data);`,
 // Deploy: switch traffic Blue -> Green
 // Rollback: switch traffic Green -> Blue`,
     options: [
-      { id: "a", text: "Dos ambientes idénticos, switch instantáneo de tráfico, rollback rápido" },
-      { id: "b", text: "Deploy gradual a % de usuarios" },
-      { id: "c", text: "Solo cambiar color del botón" },
-      { id: "d", text: "Es lo mismo que canary deployment" }
+      { id: "a", text: "Dos ambientes identicos y switch de trafico instantaneo" },
+      { id: "b", text: "Despliegue gradual por porcentaje con metricas" },
+      { id: "c", text: "Actualizacion rolling, nodo por nodo" },
+      { id: "d", text: "Feature flags sin duplicar infraestructura" }
     ],
     correctAnswer: "a",
     explanation: "Blue-Green: dos ambientes completos (blue=actual, green=nuevo). Deploy: cambiar load balancer/DNS a green. Rollback: volver a blue. Pros: rollback instantáneo, testing en producción antes de switch. Contras: costo (2x infrastructure), DB migrations complejas. Canary: deploy gradual (5% -> 50% -> 100%). Rolling: actualiza servidores uno a uno."
@@ -7099,10 +7099,11 @@ const STACK_ASSIGNMENTS = {
   166: ["nosql"],
   167: ["nosql"],
   168: ["nosql"],
-  // ===== System Design (19, 20, 21, 26, 170-185) = 20 preguntas =====
-  19: ["system-design"],
-  20: ["system-design"],
-  21: ["system-design"],
+  // ===== AWS (19-21) = 3 preguntas =====
+  19: ["aws"],
+  20: ["aws"],
+  21: ["aws"],
+  // ===== System Design (26, 170-185) = 17 preguntas =====
   26: ["system-design"],
   170: ["system-design"],
   171: ["system-design"],
