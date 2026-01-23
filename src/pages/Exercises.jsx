@@ -189,7 +189,9 @@ function Exercises() {
             stacks: remoteConfig.stacks || [],
             level: remoteConfig.level || 'intermedio',
             questionCount: remoteConfig.questionCount || questions.length,
-            sessionId: sessionId
+            sessionId: sessionId,
+            // Incluir correctAnswerMap en config para que el monitor pueda verificar respuestas
+            correctAnswerMap: remoteConfig.correctAnswerMap || {}
           };
           
           // Guardar en localStorage para que funcione igual que antes
@@ -315,6 +317,13 @@ function Exercises() {
     // Verificar si necesitamos regenerar el orden de opciones
     const savedIds = localStorage.getItem('interview-question-set-key');
     const currentKey = questionSetKey;
+    
+    // NO regenerar si ya cargamos configuración remota (tiene su propio optionOrder y correctAnswerMap)
+    if (remoteConfigLoaded && Object.keys(optionOrder).length > 0) {
+      console.log('🔒 Usando configuración remota, no regenerar opciones');
+      localStorage.setItem('interview-question-set-key', currentKey);
+      return;
+    }
     
     // Solo regenerar orden si el set de preguntas cambió
     if (savedIds !== currentKey) {

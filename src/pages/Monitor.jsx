@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { subscribeToCandidate } from '../utils/firebaseSession.js';
+import { subscribeToCandidate, getSessionConfig } from '../utils/firebaseSession.js';
 import { exercises } from '../data/exercises.js';
 
 function Monitor() {
@@ -8,6 +8,7 @@ function Monitor() {
   const navigate = useNavigate();
   const [candidateData, setCandidateData] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [sessionCorrectAnswerMap, setSessionCorrectAnswerMap] = useState({});
 
   useEffect(() => {
     if (!sessionId) {
@@ -19,6 +20,16 @@ function Monitor() {
     let isMounted = true;
 
     console.log('🔍 Monitor iniciando suscripción para sesión:', sessionId);
+
+    // Cargar correctAnswerMap directamente de Firebase para esta sesión
+    getSessionConfig(sessionId).then((config) => {
+      if (config?.correctAnswerMap) {
+        console.log('✅ Monitor: correctAnswerMap cargado de Firebase:', config.correctAnswerMap);
+        setSessionCorrectAnswerMap(config.correctAnswerMap);
+      }
+    }).catch((error) => {
+      console.warn('⚠️ Monitor: Error cargando correctAnswerMap:', error);
+    });
 
     // Suscribirse a actualizaciones del candidato
     subscribeToCandidate(sessionId, (data) => {
@@ -167,8 +178,16 @@ function Monitor() {
                 const question = exercises.find(e => e.id === parseInt(questionId));
                 if (!question) return null;
                 
-                // Obtener el mapeo de respuestas correctas si existe
-                let correctAnswerMap = candidateData?.config?.correctAnswerMap || {};
+                // Obtener el mapeo de respuestas correctas - prioridad:
+                // 1. Desde Firebase (sessionCorrectAnswerMap) - más confiable
+                // 2. Desde candidateData.config.correctAnswerMap
+                // 3. Desde localStorage (fallback para compatibilidad)
+                let correctAnswerMap = sessionCorrectAnswerMap;
+                
+                if (!correctAnswerMap || Object.keys(correctAnswerMap).length === 0) {
+                  correctAnswerMap = candidateData?.config?.correctAnswerMap || {};
+                }
+                
                 if (!correctAnswerMap || Object.keys(correctAnswerMap).length === 0) {
                   try {
                     const storedMap = localStorage.getItem('correct-answer-map');

@@ -6927,6 +6927,444 @@ NSLayoutConstraint.activate([
     ],
     correctAnswer: "a",
     explanation: "data puede ser nil o invalida; se debe validar y manejar errores antes del decode."
+  },
+
+  // ===== PRODUCT DESIGNER (291-311) = 21 preguntas =====
+  // 7 Básico + 7 Intermedio + 7 Avanzado
+
+  // --- Nivel Básico (291-297) ---
+  {
+    id: 291,
+    title: "Discovery - Creacion de User Personas",
+    category: "Proceso UX",
+    difficulty: "Básico",
+    timeLimit: TIME_LIMITS["Básico"],
+    question: "El PM te pide crear personas para un nuevo producto. ¿Cual es el enfoque correcto?",
+    code: `Contexto:
+- Producto B2B de gestion de inventario
+- Tienes acceso a 5 usuarios actuales
+- Deadline: 1 semana`,
+    options: [
+      { id: "a", text: "Inventar personas basadas en suposiciones del equipo para ahorrar tiempo" },
+      { id: "b", text: "Realizar entrevistas con usuarios reales, identificar patrones de comportamiento y crear personas basadas en datos" },
+      { id: "c", text: "Copiar personas de un competidor y adaptarlas" },
+      { id: "d", text: "Crear una sola persona generica que represente a todos los usuarios" }
+    ],
+    correctAnswer: "b",
+    explanation: "Las personas efectivas se basan en investigacion real. Entrevistar usuarios permite identificar patrones de comportamiento, necesidades y pain points autenticos."
+  },
+  {
+    id: 292,
+    title: "Jerarquia visual en UI",
+    category: "Fundamentos UX/UI",
+    difficulty: "Básico",
+    timeLimit: TIME_LIMITS["Básico"],
+    question: "En una pantalla de checkout, ¿como estableces la jerarquia visual correcta?",
+    code: `Elementos a mostrar:
+- Resumen del pedido
+- Boton de pago (CTA principal)
+- Terminos y condiciones
+- Boton para agregar cupon`,
+    options: [
+      { id: "a", text: "Todos los elementos con el mismo peso visual para no confundir" },
+      { id: "b", text: "CTA de pago con mayor contraste y tamaño, cupon como link secundario, terminos en texto pequeño" },
+      { id: "c", text: "Terminos y condiciones primero porque son legalmente importantes" },
+      { id: "d", text: "Usar colores aleatorios para cada elemento" }
+    ],
+    correctAnswer: "b",
+    explanation: "La jerarquia visual guia al usuario hacia la accion principal. El CTA de pago debe destacar con mayor contraste y tamaño, elementos secundarios con menor peso visual."
+  },
+  {
+    id: 293,
+    title: "Design Tokens - Concepto basico",
+    category: "Design Systems",
+    difficulty: "Básico",
+    timeLimit: TIME_LIMITS["Básico"],
+    question: "¿Que son los Design Tokens y para que sirven?",
+    code: `Contexto:
+- Equipo de 3 designers
+- 2 productos (web y mobile)
+- Necesidad de consistencia visual`,
+    options: [
+      { id: "a", text: "Son iconos reutilizables que se comparten entre proyectos" },
+      { id: "b", text: "Son valores de diseño (colores, espaciados, tipografia) almacenados como variables para mantener consistencia cross-platform" },
+      { id: "c", text: "Son plugins de Figma para automatizar tareas" },
+      { id: "d", text: "Son credenciales de acceso a librerias de diseño" }
+    ],
+    correctAnswer: "b",
+    explanation: "Los Design Tokens son la representacion atomica de decisiones de diseño (colores, spacing, typography) que pueden traducirse a cualquier plataforma, asegurando consistencia entre productos."
+  },
+  {
+    id: 294,
+    title: "Hotjar - Heatmaps basicos",
+    category: "Research",
+    difficulty: "Básico",
+    timeLimit: TIME_LIMITS["Básico"],
+    question: "¿Que tipo de insight puedes obtener de un heatmap de clicks en Hotjar?",
+    code: `Situacion:
+- Landing page con bajo CTR
+- Heatmap muestra clicks concentrados
+  fuera del CTA principal`,
+    options: [
+      { id: "a", text: "Cuanto tiempo pasan los usuarios en la pagina" },
+      { id: "b", text: "Donde hacen click los usuarios y si hay elementos que parecen clickeables pero no lo son" },
+      { id: "c", text: "De que pais provienen los usuarios" },
+      { id: "d", text: "Cuantas conversiones genera cada canal" }
+    ],
+    correctAnswer: "b",
+    explanation: "Los heatmaps de clicks muestran donde interactuan los usuarios. Clicks en elementos no interactivos indican problemas de affordance o expectativas no cumplidas."
+  },
+  {
+    id: 295,
+    title: "Miro - User Journey Mapping",
+    category: "Proceso UX",
+    difficulty: "Básico",
+    timeLimit: TIME_LIMITS["Básico"],
+    question: "Vas a facilitar una sesion de User Journey Mapping en Miro con el equipo. ¿Como la estructuras?",
+    code: `Objetivo:
+- Mapear experiencia de compra actual
+- Participantes: PM, CS, Dev Lead, Marketing
+- Duracion: 90 minutos`,
+    options: [
+      { id: "a", text: "Dejar el board vacio y construir el journey durante la sesion desde cero" },
+      { id: "b", text: "Preparar template con fases del journey, filas para acciones/emociones/pain points, y datos de research previo como input" },
+      { id: "c", text: "Crear el journey completo antes y solo pedir validacion" },
+      { id: "d", text: "Usar sticky notes sin estructura definida" }
+    ],
+    correctAnswer: "b",
+    explanation: "Un journey mapping efectivo requiere estructura previa (fases, dimensiones) pero se construye colaborativamente. Traer datos de research como input enriquece la discusion."
+  },
+  {
+    id: 296,
+    title: "Notion - Documentacion de proyecto de diseño",
+    category: "Colaboracion",
+    difficulty: "Básico",
+    timeLimit: TIME_LIMITS["Básico"],
+    question: "El equipo usa Notion para documentar proyectos. ¿Que debe incluir tu pagina de proyecto de diseño?",
+    code: `Proyecto:
+- Rediseño de flujo de registro
+- Equipo: 1 PM, 2 devs, 1 designer (tu)
+- Duracion estimada: 6 semanas`,
+    options: [
+      { id: "a", text: "Solo links a los archivos de Figma sin contexto adicional" },
+      { id: "b", text: "Objetivo del proyecto, timeline, links a research/diseños, decisiones clave documentadas, status updates y proximos pasos" },
+      { id: "c", text: "Copiar el PRD del PM sin agregar perspectiva de diseño" },
+      { id: "d", text: "Documentar solo al final del proyecto cuando todo este definido" }
+    ],
+    correctAnswer: "b",
+    explanation: "La documentacion de diseño debe ser un recurso vivo que alinee al equipo: contexto, decisiones, assets y progreso. Notion permite mantener todo centralizado y actualizado."
+  },
+  {
+    id: 297,
+    title: "Feedback de diseño - Recepcion",
+    category: "Soft Skills",
+    difficulty: "Básico",
+    timeLimit: TIME_LIMITS["Básico"],
+    question: "Un stakeholder critica tu diseño diciendo 'no me gusta el color'. ¿Como respondes?",
+    code: `Contexto:
+- Reunion de revision de diseño
+- El color fue elegido siguiendo
+  la guia de marca`,
+    options: [
+      { id: "a", text: "Defender inmediatamente la decision citando la guia de marca" },
+      { id: "b", text: "Indagar mas: '¿Que sensacion te genera? ¿Hay un contexto especifico donde no funciona?' y luego explicar el razonamiento" },
+      { id: "c", text: "Cambiar el color inmediatamente para evitar conflicto" },
+      { id: "d", text: "Ignorar el comentario porque no es experto en diseño" }
+    ],
+    correctAnswer: "b",
+    explanation: "El feedback vago necesita ser explorado. Preguntar el 'por que' detras del comentario ayuda a entender la preocupacion real y responder con fundamentos."
+  },
+
+  // --- Nivel Intermedio (298-304) ---
+  {
+    id: 298,
+    title: "Figma - Variantes y propiedades",
+    category: "Figma",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Necesitas crear un componente de boton con multiples estados y tamaños. ¿Cual es la estructura optima?",
+    code: `Requerimientos:
+- 3 tamaños: S, M, L
+- 4 estados: default, hover, pressed, disabled
+- 2 tipos: primary, secondary`,
+    options: [
+      { id: "a", text: "Crear 24 componentes separados (3x4x2) sin relacion entre ellos" },
+      { id: "b", text: "Crear un componente con 3 propiedades (Size, State, Type) usando variantes, permitiendo combinaciones" },
+      { id: "c", text: "Crear solo el boton M default y documentar las variaciones en texto" },
+      { id: "d", text: "Usar estilos de capa para cada combinacion posible" }
+    ],
+    correctAnswer: "b",
+    explanation: "Las variantes con propiedades permiten organizar todas las combinaciones en un solo componente, facilitando el mantenimiento y la consistencia."
+  },
+  {
+    id: 299,
+    title: "Maze - Diseño de test de usabilidad",
+    category: "Research",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Vas a testear un nuevo flujo de checkout en Maze. ¿Como diseñas el test?",
+    code: `Objetivos:
+- Validar que usuarios completen el checkout
+- Identificar puntos de friccion
+- Obtener feedback cualitativo`,
+    options: [
+      { id: "a", text: "Crear una sola tarea: 'Explora la pagina y dime que piensas'" },
+      { id: "b", text: "Diseñar misiones especificas con metricas (completion rate, misclicks), paths esperados y preguntas de seguimiento" },
+      { id: "c", text: "Solo usar el prototipo sin instrucciones para no sesgar" },
+      { id: "d", text: "Pedir a usuarios que lean en voz alta todo el texto" }
+    ],
+    correctAnswer: "b",
+    explanation: "Tests efectivos tienen misiones claras y medibles. Maze permite definir paths esperados y capturar metricas cuantitativas junto con feedback cualitativo."
+  },
+  {
+    id: 300,
+    title: "Design System - Documentacion de componentes",
+    category: "Design Systems",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "¿Que debe incluir la documentacion de un componente en el Design System?",
+    code: `Componente: Card de producto
+Usuarios: Designers y Developers
+Contexto: E-commerce con 3 productos digitales`,
+    options: [
+      { id: "a", text: "Solo el componente visual sin texto explicativo" },
+      { id: "b", text: "Anatomia, casos de uso, estados, props/variantes, do's and don'ts, especificaciones de accesibilidad y ejemplos de implementacion" },
+      { id: "c", text: "Unicamente el codigo de implementacion" },
+      { id: "d", text: "Un link al archivo de Figma sin contexto adicional" }
+    ],
+    correctAnswer: "b",
+    explanation: "La documentacion completa reduce ambiguedades. Incluir anatomia, casos de uso, accesibilidad y ejemplos ayuda tanto a designers como a developers a usar el componente correctamente."
+  },
+  {
+    id: 301,
+    title: "Google Analytics - Metricas de UX",
+    category: "Research",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Quieres entender por que los usuarios abandonan el funnel de registro. ¿Que metricas de GA4 analizas primero?",
+    code: `Funnel actual:
+1. Landing → 2. Formulario → 3. Verificacion → 4. Completado
+
+Problema: Solo 15% completa el registro`,
+    options: [
+      { id: "a", text: "Pageviews totales y bounce rate general del sitio" },
+      { id: "b", text: "Funnel exploration por paso, tiempo en cada etapa, eventos de scroll y clicks, y segmentacion por dispositivo" },
+      { id: "c", text: "Solo el numero de usuarios nuevos vs recurrentes" },
+      { id: "d", text: "Unicamente datos demograficos de la audiencia" }
+    ],
+    correctAnswer: "b",
+    explanation: "El funnel exploration muestra donde ocurre el drop-off. Combinado con tiempo en etapa y segmentacion por dispositivo, revela patrones de friccion especificos."
+  },
+  {
+    id: 302,
+    title: "Portfolio - Presentacion de caso de diseño",
+    category: "Portfolio",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Estas preparando un caso de diseño para tu portfolio. ¿Cual es la estructura mas efectiva?",
+    code: `Proyecto a documentar:
+- Rediseño de app de delivery
+- Mejoraste conversion en 25%
+- Proceso de 3 meses`,
+    options: [
+      { id: "a", text: "Mostrar solo los mockups finales en alta resolucion" },
+      { id: "b", text: "Contexto → Problema → Proceso (research, ideacion, iteraciones) → Solucion → Resultados medibles → Aprendizajes" },
+      { id: "c", text: "Listar todas las pantallas diseñadas sin narrativa" },
+      { id: "d", text: "Enfocarse solo en las herramientas utilizadas" }
+    ],
+    correctAnswer: "b",
+    explanation: "Un caso de portfolio efectivo cuenta una historia: el problema, tu proceso de pensamiento, como iteraste y el impacto medible. Los resultados cuantificables demuestran valor."
+  },
+  {
+    id: 303,
+    title: "Storytelling - Presentacion de diseño",
+    category: "Comunicacion",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "Vas a presentar una propuesta de rediseño a stakeholders no tecnicos. ¿Como estructuras la presentacion?",
+    code: `Audiencia:
+- CEO, CMO, Head of Product
+- 30 minutos disponibles
+- Necesitas aprobacion para desarrollo`,
+    options: [
+      { id: "a", text: "Mostrar solo los mockups finales y esperar preguntas" },
+      { id: "b", text: "Problema → Insights de research → Solucion propuesta → Impacto esperado → Proximos pasos, con visuales claros" },
+      { id: "c", text: "Comenzar con detalles tecnicos de implementacion" },
+      { id: "d", text: "Presentar todas las iteraciones y versiones descartadas" }
+    ],
+    correctAnswer: "b",
+    explanation: "El storytelling efectivo conecta el diseño con objetivos de negocio. La estructura problema-insight-solucion-impacto crea una narrativa convincente para stakeholders."
+  },
+  {
+    id: 304,
+    title: "Handoff - Especificaciones para desarrollo",
+    category: "Colaboracion",
+    difficulty: "Intermedio",
+    timeLimit: TIME_LIMITS["Intermedio"],
+    question: "El equipo de desarrollo reporta inconsistencias en la implementacion. ¿Como mejoras el handoff?",
+    code: `Problemas reportados:
+- Espaciados diferentes a los diseños
+- Colores con variaciones sutiles
+- Comportamientos no documentados`,
+    options: [
+      { id: "a", text: "Pedir a los developers que usen el inspect de Figma sin apoyo adicional" },
+      { id: "b", text: "Vincular tokens del Design System, documentar comportamientos edge case, usar Dev Mode de Figma y tener sesiones de alineacion" },
+      { id: "c", text: "Enviar screenshots con medidas anotadas manualmente" },
+      { id: "d", text: "Dejar que desarrollo interprete los diseños segun su criterio" }
+    ],
+    correctAnswer: "b",
+    explanation: "Un handoff efectivo usa tokens compartidos, documenta casos edge y mantiene comunicacion continua. Dev Mode de Figma facilita la extraccion precisa de especificaciones."
+  },
+
+  // --- Nivel Avanzado (305-311) ---
+  {
+    id: 305,
+    title: "Design System - Gobernanza y escalabilidad",
+    category: "Design Systems",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "El Design System tiene 200+ componentes y 5 equipos contribuyendo. ¿Como estableces gobernanza efectiva?",
+    code: `Problemas actuales:
+- Componentes duplicados con nombres diferentes
+- Cambios breaking sin aviso
+- Documentacion desactualizada
+- Adopcion inconsistente entre equipos`,
+    options: [
+      { id: "a", text: "Centralizar todo en un solo designer para evitar conflictos" },
+      { id: "b", text: "Implementar contribution guidelines, versionado semantico, deprecation policy, review process y metricas de adopcion" },
+      { id: "c", text: "Permitir que cada equipo mantenga su propia version del DS" },
+      { id: "d", text: "Congelar el DS y no aceptar nuevos componentes" }
+    ],
+    correctAnswer: "b",
+    explanation: "Un DS escalable requiere procesos claros: guidelines de contribucion, versionado para cambios breaking, proceso de review y tracking de adopcion para medir impacto."
+  },
+  {
+    id: 306,
+    title: "Research - Triangulacion de datos",
+    category: "Research",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Los datos cuantitativos de GA4 contradicen los hallazgos de entrevistas. ¿Como reconcilias la informacion?",
+    code: `Situacion:
+- GA4: 80% de usuarios completan el flujo
+- Entrevistas: usuarios reportan frustracion
+
+Hipotesis: ¿metricas incorrectas
+o sesgo de entrevistas?`,
+    options: [
+      { id: "a", text: "Priorizar datos cuantitativos porque son mas objetivos" },
+      { id: "b", text: "Triangular con una tercera fuente (session recordings, usability tests), revisar definicion de 'completar' en GA4 y segmentar por cohortes" },
+      { id: "c", text: "Descartar las entrevistas por ser subjetivas" },
+      { id: "d", text: "Asumir que ambos estan mal y empezar de cero" }
+    ],
+    correctAnswer: "b",
+    explanation: "La triangulacion con multiples fuentes revela matices. Los datos cuantitativos pueden medir 'completar' diferente a la expectativa, y las entrevistas pueden tener sesgo de seleccion."
+  },
+  {
+    id: 307,
+    title: "E-commerce - Optimizacion de conversion",
+    category: "UX Strategy",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "La tasa de conversion del checkout es 2.1% (benchmark industria: 3.5%). ¿Como priorizas mejoras?",
+    code: `Datos disponibles:
+- Funnel: Cart → Shipping → Payment → Confirm
+- Drop-off mayor: Payment (45% abandono)
+- Hotjar: usuarios vuelven al campo CVV
+- GA4: mobile tiene 60% mas abandono`,
+    options: [
+      { id: "a", text: "Rediseñar todo el checkout desde cero para mobile" },
+      { id: "b", text: "Priorizar: 1) Mejorar UX del campo CVV/payment, 2) Optimizar mobile, 3) A/B test de mejoras incrementales con metricas claras" },
+      { id: "c", text: "Agregar mas metodos de pago sin analizar el problema actual" },
+      { id: "d", text: "Reducir pasos del checkout sin validar con usuarios" }
+    ],
+    correctAnswer: "b",
+    explanation: "Los datos señalan fricciones especificas. Atacar el punto de mayor drop-off (payment) primero, optimizar el canal mas afectado (mobile) y validar con A/B tests es la estrategia data-driven."
+  },
+  {
+    id: 308,
+    title: "Organizacion - Gestion de multiples proyectos",
+    category: "Soft Skills",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Tienes 3 proyectos simultaneos con deadlines cercanos y un PM agrega una solicitud urgente. ¿Como manejas la situacion?",
+    code: `Carga actual:
+- Proyecto A: entrega en 2 dias (70% avance)
+- Proyecto B: entrega en 5 dias (40% avance)
+- Proyecto C: entrega en 1 semana (20% avance)
+- Solicitud urgente: "necesitamos mockups para mañana"`,
+    options: [
+      { id: "a", text: "Aceptar todo y trabajar horas extra para cumplir" },
+      { id: "b", text: "Evaluar impacto, comunicar trade-offs al PM, proponer alternativas (reducir scope, renegociar deadline) y priorizar con criterios claros" },
+      { id: "c", text: "Rechazar la solicitud urgente sin discusion" },
+      { id: "d", text: "Delegar proyectos a otros sin consultar capacidad del equipo" }
+    ],
+    correctAnswer: "b",
+    explanation: "La proactividad incluye comunicar limitaciones y proponer soluciones. Hacer visible el impacto de nuevas solicitudes permite decisiones informadas sobre prioridades."
+  },
+  {
+    id: 309,
+    title: "Liderazgo de proyecto end-to-end",
+    category: "UX Strategy",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Te asignan liderar el rediseño de la app core con deadline en 3 meses. ¿Como estructuras el proyecto?",
+    code: `Contexto:
+- App con 500K usuarios activos
+- Equipo: 2 designers, 1 researcher
+- Stakeholders: PM, Engineering Lead, CMO
+- Restriccion: no puede haber downtime`,
+    options: [
+      { id: "a", text: "Diseñar todo primero y presentar la vision completa al final" },
+      { id: "b", text: "Dividir en fases: Discovery (2 sem), Define (2 sem), Design + Test iterativo (6 sem), Handoff + QA (2 sem), con checkpoints semanales" },
+      { id: "c", text: "Empezar a diseñar inmediatamente para ganar tiempo" },
+      { id: "d", text: "Pedir extension del deadline antes de empezar" }
+    ],
+    correctAnswer: "b",
+    explanation: "Proyectos complejos requieren fases claras con entregas incrementales. Checkpoints regulares permiten ajustar direccion, gestionar expectativas y reducir riesgo."
+  },
+  {
+    id: 310,
+    title: "Accesibilidad - Auditoria y remediacion",
+    category: "UX Strategy",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "Una auditoria WCAG revela 47 issues de accesibilidad en el producto. ¿Como priorizas la remediacion?",
+    code: `Issues encontrados:
+- 12 criticos (A): contraste, alt text, focus
+- 20 moderados (AA): labels, landmarks
+- 15 menores (AAA): nice to have
+
+Recursos: 1 sprint de desarrollo disponible`,
+    options: [
+      { id: "a", text: "Resolver todos los issues AAA primero porque son los mas completos" },
+      { id: "b", text: "Priorizar issues criticos (A) por impacto en usuarios, crear matriz impacto/esfuerzo, documentar deuda tecnica restante y establecer a11y como criterio en nuevos diseños" },
+      { id: "c", text: "Ignorar accesibilidad porque no es requisito legal en tu pais" },
+      { id: "d", text: "Delegar toda la remediacion al equipo de QA" }
+    ],
+    correctAnswer: "b",
+    explanation: "WCAG A son requisitos minimos que afectan a mas usuarios. Priorizar por impacto, documentar deuda y establecer procesos previene acumulacion futura de issues."
+  },
+  {
+    id: 311,
+    title: "Stakeholder management - Conflicto de prioridades",
+    category: "Soft Skills",
+    difficulty: "Avanzado",
+    timeLimit: TIME_LIMITS["Avanzado"],
+    question: "El CMO quiere features visuales llamativas, el CPO prioriza usabilidad, Engineering pide simplicidad tecnica. ¿Como navegas el conflicto?",
+    code: `Situacion:
+- Redesign de homepage
+- Deadline inamovible: 4 semanas
+- Cada stakeholder tiene veto power
+- Tu recomendacion es diferente a todas`,
+    options: [
+      { id: "a", text: "Diseñar tres versiones diferentes para satisfacer a todos" },
+      { id: "b", text: "Facilitar sesion de alineacion con datos de usuario, definir criterios de exito compartidos, proponer solucion que balancea constraints y documentar trade-offs" },
+      { id: "c", text: "Escalar al CEO para que tome la decision" },
+      { id: "d", text: "Implementar la vision del stakeholder con mas poder politico" }
+    ],
+    correctAnswer: "b",
+    explanation: "El designer debe actuar como facilitador. Usar datos para alinear, definir exito en terminos compartidos y hacer trade-offs explicitos permite decisiones informadas."
   }
 
 ];
@@ -7227,6 +7665,28 @@ const STACK_ASSIGNMENTS = {
   288: ["ios"],
   289: ["ios"],
   290: ["ios"],
+  // ===== Product Designer (291-311) = 21 preguntas =====
+  291: ["product-designer"],
+  292: ["product-designer"],
+  293: ["product-designer"],
+  294: ["product-designer"],
+  295: ["product-designer"],
+  296: ["product-designer"],
+  297: ["product-designer"],
+  298: ["product-designer"],
+  299: ["product-designer"],
+  300: ["product-designer"],
+  301: ["product-designer"],
+  302: ["product-designer"],
+  303: ["product-designer"],
+  304: ["product-designer"],
+  305: ["product-designer"],
+  306: ["product-designer"],
+  307: ["product-designer"],
+  308: ["product-designer"],
+  309: ["product-designer"],
+  310: ["product-designer"],
+  311: ["product-designer"],
 };
 
 const DEFAULT_STACK = ["react"];

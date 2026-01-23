@@ -135,6 +135,13 @@ export const TECH_STACKS = [
     description: "Requisitos, stakeholders, KPIs, priorización MoSCoW, análisis de procesos y comunicación técnica.",
     focus: "Traducción de negocio a soluciones técnicas y toma de decisiones.",
   },
+  {
+    id: "product-designer",
+    label: "Product Designer",
+    icon: "🎨",
+    description: "Figma avanzado, research con Maze/Hotjar, prototipado, Design Systems y colaboración.",
+    focus: "Diseño centrado en usuario, storytelling y sistemas de diseño escalables.",
+  },
 ];
 
 export const STACK_DICTIONARY = TECH_STACKS.reduce((acc, stack) => {
